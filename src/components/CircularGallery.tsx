@@ -123,7 +123,7 @@ export default function CircularGallery({
     return () => {
       window.removeEventListener('resize', resize);
       container.removeChild(gl.canvas);
-      renderer.destroy(); // Changed from dispose() to destroy()
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
   }, [items]);
 
