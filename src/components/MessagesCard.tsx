@@ -43,7 +43,7 @@ interface MessagesCardProps {
 }
 
 const MessagesCard: React.FC<MessagesCardProps> = ({ onViewProfile }) => {
-  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<string>('1'); // Set to first message by default
   const [newMessage, setNewMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -258,14 +258,11 @@ const MessagesCard: React.FC<MessagesCardProps> = ({ onViewProfile }) => {
       bg-white/10 backdrop-blur-md rounded-2xl p-6
       border border-white/20 shadow-xl overflow-hidden
       transition-all duration-300 ease-in-out
-      ${selectedMessage ? 'w-[700px]' : 'w-[350px]'}
+      w-[1000px] mx-auto
     `}>
-      <div className="flex h-[500px]">
+      <div className="flex h-[600px]">
         {/* Messages List */}
-        <div className={`
-          flex flex-col transition-all duration-300 ease-in-out
-          ${selectedMessage ? 'w-1/3 pr-4' : 'w-full'}
-        `}>
+        <div className="w-1/3 pr-4 border-r border-white/10">
           {/* Header */}
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-white mb-2">Messages</h2>
@@ -306,181 +303,170 @@ const MessagesCard: React.FC<MessagesCardProps> = ({ onViewProfile }) => {
                            text-white placeholder-white/40 focus:outline-none focus:border-white/40
                            transition-all duration-200"
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                </svg>
-              </div>
             </div>
           </div>
         </div>
 
         {/* Conversation View */}
-        {selectedMessage && selectedChat && (
-          <div className={`
-            w-2/3 pl-4 border-l border-white/10 flex flex-col
-            transition-all duration-300 ease-in-out
-            ${selectedMessage ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}
-          `}>
-            {/* Chat Header */}
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="relative">
-                <Avatar src={selectedChat.avatarSrc} size="md" />
-                {selectedChat.online && (
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white/10" />
-                )}
-              </div>
-              <div>
-                <h3 className="text-white font-semibold">{selectedChat.name}</h3>
-                <p className="text-white/60 text-sm">
-                  {selectedChat.online ? 'Online' : 'Last seen recently'}
-                </p>
-              </div>
+        <div className="w-2/3 pl-4 flex flex-col">
+          {/* Chat Header */}
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="relative">
+              <Avatar src={selectedChat?.avatarSrc || ''} size="md" />
+              {selectedChat?.online && (
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white/10" />
+              )}
             </div>
+            <div>
+              <h3 className="text-white font-semibold">{selectedChat?.name}</h3>
+              <p className="text-white/60 text-sm">
+                {selectedChat?.online ? 'Online' : 'Last seen recently'}
+              </p>
+            </div>
+          </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-              {selectedChat.conversation?.messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className="relative group">
-                    <div
-                      className={`
-                        max-w-[80%] rounded-2xl px-4 py-2
-                        ${msg.isOwn 
-                          ? 'bg-purple-600 text-white' 
-                          : 'bg-white/10 text-white'
-                        }
-                      `}
-                    >
-                      {/* Message Content */}
-                      <p className="text-sm">{msg.text}</p>
-                      
-                      {/* Attachments */}
-                      {msg.attachments?.map((attachment, index) => (
-                        <div key={index} className="mt-2">
-                          {attachment.type === 'image' && (
-                            <img 
-                              src={attachment.url} 
-                              alt="Attachment" 
-                              className="rounded-lg max-w-full h-auto"
-                            />
-                          )}
-                          {attachment.type === 'file' && (
-                            <div className="flex items-center space-x-2 bg-white/10 rounded-lg p-2">
-                              <Paperclip className="w-4 h-4" />
-                              <span className="text-sm">{attachment.name}</span>
-                            </div>
-                          )}
-                          {attachment.type === 'voice' && (
-                            <div className="flex items-center space-x-2 bg-white/10 rounded-lg p-2">
-                              <Mic className="w-4 h-4" />
-                              <span className="text-sm">{attachment.duration}</span>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-
-                      {/* Message Footer */}
-                      <div className="flex items-center justify-between mt-1">
-                        <span className="text-xs opacity-60">
-                          {msg.timestamp}
-                        </span>
-                        {msg.isOwn && (
-                          <span className="text-xs opacity-60 ml-2">
-                            {msg.status === 'read' ? '✓✓' : msg.status === 'delivered' ? '✓✓' : '✓'}
-                          </span>
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+            {selectedChat?.conversation?.messages.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex ${msg.isOwn ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className="relative group">
+                  <div
+                    className={`
+                      max-w-[80%] rounded-2xl px-4 py-2
+                      ${msg.isOwn 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-white/10 text-white'
+                      }
+                    `}
+                  >
+                    {/* Message Content */}
+                    <p className="text-sm">{msg.text}</p>
+                    
+                    {/* Attachments */}
+                    {msg.attachments?.map((attachment, index) => (
+                      <div key={index} className="mt-2">
+                        {attachment.type === 'image' && (
+                          <img 
+                            src={attachment.url} 
+                            alt="Attachment" 
+                            className="rounded-lg max-w-full h-auto"
+                          />
+                        )}
+                        {attachment.type === 'file' && (
+                          <div className="flex items-center space-x-2 bg-white/10 rounded-lg p-2">
+                            <Paperclip className="w-4 h-4" />
+                            <span className="text-sm">{attachment.name}</span>
+                          </div>
+                        )}
+                        {attachment.type === 'voice' && (
+                          <div className="flex items-center space-x-2 bg-white/10 rounded-lg p-2">
+                            <Mic className="w-4 h-4" />
+                            <span className="text-sm">{attachment.duration}</span>
+                          </div>
                         )}
                       </div>
+                    ))}
 
-                      {/* Reactions */}
-                      {msg.reactions && msg.reactions.length > 0 && (
-                        <div className="absolute -bottom-4 right-0 flex space-x-1">
-                          {msg.reactions.map((reaction, index) => (
-                            <div
-                              key={index}
-                              className="bg-white/20 rounded-full px-2 py-0.5 text-xs"
-                            >
-                              {reaction.emoji} {reaction.count}
-                            </div>
-                          ))}
-                        </div>
+                    {/* Message Footer */}
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs opacity-60">
+                        {msg.timestamp}
+                      </span>
+                      {msg.isOwn && (
+                        <span className="text-xs opacity-60 ml-2">
+                          {msg.status === 'read' ? '✓✓' : msg.status === 'delivered' ? '✓✓' : '✓'}
+                        </span>
                       )}
                     </div>
 
-                    {/* Reaction Picker (appears on hover) */}
-                    <div className="absolute -top-8 right-0 hidden group-hover:flex space-x-1 bg-white/20 rounded-full p-1">
-                      {['❤️', '👍', '😂', '😮', '😢', '🙏'].map((emoji) => (
-                        <button
-                          key={emoji}
-                          onClick={() => handleReaction(msg.id, emoji)}
-                          className="hover:scale-125 transition-transform"
-                        >
-                          {emoji}
-                        </button>
-                      ))}
-                    </div>
+                    {/* Reactions */}
+                    {msg.reactions && msg.reactions.length > 0 && (
+                      <div className="absolute -bottom-4 right-0 flex space-x-1">
+                        {msg.reactions.map((reaction, index) => (
+                          <div
+                            key={index}
+                            className="bg-white/20 rounded-full px-2 py-0.5 text-xs"
+                          >
+                            {reaction.emoji} {reaction.count}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Reaction Picker (appears on hover) */}
+                  <div className="absolute -top-8 right-0 hidden group-hover:flex space-x-1 bg-white/20 rounded-full p-1">
+                    {['❤️', '👍', '😂', '😮', '😢', '🙏'].map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => handleReaction(msg.id, emoji)}
+                        className="hover:scale-125 transition-transform"
+                      >
+                        {emoji}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              ))}
+              </div>
+            ))}
 
-              {/* Typing Indicator */}
-              {selectedChat.conversation?.isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-white/10 rounded-2xl px-4 py-2">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce delay-100" />
-                      <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce delay-200" />
-                    </div>
+            {/* Typing Indicator */}
+            {selectedChat?.conversation?.isTyping && (
+              <div className="flex justify-start">
+                <div className="bg-white/10 rounded-2xl px-4 py-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce delay-100" />
+                    <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce delay-200" />
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Message Input */}
-            <form onSubmit={handleSendMessage} className="flex space-x-2">
-              <button
-                type="button"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className="p-2 text-white/60 hover:text-white transition-colors"
-              >
-                <Smile className="w-5 h-5" />
-              </button>
-              
-              <button
-                type="button"
-                onClick={handleVoiceMessage}
-                className={`p-2 transition-colors ${
-                  isRecording ? 'text-red-500' : 'text-white/60 hover:text-white'
-                }`}
-              >
-                <Mic className="w-5 h-5" />
-              </button>
-
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
-                className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2
-                           text-white placeholder-white/40 focus:outline-none focus:border-white/40
-                           transition-all duration-200"
-              />
-              
-              <button
-                type="submit"
-                className="p-2 bg-purple-600 text-white rounded-xl
-                           hover:bg-purple-500 transition-colors duration-200
-                           focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-              >
-                <Send className="w-5 h-5" />
-              </button>
-            </form>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* Message Input */}
+          <form onSubmit={handleSendMessage} className="flex space-x-2">
+            <button
+              type="button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="p-2 text-white/60 hover:text-white transition-colors"
+            >
+              <Smile className="w-5 h-5" />
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleVoiceMessage}
+              className={`p-2 transition-colors ${
+                isRecording ? 'text-red-500' : 'text-white/60 hover:text-white'
+              }`}
+            >
+              <Mic className="w-5 h-5" />
+            </button>
+
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type a message..."
+              className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2
+                         text-white placeholder-white/40 focus:outline-none focus:border-white/40
+                         transition-all duration-200"
+            />
+            
+            <button
+              type="submit"
+              className="p-2 bg-purple-600 text-white rounded-xl
+                         hover:bg-purple-500 transition-colors duration-200
+                         focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
