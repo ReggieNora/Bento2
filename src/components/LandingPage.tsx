@@ -56,13 +56,13 @@ const INITIAL_CARDS: CardData[] = [
 ];
 
 function getRandomLayout(num: number) {
-  const baseAngles = [-10, -5, 0, 5, 10, 15, -15];
-  const baseXs = [-80, -40, 0, 40, 80, 120, -120];
-  const baseYs = [30, 10, 0, 10, 30, 50, 50];
+  const baseAngles = [0, -2, 2, -4, 4, -6, 6];
+  const baseXs = [0, -10, 10, -20, 20, -30, 30];
+  const baseYs = [0, 5, 10, 15, 20, 25, 30];
   return Array.from({ length: num }).map((_, i) => ({
-    rotate: baseAngles[i % baseAngles.length] + (Math.random() - 0.5) * 8,
-    x: baseXs[i % baseXs.length] + (Math.random() - 0.5) * 30,
-    y: baseYs[i % baseYs.length] + (Math.random() - 0.5) * 20,
+    rotate: baseAngles[i % baseAngles.length] + (Math.random() - 0.5) * 2,
+    x: baseXs[i % baseXs.length] + (Math.random() - 0.5) * 5,
+    y: baseYs[i % baseYs.length] + (Math.random() - 0.5) * 5,
   }));
 }
 
@@ -103,8 +103,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
         </div>
       </nav>
 
-      {/* Centered Card Stack */}
-      <div className="flex-1 flex flex-col items-center justify-center relative">
+      {/* Main Content Area */}
+      <div className="flex-1 relative">
         {/* Reset Button */}
         <button
           onClick={handleReset}
@@ -115,25 +115,32 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
           <RotateCcw className="w-5 h-5 text-white" />
         </button>
 
-        <DraggableCardContainer key={resetKey} className="absolute inset-0 z-10 flex items-center justify-center">
-          {[...cards].reverse().map((item, index) => {
-            const layout = cardLayout[index] || { rotate: 0, x: 0, y: 0 };
-            return (
-              <LandingPageCard
-                key={item.id}
-                id={item.id}
-                icon={item.icon}
-                title={item.title}
-                text={item.text}
-                layout={layout}
-                onDismiss={handleCardDismiss}
-              />
-            );
-          })}
-        </DraggableCardContainer>
+        {/* Card Stack Container */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
+            {cards.map((item, index) => {
+              const isTopCard = index === 0;
+              const layout = isTopCard
+                ? { rotate: 0, x: 0, y: 0 }
+                : cardLayout[cards.length - 1 - index] || { rotate: 0, x: 0, y: 0 };
+
+              return (
+                <LandingPageCard
+                  key={item.id}
+                  id={item.id}
+                  icon={item.icon}
+                  title={item.title}
+                  text={item.text}
+                  layout={layout}
+                  onDismiss={handleCardDismiss}
+                />
+              );
+            })}
+          </DraggableCardContainer>
+        </div>
 
         {/* Call to Action Section */}
-        <div className="mt-12 flex flex-col items-center justify-center">
+        <div className="absolute inset-x-0 bottom-0 z-0 flex flex-col items-center justify-center pb-16">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Ready to join Hirly?</h2>
           <p className="text-white/80 mb-6 text-center max-w-md">Sign up or log in to start matching with top jobs and talent, powered by AI and a modern experience.</p>
           <button

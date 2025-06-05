@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import { motion, useMotionValue, AnimatePresence } from "framer-motion";
 
 interface DraggableCardContainerProps {
@@ -14,7 +14,6 @@ interface DraggableCardBodyProps {
   onTap?: () => void;
 }
 
-// Emoji burst component
 function EmojiBurst({ direction, type }: { direction: 'left' | 'right', type: 'heart' | 'fire' }) {
   const emoji = type === 'heart' ? '❤️' : '🔥';
   
@@ -35,7 +34,7 @@ function EmojiBurst({ direction, type }: { direction: 'left' | 'right', type: 'h
       animate={{ 
         scale: [0, 2.5, 2],
         opacity: [0, 1, 0],
-        y: -300 // Float up
+        y: -300
       }}
       transition={{
         duration: 2,
@@ -63,8 +62,8 @@ export function DraggableCardBody({
   onTap,
 }: DraggableCardBodyProps) {
   const x = useMotionValue(0);
-  const [exitDirection, setExitDirection] = useState<'left' | 'right'>('right');
-  const [showEmojiBurst, setShowEmojiBurst] = useState(false);
+  const [exitDirection, setExitDirection] = React.useState<'left' | 'right'>('right');
+  const [showEmojiBurst, setShowEmojiBurst] = React.useState(false);
 
   function handleDragEnd(_e: any, info: { offset: { x: number } }) {
     if (!onDismiss) return;
@@ -83,16 +82,16 @@ export function DraggableCardBody({
 
   return (
     <motion.div
-      className={`cursor-grab active:cursor-grabbing ${className}`}
-      drag
+      className={className}
+      drag="x"
       dragElastic={0.7}
-      dragConstraints={{ left: -400, right: 400, top: -200, bottom: 200 }}
+      dragConstraints={{ left: -400, right: 400 }}
       style={{ x }}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       transition={{ 
-        type: "spring", 
-        stiffness: 300, 
+        type: "spring",
+        stiffness: 300,
         damping: 20,
         mass: 0.8
       }}
