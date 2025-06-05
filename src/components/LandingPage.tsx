@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, UserPlus, LogIn, Twitter, Linkedin, Github } from 'lucide-react';
 import hirlyLogo from '../assets/hirly-logo.png';
 import { Link } from 'react-router-dom';
+import ChromaGrid from './ChromaGrid';
 
 interface LandingPageProps {
   onAuthSuccess: (userType: 'candidate' | 'employer') => void;
@@ -45,6 +46,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
           >
             <UserPlus className="w-5 h-5" /> Sign Up or Log In <ArrowRight className="w-5 h-5" />
           </button>
+        </div>
+      </div>
+
+      {/* Features Section with ChromaGrid */}
+      <div className="w-full py-16">
+        <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-12">
+          Discover Our Powerful Features
+        </h2>
+        <div style={{ height: '600px', position: 'relative' }}>
+          <ChromaGrid
+            radius={300}
+            damping={0.45}
+            fadeOut={0.6}
+            ease="power3.out"
+          />
         </div>
       </div>
     </div>
