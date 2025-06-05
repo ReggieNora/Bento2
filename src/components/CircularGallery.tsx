@@ -57,6 +57,7 @@ export default function CircularGallery({
 
         // Load the image
         const img = new Image();
+        img.crossOrigin = 'anonymous'; // Add cross-origin handling
         img.src = item.image;
         img.onload = () => (texture.image = img);
 
@@ -122,7 +123,7 @@ export default function CircularGallery({
     return () => {
       window.removeEventListener('resize', resize);
       container.removeChild(gl.canvas);
-      renderer.dispose();
+      renderer.destroy(); // Changed from dispose() to destroy()
     };
   }, [items]);
 
