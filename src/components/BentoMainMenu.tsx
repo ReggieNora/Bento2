@@ -55,7 +55,13 @@ const SkeletonProfile = () => (
 
 const SkeletonSettings = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
-    <motion.div className="h-8 w-8 rounded-full bg-gradient-to-r from-gray-400 to-zinc-500 mb-2" />
+    <div className="relative flex-1 flex items-center justify-center">
+      <img 
+        src="/src/assets/Screenshot_2025-06-06_012122-removebg-preview (1).png" 
+        alt="Settings" 
+        className="w-32 h-32 opacity-80"
+      />
+    </div>
     <motion.div className="w-1/3 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
