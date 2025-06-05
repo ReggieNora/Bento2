@@ -34,9 +34,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
           </div>
         </nav>
 
-        {/* Hero Section */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-white text-center mb-6 max-w-4xl">
+        {/* Hero Section - Moved down to align with lamp glow */}
+        <div className="flex-1 flex flex-col items-center justify-center px-4 translate-y-24">
+          <h1 className="text-4xl md:text-7xl font-bold text-center mb-8 max-w-4xl bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
             Find Your Next Opportunity with AI-Powered Matching
           </h1>
           <p className="text-xl text-white/80 text-center mb-12 max-w-2xl">
