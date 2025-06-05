@@ -11,24 +11,36 @@ interface AuthModalProps {
 const AuthModal: React.FC<AuthModalProps> = ({ onAuthSuccess, onClose }) => {
   const [userType, setUserType] = useState<'candidate' | 'employer'>('candidate');
   const [authAction, setAuthAction] = useState<'signin' | 'signup'>('signin');
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    // Wait for animation to complete before calling onClose
+    setTimeout(onClose, 400);
+  };
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       <motion.div
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-lg"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
       >
         <motion.div
           className="relative w-full max-w-lg mx-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden"
           initial={{ scale: 0.9, y: 20, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
+          animate={{ 
+            scale: isClosing ? 0.9 : 1,
+            y: isClosing ? 20 : 0,
+            opacity: isClosing ? 0 : 1
+          }}
           exit={{ scale: 0.9, y: 20, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         >
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute top-4 right-4 p-2 rounded-xl bg-white/10 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
