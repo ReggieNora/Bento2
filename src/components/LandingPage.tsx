@@ -1,11 +1,39 @@
 import React, { useState } from 'react';
 import { ArrowRight, UserPlus, LogIn, Twitter, Linkedin, Github } from 'lucide-react';
-import hirlyLogo from '../assets/hirly-logo.png';
 import { Link } from 'react-router-dom';
+import hirlyLogo from '../assets/hirly-logo.png';
+import CircularGallery from './CircularGallery';
 
 interface LandingPageProps {
   onAuthSuccess: (userType: 'candidate' | 'employer') => void;
 }
+
+const features = [
+  {
+    image: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg",
+    text: "AI-Powered Matching"
+  },
+  {
+    image: "https://images.pexels.com/photos/3182833/pexels-photo-3182833.jpeg",
+    text: "Direct Messaging"
+  },
+  {
+    image: "https://images.pexels.com/photos/8353841/pexels-photo-8353841.jpeg",
+    text: "AI Interview Coach"
+  },
+  {
+    image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg",
+    text: "Personalized Profiles"
+  },
+  {
+    image: "https://images.pexels.com/photos/7681091/pexels-photo-7681091.jpeg",
+    text: "Analytics Dashboard"
+  },
+  {
+    image: "https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg",
+    text: "Modern Interface"
+  }
+];
 
 const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
   return (
@@ -44,6 +72,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
         >
           <UserPlus className="w-5 h-5" /> Get Started <ArrowRight className="w-5 h-5" />
         </button>
+      </div>
+
+      {/* Features Gallery */}
+      <div className="h-[600px] w-full relative mb-16">
+        <CircularGallery 
+          items={features}
+          bend={3}
+          textColor="#ffffff"
+          borderRadius={0.05}
+          font="bold 24px DM Sans"
+        />
       </div>
 
       {/* Footer */}
