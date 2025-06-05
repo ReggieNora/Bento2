@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { BentoGrid, BentoGridItem } from "./ui/BentoGrid";
 import {
@@ -19,24 +18,33 @@ const SkeletonSwipe = () => (
     <motion.div className="w-2/3 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
+
 const SkeletonMessages = () => (
-  <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
-    <motion.div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 mb-2" />
+  <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
+    <motion.div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 mb-2">
+      {/* Notification Badge */}
+      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold animate-pulse">
+        1
+      </span>
+    </motion.div>
     <motion.div className="w-1/2 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
+
 const SkeletonProfile = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <motion.div className="h-10 w-10 rounded-full bg-gradient-to-r from-green-400 to-teal-400 mb-2" />
     <motion.div className="w-1/2 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
+
 const SkeletonSettings = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <motion.div className="h-8 w-8 rounded-full bg-gradient-to-r from-gray-400 to-zinc-500 mb-2" />
     <motion.div className="w-1/3 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
+
 const SkeletonCoach = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <motion.div className="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 mb-2" />
