@@ -249,12 +249,10 @@ function App() {
       type: 'candidates',
       component: (
         <ProfileCard 
-          avatarSrc={candidateProfiles[currentCandidateIndex].avatarSrc}
           name={candidateProfiles[currentCandidateIndex].name}
           title={candidateProfiles[currentCandidateIndex].title}
           skills={candidateProfiles[currentCandidateIndex].skills}
-          onViewProfile={() => console.log("View profile clicked")}
-          buttonLabel="View Profile"
+          description="Senior software engineer with expertise in React, Node.js, and cloud architectures. Passionate about building scalable web applications and mentoring junior developers."
         />
       )
     },

@@ -1,37 +1,64 @@
 import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
 
 interface ProfileCardProps {
-  avatarSrc: string;
   name: string;
   title: string;
-  description?: string;
   skills: string[];
-  resume?: React.ReactNode; // For custom resume content
+  description?: string;
+  onBack: () => void;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
-  avatarSrc,
   name,
   title,
-  description,
   skills,
-  resume
+  description,
+  onBack
 }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Collapsed view
-  if (!expanded) {
-    return (
+  const sampleResume = {
+    experience: [
+      {
+        title: "Senior Frontend Developer",
+        company: "Google",
+        duration: "2020 - Present",
+        description: "Led development of core UI features, mentored junior devs, and improved app performance by 40%."
+      },
+      {
+        title: "Frontend Developer",
+        company: "Facebook",
+        duration: "2018 - 2020",
+        description: "Built and maintained React components, implemented new features, and collaborated with design team."
+      }
+    ],
+    education: {
+      degree: "B.S. Computer Science",
+      school: "Stanford University",
+      duration: "2014 - 2018",
+      honors: "Graduated with honors. Focus on Software Engineering and AI."
+    }
+  };
+
+  return (
+    <div className="relative w-full h-full flex items-center justify-center">
+      {/* Back Button */}
+      <button
+        onClick={onBack}
+        className="absolute top-4 left-4 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-colors z-10"
+      >
+        Back
+      </button>
+
+      {/* Main Card */}
       <div
-        className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl transition-all duration-300 w-[350px] flex flex-col items-center cursor-pointer"
-        style={{ minHeight: 350 }}
-        onClick={() => setExpanded(true)}
+        className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl transition-all duration-300 w-[350px] flex flex-col items-center cursor-pointer hover:scale-[1.02]"
+        onClick={() => setIsModalOpen(true)}
       >
         <img
-          src={avatarSrc}
+          src="https://thispersondoesnotexist.com/image"
           alt={name}
-          className="w-24 h-24 rounded-xl object-cover border-2 border-white/20 mb-4"
+          className="w-24 h-24 rounded-full border-2 border-white/20 mb-4"
         />
         <h2 className="text-2xl font-bold text-white text-center mb-1">{name}</h2>
         <p className="text-white/60 text-lg text-center mb-2">{title}</p>
@@ -49,77 +76,86 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <button
           className="mt-auto w-full max-w-xs py-2 rounded-xl bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold shadow-lg hover:from-pink-600 hover:to-red-600 transition-colors"
         >
-          View Profile
+          View Full Profile
         </button>
       </div>
-    );
-  }
 
-  // Expanded view
-  return (
-    <div
-      className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl transition-all duration-300 w-[700px] flex h-[500px]"
-    >
-      {/* Left: Profile summary */}
-      <div className="w-1/3 pr-4 flex flex-col items-center justify-center">
-        <img
-          src={avatarSrc}
-          alt={name}
-          className="w-24 h-24 rounded-xl object-cover border-2 border-white/20 mb-4"
-        />
-        <h2 className="text-2xl font-bold text-white text-center mb-1">{name}</h2>
-        <p className="text-white/60 text-lg text-center mb-2">{title}</p>
-        {description && <p className="text-white/50 text-center mb-4">{description}</p>}
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
-          {skills.map((skill, i) => (
-            <span
-              key={i}
-              className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm"
-            >
-              {skill}
-            </span>
-          ))}
-        </div>
-        <button
-          className="mt-auto w-full max-w-xs py-2 rounded-xl bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold shadow-lg hover:from-pink-600 hover:to-red-600 transition-colors"
-          onClick={() => setExpanded(false)}
-        >
-          <span className="flex items-center justify-center"><ArrowLeft className="w-4 h-4 mr-1" /> Back</span>
-        </button>
-      </div>
-      {/* Right: Resume details */}
-      <div className="w-2/3 pl-4 border-l border-white/10 flex flex-col overflow-y-auto">
-        {resume ? (
-          resume
-        ) : (
-          <div className="text-white/80">
-            <h3 className="text-xl font-bold mb-4">Resume</h3>
-            {/* Experience Section */}
-            <div className="mb-6">
-              <h4 className="text-lg font-semibold mb-2">Experience</h4>
-              <div className="mb-4">
-                <div className="font-bold text-white">Senior Frontend Developer</div>
-                <div className="text-white/60 text-sm">Google &bull; 2020 - Present</div>
-                <div className="text-white/70 text-sm mt-1">Led development of core UI features, mentored junior devs, and improved app performance by 40%.</div>
-              </div>
-              <div>
-                <div className="font-bold text-white">Frontend Developer</div>
-                <div className="text-white/60 text-sm">Facebook &bull; 2018 - 2020</div>
-                <div className="text-white/70 text-sm mt-1">Built and maintained React components, implemented new features, and collaborated with design team.</div>
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl w-full max-w-4xl h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Full Profile</h2>
+              <div className="flex gap-4 items-center">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-white/60 hover:text-white"
+                >
+                  ×
+                </button>
+                <button
+                  onClick={() => console.log('Edit profile clicked')}
+                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white transition-colors"
+                >
+                  Edit Profile
+                </button>
               </div>
             </div>
-            {/* Education Section */}
-            <div>
-              <h4 className="text-lg font-semibold mb-2">Education</h4>
+
+            <div className="space-y-8">
+              {/* Personal Info */}
               <div>
-                <div className="font-bold text-white">B.S. Computer Science</div>
-                <div className="text-white/60 text-sm">Stanford University &bull; 2014 - 2018</div>
-                <div className="text-white/70 text-sm mt-1">Graduated with honors. Focus on Software Engineering and AI.</div>
+                <div className="flex items-center gap-4 mb-4">
+                  <img
+                    src="https://thispersondoesnotexist.com/image"
+                    alt={name}
+                    className="w-32 h-32 rounded-full border-2 border-white/20"
+                  />
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{name}</h3>
+                    <p className="text-white/60 text-lg">{title}</p>
+                  </div>
+                </div>
+                {description && <p className="text-white/50 mb-4">{description}</p>}
+                <div className="flex flex-wrap gap-2">
+                  {skills.map((skill, i) => (
+                    <span
+                      key={i}
+                      className="px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Experience */}
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Experience</h3>
+                {sampleResume.experience.map((exp, i) => (
+                  <div key={i} className="mb-6">
+                    <h4 className="text-lg font-semibold text-white mb-2">{exp.title}</h4>
+                    <p className="text-white/60 text-sm mb-1">{exp.company}</p>
+                    <p className="text-white/60 text-sm mb-2">{exp.duration}</p>
+                    <p className="text-white/70 text-sm">{exp.description}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Education */}
+              <div>
+                <h3 className="text-xl font-bold text-white mb-4">Education</h3>
+                <div>
+                  <h4 className="text-lg font-semibold text-white mb-2">{sampleResume.education.degree}</h4>
+                  <p className="text-white/60 text-sm mb-1">{sampleResume.education.school}</p>
+                  <p className="text-white/60 text-sm mb-2">{sampleResume.education.duration}</p>
+                  <p className="text-white/70 text-sm">{sampleResume.education.honors}</p>
+                </div>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

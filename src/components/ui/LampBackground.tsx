@@ -54,18 +54,12 @@ export const LampBackground = ({
         <div className="absolute top-1/2 z-50 h-48 w-full bg-transparent opacity-10 backdrop-blur-md"></div>
         <div className="absolute inset-auto z-50 h-36 w-[28rem] -translate-y-1/2 rounded-full bg-purple-600 opacity-50 blur-3xl"></div>
         <motion.div
-          initial={{ width: "8rem", opacity: 0.2 }}
-          whileInView={{ width: "16rem", opacity: 1 }}
+          initial={{ width: "8rem" }}
+          whileInView={{ width: "16rem" }}
           transition={{
             delay: 0.3,
-            duration: 2.5,
+            duration: 0.8,
             ease: "easeInOut",
-            opacity: {
-              duration: 2.5,
-              ease: "easeInOut",
-              times: [0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1],
-              values: [0.05, 0.95, 0.05, 0.95, 0.05, 0.95, 0.05, 0.95, 0.05, 0.95, 0.05, 0.95, 0.05, 0.95, 0.05, 0.95, 0.05, 0.95, 0.05, 1]
-            }
           }}
           className="absolute inset-auto z-30 h-36 w-64 -translate-y-[6rem] rounded-full bg-purple-500 blur-2xl"
         ></motion.div>

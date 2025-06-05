@@ -10,6 +10,7 @@ import {
 import { motion } from "framer-motion";
 import SwipeApp from "./SwipeApp";
 import MessagesOverlay from "./MessagesOverlay";
+import ProfileCard from "./ProfileCard";
 
 const SkeletonSwipe = () => (
   <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
@@ -108,6 +109,7 @@ const items = [
 export default function BentoMainMenu() {
   const [swipeOpen, setSwipeOpen] = React.useState(false);
   const [messagesOpen, setMessagesOpen] = React.useState(false);
+  const [profileOpen, setProfileOpen] = React.useState(false);
 
   if (swipeOpen) {
     return <SwipeApp onCollapse={() => setSwipeOpen(false)} />;
@@ -115,6 +117,20 @@ export default function BentoMainMenu() {
 
   if (messagesOpen) {
     return <MessagesOverlay onCollapse={() => setMessagesOpen(false)} />;
+  }
+
+  if (profileOpen) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <ProfileCard
+          name="Alex Johnson"
+          title="Senior Frontend Developer"
+          skills={["React", "TypeScript", "Node.js", "AWS"]}
+          description="Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."
+          onBack={() => setProfileOpen(false)}
+        />
+      </div>
+    );
   }
 
   return (
@@ -130,8 +146,9 @@ export default function BentoMainMenu() {
           onClick={() => {
             if (item.title === "Swipe") setSwipeOpen(true);
             if (item.title === "Messages") setMessagesOpen(true);
+            if (item.title === "Profile") setProfileOpen(true);
           }}
-          style={{ cursor: item.title === "Swipe" || item.title === "Messages" ? "pointer" : "default" }}
+          style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" ? "pointer" : "default" }}
         />
       ))}
     </BentoGrid>
