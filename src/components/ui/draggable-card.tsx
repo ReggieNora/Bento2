@@ -77,7 +77,6 @@ export function DraggableCardBody({
       setShowEmojiBurst(true);
       setTimeout(() => onDismiss('left'), 50);
     }
-    // Reset the drag position
     x.set(0);
     onDrag?.(0);
   }
@@ -89,11 +88,11 @@ export function DraggableCardBody({
       dragElastic={0.7}
       dragConstraints={{ left: -400, right: 400, top: -200, bottom: 200 }}
       style={{ x }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       transition={{ 
         type: "spring", 
-        stiffness: 200, 
+        stiffness: 300, 
         damping: 20,
         mass: 0.8
       }}
@@ -101,29 +100,15 @@ export function DraggableCardBody({
       onDrag={(_, info) => onDrag?.(info.offset.x)}
       onClick={onTap}
     >
-      <motion.div
-        initial={{ scale: 1, opacity: 1 }}
-        exit={{
-          x: exitDirection === 'left' ? -500 : 500,
-          opacity: 0,
-          scale: 0.5,
-          rotate: exitDirection === 'left' ? -30 : 30,
-        }}
-        transition={{
-          duration: 0.4,
-          ease: "easeInOut"
-        }}
-      >
-        {children}
-        <AnimatePresence>
-          {showEmojiBurst && (
-            <EmojiBurst 
-              direction={exitDirection} 
-              type={exitDirection === 'right' ? 'heart' : 'fire'} 
-            />
-          )}
-        </AnimatePresence>
-      </motion.div>
+      {children}
+      <AnimatePresence>
+        {showEmojiBurst && (
+          <EmojiBurst 
+            direction={exitDirection} 
+            type={exitDirection === 'right' ? 'heart' : 'fire'} 
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
-} 
+}
