@@ -13,14 +13,14 @@ import MessagesOverlay from "./MessagesOverlay";
 
 const SkeletonMessages = () => (
   <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
-    <div className="relative">
+    <div className="relative flex-1 flex items-center justify-center">
       <img 
-        src="/src/assets/Screenshot_2025-06-06_011836-removebg-preview (1).png" 
+        src="/src/assets/Screenshot_2025-06-06_011836-removebg-preview (2).png" 
         alt="Messages" 
-        className="h-12 w-12 opacity-80"
+        className="w-32 h-32 opacity-80"
       />
       {/* Enhanced Notification Badge */}
-      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold animate-pulse shadow-lg border border-white/20">
+      <span className="absolute top-0 right-0 w-6 h-6 bg-red-500 rounded-full text-white text-sm flex items-center justify-center font-bold animate-pulse shadow-lg border border-white/20">
         1
       </span>
     </div>
