@@ -48,15 +48,69 @@ export default function CircularGallery({
       });
     }
 
+    function createItems(gl: WebGLRenderingContext, geometry: Plane, scene: Transform) {
+      return items.map((item) => {
+        // Create texture from image
+        const texture = new Texture(gl, {
+          generateMipmaps: false,
+        });
+
+        // Load the image
+        const img = new Image();
+        img.src = item.image;
+        img.onload = () => (texture.image = img);
+
+        // Create shader program
+        const program = new Program(gl, {
+          vertex: `
+            attribute vec2 uv;
+            attribute vec3 position;
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+            varying vec2 vUv;
+
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `,
+          fragment: `
+            precision highp float;
+            uniform sampler2D tMap;
+            varying vec2 vUv;
+
+            void main() {
+              vec4 texture = texture2D(tMap, vUv);
+              gl_FragColor = texture;
+            }
+          `,
+          uniforms: {
+            tMap: { value: texture },
+          },
+        });
+
+        // Create mesh
+        const mesh = new Mesh(gl, {
+          geometry,
+          program,
+        });
+
+        mesh.setParent(scene);
+        mesh.scale.set(1, 1, 1);
+
+        return { mesh, texture };
+      });
+    }
+
     const geometry = new Plane(gl);
-    const items = createItems(gl, geometry, scene);
+    const galleryItems = createItems(gl, geometry, scene);
     
     function render() {
       requestAnimationFrame(render);
-      items.forEach((item, i) => {
+      galleryItems.forEach((item, i) => {
         item.mesh.rotation.y = Math.sin(Date.now() * 0.001 + i) * 0.1;
-        item.mesh.position.x = Math.cos(i * (Math.PI * 2) / items.length) * 2;
-        item.mesh.position.y = Math.sin(i * (Math.PI * 2) / items.length) * 2;
+        item.mesh.position.x = Math.cos(i * (Math.PI * 2) / galleryItems.length) * 2;
+        item.mesh.position.y = Math.sin(i * (Math.PI * 2) / galleryItems.length) * 2;
       });
       renderer.render({ scene, camera });
     }
