@@ -15,7 +15,7 @@ const SkeletonSwipe = () => (
   <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <div className="relative flex-1 flex items-center justify-center">
       <img 
-        src="/src/assets/Screenshot_2025-06-06_011836-removebg-preview (2) copy.png" 
+        src="/src/assets/Screenshot_2025-06-06_011848-removebg-preview (1).png" 
         alt="Swipe Cards" 
         className="w-32 h-32 opacity-80"
       />
