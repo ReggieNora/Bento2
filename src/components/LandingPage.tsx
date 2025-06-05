@@ -28,11 +28,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
             animate={{ y: 0 }}
             exit={{ y: -100 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 left-0 right-0 z-40 bg-black/50 backdrop-blur-xl border-b border-white/10"
+            className="fixed top-0 left-0 right-0 z-40"
             onMouseLeave={() => setShowNav(false)}
           >
             <div className="flex justify-center items-center px-12 py-6">
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-8 bg-black/50 backdrop-blur-xl px-8 py-3 rounded-full">
                 <Link to="/about" className="text-white/70 hover:text-white transition-colors">About</Link>
                 <Link to="/pricing" className="text-white/70 hover:text-white transition-colors">Pricing</Link>
                 <Link 
