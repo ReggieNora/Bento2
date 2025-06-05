@@ -10,6 +10,7 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import SwipeApp from "./SwipeApp";
+import MessagesOverlay from "./MessagesOverlay";
 
 // Skeletons for visual effect (can be customized per tile)
 const SkeletonSwipe = () => (
@@ -126,9 +127,14 @@ const items = [
 
 export default function BentoMainMenu() {
   const [swipeOpen, setSwipeOpen] = React.useState(false);
+  const [messagesOpen, setMessagesOpen] = React.useState(false);
 
   if (swipeOpen) {
     return <SwipeApp onCollapse={() => setSwipeOpen(false)} />;
+  }
+
+  if (messagesOpen) {
+    return <MessagesOverlay onCollapse={() => setMessagesOpen(false)} />;
   }
 
   return (
@@ -141,10 +147,13 @@ export default function BentoMainMenu() {
           header={item.header}
           className={item.className}
           icon={item.icon}
-          // Only Swipe tile is clickable for now
-          {...(item.title === "Swipe" && { onClick: () => setSwipeOpen(true), style: { cursor: "pointer" } })}
+          onClick={() => {
+            if (item.title === "Swipe") setSwipeOpen(true);
+            if (item.title === "Messages") setMessagesOpen(true);
+          }}
+          style={{ cursor: item.title === "Swipe" || item.title === "Messages" ? "pointer" : "default" }}
         />
       ))}
     </BentoGrid>
   );
-} 
+}
