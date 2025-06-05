@@ -31,13 +31,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
             className="fixed top-0 left-0 right-0 z-40 bg-black/50 backdrop-blur-xl border-b border-white/10"
             onMouseLeave={() => setShowNav(false)}
           >
-            <div className="flex justify-between items-center px-12 py-6">
-              <Link 
-                to="/" 
-                className="text-2xl font-bold text-white hover:text-purple-400 transition-colors"
-              >
-                Hirly
-              </Link>
+            <div className="flex justify-center items-center px-12 py-6">
               <div className="flex items-center gap-8">
                 <Link to="/about" className="text-white/70 hover:text-white transition-colors">About</Link>
                 <Link to="/pricing" className="text-white/70 hover:text-white transition-colors">Pricing</Link>
