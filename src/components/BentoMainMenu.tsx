@@ -32,7 +32,6 @@ const SkeletonMessages = () => (
         alt="Messages" 
         className="w-32 h-32 opacity-80"
       />
-      {/* Enhanced Notification Badge */}
       <span className="absolute top-0 right-0 w-6 h-6 bg-red-500 rounded-full text-white text-sm flex items-center justify-center font-bold animate-pulse shadow-lg border border-white/20">
         1
       </span>
