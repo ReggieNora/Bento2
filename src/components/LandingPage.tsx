@@ -55,7 +55,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="text-[8rem] md:text-[12rem] font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-white via-white/80 to-white/30"
+            className="text-[8rem] md:text-[12rem] font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-white via-white/80 to-white/30 mt-16"
           >
             Hirly
           </motion.h1>
