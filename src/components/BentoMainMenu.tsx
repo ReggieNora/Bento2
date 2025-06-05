@@ -11,23 +11,27 @@ import { motion } from "framer-motion";
 import SwipeApp from "./SwipeApp";
 import MessagesOverlay from "./MessagesOverlay";
 
-// Skeletons for visual effect (can be customized per tile)
+const SkeletonMessages = () => (
+  <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
+    <div className="relative">
+      <img 
+        src="/src/assets/Screenshot_2025-06-06_011836-removebg-preview (1).png" 
+        alt="Messages" 
+        className="h-12 w-12 opacity-80"
+      />
+      {/* Enhanced Notification Badge */}
+      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold animate-pulse shadow-lg border border-white/20">
+        1
+      </span>
+    </div>
+    <motion.div className="w-1/2 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
+  </motion.div>
+);
+
 const SkeletonSwipe = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <motion.div className="h-12 w-12 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 mb-2" />
     <motion.div className="w-2/3 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
-  </motion.div>
-);
-
-const SkeletonMessages = () => (
-  <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
-    <motion.div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 mb-2">
-      {/* Notification Badge */}
-      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-bold animate-pulse">
-        1
-      </span>
-    </motion.div>
-    <motion.div className="w-1/2 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
 
