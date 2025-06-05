@@ -1,87 +1,13 @@
-import React, { useState } from 'react';
-import { ArrowRight, UserPlus, LogIn, RotateCcw, Twitter, Linkedin, Github } from 'lucide-react';
-import { DraggableCardContainer } from './ui/draggable-card';
+import React from 'react';
+import { ArrowRight, UserPlus, LogIn, Twitter, Linkedin, Github } from 'lucide-react';
 import hirlyLogo from '../assets/hirly-logo.png';
 import { Link } from 'react-router-dom';
-import LandingPageCard from './LandingPageCard';
 
 interface LandingPageProps {
   onAuthSuccess: (userType: 'candidate' | 'employer') => void;
 }
 
-interface CardData {
-  id: string;
-  icon: string;
-  title: string;
-  text: string;
-}
-
-const INITIAL_CARDS: CardData[] = [
-  {
-    id: 'card-1',
-    icon: '🎯',
-    title: 'Hirly',
-    text: 'Work that finds you.\n\nSmart matches. Human-first hiring.',
-  },
-  {
-    id: 'card-2',
-    icon: '📸',
-    title: 'Not a Resume. A Real Story.',
-    text: "You're more than a bullet list.\nHirly captures your whole vibe -- not just your job titles.",
-  },
-  {
-    id: 'card-3',
-    icon: '🔁',
-    title: 'Matching, Not Searching',
-    text: 'Stop scrolling. Start matching.\nWe pair you with people and places where you belong.',
-  },
-  {
-    id: 'card-4',
-    icon: '📱',
-    title: 'Sleek. Simple. Swipe.',
-    text: 'Our modern UI makes hiring feel like a convo, not a chore.\nClean cards. Clear paths. No clutter.',
-  },
-  {
-    id: 'card-5',
-    icon: '💬',
-    title: 'Personality Over Paper',
-    text: 'Culture fit > checkbox fit.\nWe focus on chemistry, not just credentials.',
-  },
-  {
-    id: 'card-6',
-    icon: '🛠️',
-    title: 'Built by Creatives, Not Corporates',
-    text: 'Hirly is made by makers --\nFor people who hire with heart, not templates.',
-  },
-];
-
-function getRandomLayout(num: number) {
-  const baseAngles = [0, -2, 2, -4, 4, -6, 6];
-  const baseXs = [0, -10, 10, -20, 20, -30, 30];
-  const baseYs = [0, 5, 10, 15, 20, 25, 30];
-  return Array.from({ length: num }).map((_, i) => ({
-    rotate: baseAngles[i % baseAngles.length] + (Math.random() - 0.5) * 2,
-    x: baseXs[i % baseXs.length] + (Math.random() - 0.5) * 5,
-    y: baseYs[i % baseYs.length] + (Math.random() - 0.5) * 5,
-  }));
-}
-
 const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
-  const [cards, setCards] = useState<CardData[]>(INITIAL_CARDS);
-  const [cardLayout, setCardLayout] = useState(() => getRandomLayout(INITIAL_CARDS.length));
-  const [resetKey, setResetKey] = useState(0);
-
-  const handleCardDismiss = (id: string, direction: 'left' | 'right') => {
-    setCards(prev => prev.filter(card => card.id !== id));
-    setCardLayout(prev => prev.slice(1));
-  };
-
-  const handleReset = () => {
-    setCards(INITIAL_CARDS);
-    setCardLayout(getRandomLayout(INITIAL_CARDS.length));
-    setResetKey(k => k + 1);
-  };
-
   return (
     <div className="min-h-screen w-full bg-gradient-to-tl from-purple-700 via-black to-black flex flex-col overflow-hidden">
       {/* Navigation */}
@@ -104,45 +30,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
       </nav>
 
       {/* Main Content Area */}
-      <div className="flex-1 relative">
-        {/* Reset Button */}
-        <button
-          onClick={handleReset}
-          className="absolute top-4 left-4 opacity-30 hover:opacity-80 transition-opacity z-20 p-2 rounded-full bg-neutral-800"
-          title="Reset Cards"
-          style={{ marginLeft: '72px' }}
-        >
-          <RotateCcw className="w-5 h-5 text-white" />
-        </button>
-
-        {/* Card Stack Container */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
-            {cards.map((item, index) => {
-              const isTopCard = index === 0;
-              const layout = isTopCard
-                ? { rotate: 0, x: 0, y: 0 }
-                : cardLayout[cards.length - 1 - index] || { rotate: 0, x: 0, y: 0 };
-
-              return (
-                <LandingPageCard
-                  key={item.id}
-                  id={item.id}
-                  icon={item.icon}
-                  title={item.title}
-                  text={item.text}
-                  layout={layout}
-                  onDismiss={handleCardDismiss}
-                />
-              );
-            })}
-          </DraggableCardContainer>
-        </div>
-
-        {/* Call to Action Section */}
-        <div className="absolute inset-x-0 bottom-0 z-0 flex flex-col items-center justify-center pb-16">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Ready to join Hirly?</h2>
-          <p className="text-white/80 mb-6 text-center max-w-md">Sign up or log in to start matching with top jobs and talent, powered by AI and a modern experience.</p>
+      <div className="flex-1 flex flex-col items-center justify-center px-4">
+        <div className="text-center max-w-3xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            Work that finds you
+          </h1>
+          <p className="text-xl md:text-2xl text-white/80 mb-8 leading-relaxed">
+            Smart matches. Human-first hiring.<br />
+            Stop scrolling, start matching with opportunities that matter.
+          </p>
           <button
             className="px-8 py-4 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold shadow-lg flex items-center gap-2 hover:from-pink-600 hover:to-purple-600 transition-colors mx-auto"
             onClick={() => onAuthSuccess('candidate')}
