@@ -41,8 +41,14 @@ const SkeletonMessages = () => (
 );
 
 const SkeletonProfile = () => (
-  <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
-    <motion.div className="h-10 w-10 rounded-full bg-gradient-to-r from-green-400 to-teal-400 mb-2" />
+  <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
+    <div className="relative flex-1 flex items-center justify-center">
+      <img 
+        src="/src/assets/Screenshot 2025-06-06 011801.png" 
+        alt="Profile" 
+        className="w-32 h-32 opacity-80"
+      />
+    </div>
     <motion.div className="w-1/2 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
