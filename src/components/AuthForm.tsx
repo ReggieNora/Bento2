@@ -110,13 +110,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
         {authAction === 'signin' && (
           <div className="w-full flex flex-col gap-3 mt-6">
             <button className="flex items-center justify-center gap-3 w-full py-2 rounded-xl bg-white/90 hover:bg-white text-gray-800 font-semibold shadow border border-white/30 transition-colors">
-              <span className="inline-block w-6 h-6">
-                <img
-                  src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
-                  alt="Google"
-                  className="w-full h-full object-contain"
-                />
-              </span>
+              <img
+                src="https://www.google.com/favicon.ico"
+                alt="Google"
+                className="w-5 h-5"
+              />
               Sign in with Google
             </button>
           </div>
