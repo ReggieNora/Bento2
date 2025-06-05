@@ -1,60 +1,87 @@
-import React from 'react';
-import { ArrowRight, UserPlus, LogIn, Twitter, Linkedin, Github } from 'lucide-react';
-import hirlyLogo from '../assets/hirly-logo.png';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LampBackground } from './ui/LampBackground';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface LandingPageProps {
   onAuthSuccess: (userType: 'candidate' | 'employer') => void;
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
+  const [showNav, setShowNav] = useState(false);
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
       <LampBackground />
       
-      {/* Content Layer */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Navigation */}
-        <nav className="flex justify-between items-center px-12 py-6 text-white/90 text-lg gap-10">
-          <Link to="/" className="flex items-center group" style={{ textDecoration: 'none' }}>
-            <img src={hirlyLogo} alt="Hirly Logo" className="w-24 h-auto drop-shadow-lg transition-transform group-hover:scale-105" style={{ borderRadius: '8px' }} />
-          </Link>
-          <div className="flex items-center gap-8">
-            <a href="#about" className="hover:text-white transition">About</a>
-            <Link to="/pricing" className="hover:text-white transition">Pricing</Link>
-            <Link to="/login" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-2">
-              <LogIn className="w-5 h-5" /> Login / Sign Up
-            </Link>
-            <div className="flex gap-4 text-white/70 text-xl ml-4">
-              <a href="#" className="hover:text-white transition" aria-label="Twitter"><Twitter /></a>
-              <a href="#" className="hover:text-white transition" aria-label="LinkedIn"><Linkedin /></a>
-              <a href="#" className="hover:text-white transition" aria-label="GitHub"><Github /></a>
-            </div>
-          </div>
-        </nav>
-
-        {/* Hero Section - Moved down to align with lamp glow */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4 translate-y-24">
-          <h1 className="text-4xl md:text-7xl font-bold text-center mb-8 max-w-4xl bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
-            Find Your Next Opportunity with AI-Powered Matching
-          </h1>
-          <p className="text-xl text-white/80 text-center mb-12 max-w-2xl">
-            Hirly connects talented professionals with their ideal roles using advanced AI matching technology.
-            No more endless scrolling – just perfect matches.
-          </p>
-          <button
-            className="px-8 py-4 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold shadow-lg flex items-center gap-2 hover:from-pink-600 hover:to-purple-600 transition-colors mx-auto"
-            onClick={() => onAuthSuccess('candidate')}
+      {/* Hover Area for Navbar */}
+      <div 
+        className="fixed top-0 left-0 right-0 h-2 z-50"
+        onMouseEnter={() => setShowNav(true)}
+      />
+      
+      {/* Animated Navbar */}
+      <AnimatePresence>
+        {showNav && (
+          <motion.nav
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            exit={{ y: -100 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed top-0 left-0 right-0 z-40 bg-black/50 backdrop-blur-xl border-b border-white/10"
+            onMouseLeave={() => setShowNav(false)}
           >
-            <UserPlus className="w-5 h-5" /> Get Started <ArrowRight className="w-5 h-5" />
-          </button>
-        </div>
+            <div className="flex justify-between items-center px-12 py-6">
+              <Link 
+                to="/" 
+                className="text-2xl font-bold text-white hover:text-purple-400 transition-colors"
+              >
+                Hirly
+              </Link>
+              <div className="flex items-center gap-8">
+                <Link to="/about" className="text-white/70 hover:text-white transition-colors">About</Link>
+                <Link to="/pricing" className="text-white/70 hover:text-white transition-colors">Pricing</Link>
+                <Link 
+                  to="/login" 
+                  className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white"
+                >
+                  Sign In
+                </Link>
+              </div>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
 
-        {/* Footer */}
-        <footer className="py-8 text-center text-white/60">
-          <p>© 2025 Hirly. All rights reserved.</p>
-        </footer>
+      {/* Hero Section */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <div className="flex-1 flex flex-col items-center justify-center px-4">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="text-[8rem] md:text-[12rem] font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-white via-white/80 to-white/30"
+          >
+            Hirly
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1 }}
+            className="text-xl text-white/50 text-center mt-8"
+          >
+            The future of hiring
+          </motion.p>
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 1.5 }}
+            onClick={() => onAuthSuccess('candidate')}
+            className="mt-12 px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-all hover:scale-105"
+          >
+            Get Started
+          </motion.button>
+        </div>
       </div>
     </div>
   );
