@@ -41,7 +41,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ onAuthSuccess, onClose }) => {
         >
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 p-2 rounded-xl bg-white/10 text-white/80 hover:bg-white/20 hover:text-white transition-colors"
+            className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 hover:backdrop-blur-none transition-all duration-300 text-white/80 hover:text-white backdrop-blur-sm"
           >
             <X className="w-5 h-5" />
           </button>
