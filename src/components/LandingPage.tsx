@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LampBackground } from './ui/LampBackground';
 import { motion, AnimatePresence } from 'framer-motion';
+import StarBorder from './StarBorder';
 
 interface LandingPageProps {
   onAuthSuccess: (userType: 'candidate' | 'employer') => void;
@@ -66,15 +67,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
           >
             The future of hiring
           </motion.p>
-          <motion.button
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 1.5 }}
-            onClick={() => onAuthSuccess('candidate')}
-            className="mt-12 px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-all hover:scale-105"
+            className="mt-12"
           >
-            Get Started
-          </motion.button>
+            <StarBorder
+              as="button"
+              color="rgb(147, 51, 234)"
+              speed="5s"
+              onClick={() => onAuthSuccess('candidate')}
+            >
+              Get Started
+            </StarBorder>
+          </motion.div>
         </div>
       </div>
     </div>
