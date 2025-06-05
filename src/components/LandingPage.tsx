@@ -103,7 +103,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
         </div>
       </nav>
 
-      {/* Centered Card Stack */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col items-center justify-center relative">
         {/* Reset Button */}
         <button
@@ -115,25 +115,28 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
           <RotateCcw className="w-5 h-5 text-white" />
         </button>
 
-        <DraggableCardContainer key={resetKey} className="absolute inset-0 z-10 flex items-center justify-center">
-          {[...cards].reverse().map((item, index) => {
-            const layout = cardLayout[index] || { rotate: 0, x: 0, y: 0 };
-            return (
-              <LandingPageCard
-                key={item.id}
-                id={item.id}
-                icon={item.icon}
-                title={item.title}
-                text={item.text}
-                layout={layout}
-                onDismiss={handleCardDismiss}
-              />
-            );
-          })}
-        </DraggableCardContainer>
+        {/* Card Stack Container - Now absolutely positioned */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center">
+          <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
+            {[...cards].reverse().map((item, index) => {
+              const layout = cardLayout[index] || { rotate: 0, x: 0, y: 0 };
+              return (
+                <LandingPageCard
+                  key={item.id}
+                  id={item.id}
+                  icon={item.icon}
+                  title={item.title}
+                  text={item.text}
+                  layout={layout}
+                  onDismiss={handleCardDismiss}
+                />
+              );
+            })}
+          </DraggableCardContainer>
+        </div>
 
-        {/* Call to Action Section */}
-        <div className="mt-12 flex flex-col items-center justify-center">
+        {/* Call to Action Section - Now with lower z-index */}
+        <div className="mt-12 flex flex-col items-center justify-center z-0">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Ready to join Hirly?</h2>
           <p className="text-white/80 mb-6 text-center max-w-md">Sign up or log in to start matching with top jobs and talent, powered by AI and a modern experience.</p>
           <button
