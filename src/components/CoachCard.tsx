@@ -347,8 +347,8 @@ const CoachCard: React.FC<CoachCardProps> = ({
             <div className="h-8"></div>
           </div>
 
-          {/* Fixed Bottom Button */}
-          <div className="mt-6 flex-shrink-0">
+          {/* Fixed Bottom Button - Now Centered */}
+          <div className="mt-6 flex-shrink-0 flex justify-center">
             <GradientButton onClick={onStartSession}>
               Begin
             </GradientButton>
