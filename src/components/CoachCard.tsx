@@ -87,11 +87,12 @@ const CoachCard: React.FC<CoachCardProps> = ({
 
   return (
     <div className="relative w-[700px] max-w-full">
-      <div className="flex flex-col min-h-[600px] max-h-[80vh] p-8 rounded-3xl 
+      <div className="flex flex-col h-[80vh] max-h-[600px] p-8 rounded-3xl 
                     bg-white/10 backdrop-blur-md border border-white/20
-                    shadow-xl shadow-black/20 overflow-hidden">
+                    shadow-xl shadow-black/20">
         
         <div className="relative z-10 flex flex-col h-full">
+          {/* Fixed Header */}
           <div className="flex justify-between items-center mb-6 flex-shrink-0">
             <h2 className="text-2xl font-bold text-white tracking-wide
                          text-shadow-glow">AI Interview Coach</h2>
@@ -106,15 +107,15 @@ const CoachCard: React.FC<CoachCardProps> = ({
             )}
           </div>
 
-          {/* Scrollable Content Area */}
+          {/* Scrollable Content Area with Invisible Scrollbar */}
           <div 
-            className="flex-1 overflow-y-auto space-y-6 pr-2"
+            className="flex-1 overflow-y-auto pr-4 space-y-6"
             style={{
               scrollbarWidth: 'none', /* Firefox */
               msOverflowStyle: 'none', /* Internet Explorer 10+ */
             }}
           >
-            {/* Hide scrollbar for WebKit browsers */}
+            {/* CSS to hide WebKit scrollbars */}
             <style jsx>{`
               div::-webkit-scrollbar {
                 display: none;
@@ -222,6 +223,14 @@ const CoachCard: React.FC<CoachCardProps> = ({
                   <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
                   <p className="text-white/70 text-sm">Practice speaking clearly and at a moderate pace</p>
                 </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70 text-sm">Maintain good eye contact and confident body language</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70 text-sm">Follow up with a thank-you email within 24 hours</p>
+                </div>
               </div>
             </div>
 
@@ -229,11 +238,16 @@ const CoachCard: React.FC<CoachCardProps> = ({
             <div className="bg-white/5 rounded-xl p-6">
               <h3 className="text-white font-semibold mb-4">Recent Sessions</h3>
               <div className="space-y-3">
-                {[1, 2, 3].map((session) => (
-                  <div key={session} className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                {[
+                  { type: "Technical Interview Practice", score: 85, time: "2 days ago" },
+                  { type: "Behavioral Interview Practice", score: 92, time: "1 week ago" },
+                  { type: "Leadership Interview Practice", score: 78, time: "2 weeks ago" },
+                  { type: "System Design Interview", score: 88, time: "3 weeks ago" },
+                ].map((session, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
                     <div>
-                      <h4 className="text-white font-medium">Technical Interview Practice</h4>
-                      <p className="text-white/60 text-sm">Completed 2 days ago • Score: 85%</p>
+                      <h4 className="text-white font-medium">{session.type}</h4>
+                      <p className="text-white/60 text-sm">Completed {session.time} • Score: {session.score}%</p>
                     </div>
                     <button className="px-4 py-2 bg-white/10 text-white rounded-lg
                                     hover:bg-white/20 transition-colors duration-200">
@@ -267,8 +281,70 @@ const CoachCard: React.FC<CoachCardProps> = ({
               </div>
             </div>
 
+            {/* Skill Development */}
+            <div className="bg-white/5 rounded-xl p-6">
+              <h3 className="text-white font-semibold mb-4">Skill Development Areas</h3>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-white/80 text-sm">Communication Skills</span>
+                    <span className="text-green-400 text-sm">92%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-green-400 h-2 rounded-full" style={{ width: '92%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-white/80 text-sm">Technical Knowledge</span>
+                    <span className="text-blue-400 text-sm">85%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-blue-400 h-2 rounded-full" style={{ width: '85%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-white/80 text-sm">Problem Solving</span>
+                    <span className="text-yellow-400 text-sm">78%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-yellow-400 h-2 rounded-full" style={{ width: '78%' }}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-white/80 text-sm">Leadership Presence</span>
+                    <span className="text-purple-400 text-sm">82%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-purple-400 h-2 rounded-full" style={{ width: '82%' }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Recommendations */}
+            <div className="bg-white/5 rounded-xl p-6">
+              <h3 className="text-white font-semibold mb-4">AI Recommendations</h3>
+              <div className="space-y-3">
+                <div className="bg-white/5 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-2">Focus on System Design</h4>
+                  <p className="text-white/70 text-sm">Based on your recent sessions, practicing system design questions could improve your technical interview performance by 15%.</p>
+                </div>
+                <div className="bg-white/5 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-2">Improve Response Structure</h4>
+                  <p className="text-white/70 text-sm">Try using the STAR method more consistently in your behavioral responses for clearer communication.</p>
+                </div>
+                <div className="bg-white/5 rounded-lg p-4">
+                  <h4 className="text-white font-medium mb-2">Practice Mock Interviews</h4>
+                  <p className="text-white/70 text-sm">Schedule more frequent practice sessions to build confidence and reduce interview anxiety.</p>
+                </div>
+              </div>
+            </div>
+
             {/* Extra padding for better scrolling */}
-            <div className="h-4"></div>
+            <div className="h-8"></div>
           </div>
 
           {/* Fixed Bottom Button */}
