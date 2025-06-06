@@ -21,7 +21,6 @@ const SkeletonSwipe = () => (
         className="w-32 h-32 opacity-80"
       />
     </div>
-    <motion.div className="w-2/3 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
 
