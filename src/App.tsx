@@ -31,10 +31,6 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  // Greeting state
-  const [greetingMessage, setGreetingMessage] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string>('Guest');
 
   // Job listings data
   const jobListings = [
@@ -171,37 +167,6 @@ function App() {
       timestamp: "5h ago"
     }
   ];
-
-  // Generate time-based greeting
-  const generateGreeting = (name: string) => {
-    const hour = new Date().getHours();
-    let timeOfDay = '';
-    
-    if (hour < 12) {
-      timeOfDay = 'Good morning';
-    } else if (hour < 17) {
-      timeOfDay = 'Good afternoon';
-    } else {
-      timeOfDay = 'Good evening';
-    }
-    
-    return `${timeOfDay}, ${name}!\nWelcome back to Hirly`;
-  };
-
-  // Set up greeting when user authenticates
-  useEffect(() => {
-    if (isAuthenticated && userName) {
-      const greeting = generateGreeting(userName);
-      setGreetingMessage(greeting);
-      
-      // Clear greeting after 2 minutes
-      const timer = setTimeout(() => {
-        setGreetingMessage(null);
-      }, 120000); // 2 minutes
-      
-      return () => clearTimeout(timer);
-    }
-  }, [isAuthenticated, userName]);
 
   const handleSwipeStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -388,8 +353,6 @@ function App() {
       setUserType(type);
       setSelectedRole(type);
       setIsAuthenticated(true);
-      // Set a more personalized user name based on type
-      setUserName(type === 'candidate' ? 'Alex' : 'Sarah');
     }} />;
   }
 
@@ -407,9 +370,6 @@ function App() {
         centerVignette={false}
         outerVignette={true}
         smooth={true}
-        greetingMessage={greetingMessage}
-        greetingDuration={120000} // 2 minutes
-        userName={userName}
       />
       <BentoMainMenu />
     </div>
