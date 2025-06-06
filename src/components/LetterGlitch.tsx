@@ -35,16 +35,20 @@ const LetterGlitch = ({
     textToType: 'HIRLY',
     currentIndex: 0,
     displayCycles: 0,
-    maxDisplayCycles: 60, // How long to display "HIRLY"
-    triggerCycle: 200, // How many random cycles before typing "HIRLY"
+    maxDisplayCycles: 80, // How long to display "HIRLY"
+    triggerCycle: 150, // How many random cycles before typing "HIRLY"
     currentCycle: 0,
     hirlyPositions: [] as number[], // Store positions where HIRLY is displayed
-    typingSpeed: 150, // Speed of typing each character
+    typingSpeed: 200, // Speed of typing each character
   });
 
   const fontSize = 16;
   const charWidth = 10;
   const charHeight = 20;
+  
+  // Much larger font for HIRLY
+  const hirlyFontSize = 48;
+  const hirlyCharWidth = 30;
 
   const lettersAndSymbols = [
     "A",
@@ -118,8 +122,9 @@ const LetterGlitch = ({
   };
 
   const getHirlyColor = () => {
-    // Use a brighter, more prominent color for HIRLY
-    return "#ffffff";
+    // Use a brighter, more prominent color for HIRLY with some variation
+    const colors = ["#ffffff", "#7c3aed", "#ec4899"];
+    return colors[Math.floor(Math.random() * colors.length)];
   };
 
   const hexToRgb = (hex: string) => {
@@ -161,11 +166,15 @@ const LetterGlitch = ({
     const { columns, rows } = grid.current;
     const text = typingState.current.textToType;
     const centerRow = Math.floor(rows / 2);
-    const startCol = Math.floor((columns - text.length) / 2);
+    
+    // Calculate positions to center HIRLY with larger spacing
+    const totalWidth = text.length * Math.ceil(hirlyCharWidth / charWidth);
+    const startCol = Math.floor((columns - totalWidth) / 2);
     
     const positions = [];
     for (let i = 0; i < text.length; i++) {
-      const index = centerRow * columns + startCol + i;
+      const colOffset = i * Math.ceil(hirlyCharWidth / charWidth);
+      const index = centerRow * columns + startCol + colOffset;
       if (index >= 0 && index < letters.current.length) {
         positions.push(index);
       }
@@ -217,7 +226,6 @@ const LetterGlitch = ({
     const ctx = context.current;
     const { width, height } = canvasRef.current!.getBoundingClientRect();
     ctx.clearRect(0, 0, width, height);
-    ctx.font = `${fontSize}px monospace`;
     ctx.textBaseline = "top";
 
     letters.current.forEach((letter, index) => {
@@ -226,17 +234,26 @@ const LetterGlitch = ({
       
       // Use different styling for HIRLY characters
       if (letter.isHirly) {
-        ctx.font = `bold ${fontSize + 2}px monospace`;
+        ctx.font = `bold ${hirlyFontSize}px monospace`;
         ctx.fillStyle = letter.color;
         ctx.shadowColor = letter.color;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = letter.color;
+        ctx.lineWidth = 2;
+        
+        // Draw the character with both fill and stroke for more prominence
+        ctx.fillText(letter.char, x - 10, y - 15); // Offset to center better
+        ctx.strokeText(letter.char, x - 10, y - 15);
+        
+        // Add extra glow effect
+        ctx.shadowBlur = 30;
+        ctx.fillText(letter.char, x - 10, y - 15);
       } else {
         ctx.font = `${fontSize}px monospace`;
         ctx.fillStyle = letter.color;
         ctx.shadowBlur = 0;
+        ctx.fillText(letter.char, x, y);
       }
-      
-      ctx.fillText(letter.char, x, y);
     });
   };
 
@@ -244,7 +261,7 @@ const LetterGlitch = ({
     if (!letters.current || letters.current.length === 0) return;
     if (typingState.current.mode !== 'random') return; // Only update random letters in random mode
 
-    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.05));
+    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.08));
 
     for (let i = 0; i < updateCount; i++) {
       const index = Math.floor(Math.random() * letters.current.length);
@@ -273,6 +290,24 @@ const LetterGlitch = ({
         letters.current[position].targetColor = getHirlyColor();
         letters.current[position].colorProgress = 1;
         letters.current[position].isHirly = true;
+        
+        // Also mark surrounding positions as HIRLY to create a larger presence
+        const surroundingPositions = [
+          position - 1,
+          position + 1,
+          position - grid.current.columns,
+          position + grid.current.columns,
+        ];
+        
+        surroundingPositions.forEach(pos => {
+          if (pos >= 0 && pos < letters.current.length && letters.current[pos]) {
+            // Don't overwrite other HIRLY characters, but make surrounding area less prominent
+            if (!letters.current[pos].isHirly) {
+              letters.current[pos].char = ' '; // Clear surrounding characters
+              letters.current[pos].color = 'rgba(0,0,0,0.1)';
+            }
+          }
+        });
       }
       
       typingState.current.currentIndex++;
@@ -285,14 +320,29 @@ const LetterGlitch = ({
   };
 
   const clearHirly = () => {
+    // Clear a larger area around HIRLY positions
     typingState.current.hirlyPositions.forEach(position => {
-      if (letters.current[position]) {
-        letters.current[position].char = getRandomChar();
-        letters.current[position].color = getRandomColor();
-        letters.current[position].targetColor = getRandomColor();
-        letters.current[position].colorProgress = 1;
-        letters.current[position].isHirly = false;
-      }
+      const clearPositions = [
+        position - 1,
+        position,
+        position + 1,
+        position - grid.current.columns - 1,
+        position - grid.current.columns,
+        position - grid.current.columns + 1,
+        position + grid.current.columns - 1,
+        position + grid.current.columns,
+        position + grid.current.columns + 1,
+      ];
+      
+      clearPositions.forEach(pos => {
+        if (pos >= 0 && pos < letters.current.length && letters.current[pos]) {
+          letters.current[pos].char = getRandomChar();
+          letters.current[pos].color = getRandomColor();
+          letters.current[pos].targetColor = getRandomColor();
+          letters.current[pos].colorProgress = 1;
+          letters.current[pos].isHirly = false;
+        }
+      });
     });
   };
 
@@ -333,6 +383,17 @@ const LetterGlitch = ({
       }
     } else if (typingState.current.mode === 'display') {
       typingState.current.displayCycles++;
+      
+      // Add some glitch effect to HIRLY while displaying
+      if (typingState.current.displayCycles % 10 === 0) {
+        typingState.current.hirlyPositions.forEach(position => {
+          if (letters.current[position] && letters.current[position].isHirly) {
+            letters.current[position].color = getHirlyColor();
+          }
+        });
+        drawLetters();
+      }
+      
       if (typingState.current.displayCycles >= typingState.current.maxDisplayCycles) {
         clearHirly();
         typingState.current.mode = 'random';
@@ -408,7 +469,7 @@ const LetterGlitch = ({
     display: "block",
     width: "100%",
     height: "100%",
-    opacity: 0.25,
+    opacity: 0.4, // Increased opacity to make HIRLY more visible
   };
 
   const outerVignetteStyle = {
