@@ -86,13 +86,13 @@ const CoachCard: React.FC<CoachCardProps> = ({
   }
 
   return (
-    <div className="relative w-[700px]">
-      <div className="flex flex-col h-[600px] p-8 rounded-3xl 
+    <div className="relative w-[700px] max-w-full">
+      <div className="flex flex-col min-h-[600px] max-h-[80vh] p-8 rounded-3xl 
                     bg-white/10 backdrop-blur-md border border-white/20
                     shadow-xl shadow-black/20 overflow-hidden">
         
-        <div className="relative z-10">
-          <div className="flex justify-between items-center mb-6">
+        <div className="relative z-10 flex flex-col h-full">
+          <div className="flex justify-between items-center mb-6 flex-shrink-0">
             <h2 className="text-2xl font-bold text-white tracking-wide
                          text-shadow-glow">AI Interview Coach</h2>
             {!forceExpanded && (
@@ -106,7 +106,21 @@ const CoachCard: React.FC<CoachCardProps> = ({
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-4 space-y-6">
+          {/* Scrollable Content Area */}
+          <div 
+            className="flex-1 overflow-y-auto space-y-6 pr-2"
+            style={{
+              scrollbarWidth: 'none', /* Firefox */
+              msOverflowStyle: 'none', /* Internet Explorer 10+ */
+            }}
+          >
+            {/* Hide scrollbar for WebKit browsers */}
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+
             {/* Welcome Message */}
             <div className="bg-white/5 rounded-xl p-6 text-center">
               <h3 className="text-white font-semibold mb-4 text-xl">Welcome to Your AI Interview Coach</h3>
@@ -188,6 +202,29 @@ const CoachCard: React.FC<CoachCardProps> = ({
               </div>
             </div>
 
+            {/* Interview Tips Section */}
+            <div className="bg-white/5 rounded-xl p-6">
+              <h3 className="text-white font-semibold mb-4">Interview Tips</h3>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70 text-sm">Practice your STAR method responses (Situation, Task, Action, Result)</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70 text-sm">Research the company culture and values beforehand</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70 text-sm">Prepare thoughtful questions to ask your interviewer</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-white/70 text-sm">Practice speaking clearly and at a moderate pace</p>
+                </div>
+              </div>
+            </div>
+
             {/* Recent Sessions */}
             <div className="bg-white/5 rounded-xl p-6">
               <h3 className="text-white font-semibold mb-4">Recent Sessions</h3>
@@ -196,7 +233,7 @@ const CoachCard: React.FC<CoachCardProps> = ({
                   <div key={session} className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
                     <div>
                       <h4 className="text-white font-medium">Technical Interview Practice</h4>
-                      <p className="text-white/60 text-sm">Completed 2 days ago</p>
+                      <p className="text-white/60 text-sm">Completed 2 days ago • Score: 85%</p>
                     </div>
                     <button className="px-4 py-2 bg-white/10 text-white rounded-lg
                                     hover:bg-white/20 transition-colors duration-200">
@@ -206,9 +243,36 @@ const CoachCard: React.FC<CoachCardProps> = ({
                 ))}
               </div>
             </div>
+
+            {/* Performance Analytics */}
+            <div className="bg-white/5 rounded-xl p-6">
+              <h3 className="text-white font-semibold mb-4">Your Progress</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-400 mb-1">12</div>
+                  <div className="text-white/60 text-sm">Sessions Completed</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-400 mb-1">87%</div>
+                  <div className="text-white/60 text-sm">Average Score</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-400 mb-1">24h</div>
+                  <div className="text-white/60 text-sm">Practice Time</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-yellow-400 mb-1">5</div>
+                  <div className="text-white/60 text-sm">Skills Improved</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Extra padding for better scrolling */}
+            <div className="h-4"></div>
           </div>
 
-          <div className="mt-6">
+          {/* Fixed Bottom Button */}
+          <div className="mt-6 flex-shrink-0">
             <GradientButton onClick={onStartSession}>
               Begin
             </GradientButton>

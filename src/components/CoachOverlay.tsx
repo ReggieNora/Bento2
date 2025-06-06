@@ -39,9 +39,27 @@ export default function CoachOverlay({ onCollapse }: CoachOverlayProps) {
           </button>
         </div>
         
-        {/* Coach Card Content */}
-        <div className="w-full max-w-4xl mx-auto flex items-center justify-center relative z-10">
-          <CoachCard forceExpanded={true} onStartSession={() => console.log('Begin AI Interview Session')} />
+        {/* Scrollable Container */}
+        <div className="w-full h-full flex items-center justify-center relative z-10 p-8">
+          <div 
+            className="w-full max-w-4xl h-full overflow-y-auto flex items-center justify-center"
+            style={{
+              scrollbarWidth: 'none', /* Firefox */
+              msOverflowStyle: 'none', /* Internet Explorer 10+ */
+            }}
+          >
+            {/* Hide scrollbar for WebKit browsers */}
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
+            
+            {/* Coach Card Content */}
+            <div className="py-8">
+              <CoachCard forceExpanded={true} onStartSession={() => console.log('Begin AI Interview Session')} />
+            </div>
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>
