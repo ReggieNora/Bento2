@@ -29,26 +29,23 @@ const LetterGlitch = ({
   const lastGlitchTime = useRef(Date.now());
   const lastTypingTime = useRef(Date.now());
 
-  // Typing state management
+  // Typing state management - modified for permanent display
   const typingState = useRef({
-    mode: 'random' as 'random' | 'typing' | 'display',
+    mode: 'typing' as 'typing' | 'permanent', // Start typing immediately, then permanent
     textToType: 'HIRLY',
     currentIndex: 0,
-    displayCycles: 0,
-    maxDisplayCycles: 200, // Much longer display time (was 80)
-    triggerCycle: 120, // Slightly faster trigger
-    currentCycle: 0,
     hirlyPositions: [] as number[], // Store positions where HIRLY is displayed
-    typingSpeed: 150, // Faster typing
+    typingSpeed: 150, // Typing speed
+    hasTyped: false, // Track if we've finished typing once
   });
 
   const fontSize = 16;
   const charWidth = 10;
   const charHeight = 20;
   
-  // MUCH larger font for HIRLY
-  const hirlyFontSize = 96; // Doubled from 48px
-  const hirlyCharWidth = 60; // Doubled from 30px
+  // Large font for HIRLY
+  const hirlyFontSize = 96;
+  const hirlyCharWidth = 60;
 
   const lettersAndSymbols = [
     "A",
@@ -192,7 +189,7 @@ const LetterGlitch = ({
       isHirly: false,
     }));
     
-    // Reset typing state when grid changes
+    // Calculate HIRLY positions when grid changes
     typingState.current.hirlyPositions = calculateHirlyPositions();
   };
 
@@ -217,6 +214,12 @@ const LetterGlitch = ({
 
     const { columns, rows } = calculateGrid(rect.width, rect.height);
     initializeLetters(columns, rows);
+    
+    // If we've already typed HIRLY, immediately display it in the new grid
+    if (typingState.current.hasTyped) {
+      displayHirlyImmediately();
+    }
+    
     drawLetters();
   };
 
@@ -310,29 +313,39 @@ const LetterGlitch = ({
       typingState.current.currentIndex++;
       
       if (typingState.current.currentIndex >= textToType.length) {
-        typingState.current.mode = 'display';
-        typingState.current.displayCycles = 0;
+        typingState.current.mode = 'permanent';
+        typingState.current.hasTyped = true;
       }
     }
   };
 
-  const clearHirly = () => {
-    // Clear a much larger area around HIRLY positions
-    const clearRadius = 4; // Even larger clear radius
-    typingState.current.hirlyPositions.forEach(position => {
-      for (let dy = -clearRadius; dy <= clearRadius; dy++) {
-        for (let dx = -clearRadius; dx <= clearRadius; dx++) {
-          const clearPos = position + dy * grid.current.columns + dx;
-          if (clearPos >= 0 && clearPos < letters.current.length && letters.current[clearPos]) {
-            letters.current[clearPos].char = getRandomChar();
-            letters.current[clearPos].color = getRandomColor();
-            letters.current[clearPos].targetColor = getRandomColor();
-            letters.current[clearPos].colorProgress = 1;
-            letters.current[clearPos].isHirly = false;
+  const displayHirlyImmediately = () => {
+    const { textToType, hirlyPositions } = typingState.current;
+    
+    // Display all HIRLY characters immediately
+    for (let i = 0; i < textToType.length && i < hirlyPositions.length; i++) {
+      const position = hirlyPositions[i];
+      if (letters.current[position]) {
+        letters.current[position].char = textToType[i];
+        letters.current[position].color = getHirlyColor();
+        letters.current[position].targetColor = getHirlyColor();
+        letters.current[position].colorProgress = 1;
+        letters.current[position].isHirly = true;
+        
+        // Clear surrounding area
+        const clearRadius = 3;
+        for (let dy = -clearRadius; dy <= clearRadius; dy++) {
+          for (let dx = -clearRadius; dx <= clearRadius; dx++) {
+            const clearPos = position + dy * grid.current.columns + dx;
+            if (clearPos >= 0 && clearPos < letters.current.length && 
+                letters.current[clearPos] && !letters.current[clearPos].isHirly) {
+              letters.current[clearPos].char = ' ';
+              letters.current[clearPos].color = 'rgba(0,0,0,0.1)';
+            }
           }
         }
       }
-    });
+    }
   };
 
   const handleSmoothTransitions = () => {
@@ -357,36 +370,20 @@ const LetterGlitch = ({
   const animate = () => {
     const now = Date.now();
     
-    // Always update random background letters (this is the key change!)
+    // Always update random background letters
     if (now - lastGlitchTime.current >= glitchSpeed) {
       updateLetters();
       lastGlitchTime.current = now;
     }
     
-    // Handle typing logic
+    // Handle typing logic - only type once, then stay permanent
     if (typingState.current.mode === 'typing') {
       if (now - lastTypingTime.current >= typingState.current.typingSpeed) {
         typeHirlyCharacter();
         lastTypingTime.current = now;
       }
-    } else if (typingState.current.mode === 'display') {
-      typingState.current.displayCycles++;
-      
-      if (typingState.current.displayCycles >= typingState.current.maxDisplayCycles) {
-        clearHirly();
-        typingState.current.mode = 'random';
-        typingState.current.currentCycle = 0;
-        typingState.current.currentIndex = 0;
-      }
-    } else if (typingState.current.mode === 'random') {
-      typingState.current.currentCycle++;
-      if (typingState.current.currentCycle >= typingState.current.triggerCycle) {
-        typingState.current.mode = 'typing';
-        typingState.current.currentIndex = 0;
-        typingState.current.hirlyPositions = calculateHirlyPositions();
-        lastTypingTime.current = now;
-      }
     }
+    // In permanent mode, HIRLY stays displayed forever - no clearing logic
 
     if (smooth) {
       handleSmoothTransitions();
