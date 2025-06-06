@@ -262,7 +262,6 @@ const LetterGlitch = ({
 
   const updateLetters = () => {
     if (!letters.current || letters.current.length === 0) return;
-    if (typingState.current.mode !== 'random') return; // Only update random letters in random mode
 
     const updateCount = Math.max(1, Math.floor(letters.current.length * 0.08));
 
@@ -337,7 +336,6 @@ const LetterGlitch = ({
   };
 
   const handleSmoothTransitions = () => {
-    let needsRedraw = false;
     letters.current.forEach((letter) => {
       if (letter.colorProgress < 1 && !letter.isHirly) { // Don't smooth transition HIRLY characters
         letter.colorProgress += 0.05;
@@ -351,58 +349,51 @@ const LetterGlitch = ({
             endRgb,
             letter.colorProgress
           );
-          needsRedraw = true;
         }
       }
     });
-
-    if (needsRedraw) {
-      drawLetters();
-    }
   };
 
   const animate = () => {
     const now = Date.now();
     
+    // Always update random background letters (this is the key change!)
+    if (now - lastGlitchTime.current >= glitchSpeed) {
+      updateLetters();
+      lastGlitchTime.current = now;
+    }
+    
     // Handle typing logic
     if (typingState.current.mode === 'typing') {
       if (now - lastTypingTime.current >= typingState.current.typingSpeed) {
         typeHirlyCharacter();
-        drawLetters();
         lastTypingTime.current = now;
       }
     } else if (typingState.current.mode === 'display') {
       typingState.current.displayCycles++;
-      
-      // No color changes during display - keep HIRLY pure white and stable
       
       if (typingState.current.displayCycles >= typingState.current.maxDisplayCycles) {
         clearHirly();
         typingState.current.mode = 'random';
         typingState.current.currentCycle = 0;
         typingState.current.currentIndex = 0;
-        drawLetters();
       }
     } else if (typingState.current.mode === 'random') {
-      // Handle random glitch updates
-      if (now - lastGlitchTime.current >= glitchSpeed) {
-        updateLetters();
-        drawLetters();
-        lastGlitchTime.current = now;
-        
-        typingState.current.currentCycle++;
-        if (typingState.current.currentCycle >= typingState.current.triggerCycle) {
-          typingState.current.mode = 'typing';
-          typingState.current.currentIndex = 0;
-          typingState.current.hirlyPositions = calculateHirlyPositions();
-          lastTypingTime.current = now;
-        }
+      typingState.current.currentCycle++;
+      if (typingState.current.currentCycle >= typingState.current.triggerCycle) {
+        typingState.current.mode = 'typing';
+        typingState.current.currentIndex = 0;
+        typingState.current.hirlyPositions = calculateHirlyPositions();
+        lastTypingTime.current = now;
       }
     }
 
     if (smooth) {
       handleSmoothTransitions();
     }
+
+    // Always redraw the canvas every frame
+    drawLetters();
 
     animationRef.current = requestAnimationFrame(animate);
   };
