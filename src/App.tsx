@@ -12,6 +12,7 @@ import LandingPage from './components/LandingPage';
 import JobCard from './components/JobCard';
 import AboutPage from './components/AboutPage';
 import BentoMainMenu from './components/BentoMainMenu';
+import LetterGlitch from './components/LetterGlitch';
 
 function App() {
   const [selectedRole, setSelectedRole] = useState<'candidate' | 'employer' | null>(null);
@@ -357,11 +358,18 @@ function App() {
 
   // Render the new bento grid main menu after authentication
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
       <Iridescence 
         color={[0.4, 0.2, 0.8]}
         speed={0.2}
         amplitude={0.05}
+      />
+      <LetterGlitch
+        glitchColors={["#7c3aed", "#ec4899", "#2e1065"]}
+        glitchSpeed={75}
+        centerVignette={false}
+        outerVignette={true}
+        smooth={true}
       />
       <BentoMainMenu />
     </div>
