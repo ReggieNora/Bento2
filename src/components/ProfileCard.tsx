@@ -45,19 +45,27 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       {/* Back Button - Completely Opaque */}
       <button
         onClick={onBack}
-        className="absolute top-4 left-4 px-4 py-2 rounded-full bg-gray-900 hover:bg-gray-800 text-white transition-colors z-10 border border-gray-700 shadow-xl"
+        className="absolute top-4 left-4 px-4 py-2 rounded-full text-white transition-colors z-10 shadow-xl"
+        style={{
+          backgroundColor: '#1f2937', // Solid dark background
+          border: '1px solid #374151', // Solid border
+          backdropFilter: 'none',
+          backgroundImage: 'none'
+        }}
       >
         Back
       </button>
 
       {/* Main Card - Completely Solid Background */}
       <div
-        className="bg-gray-900 rounded-2xl p-6 border border-gray-700 shadow-2xl transition-all duration-300 w-[350px] flex flex-col items-center cursor-pointer hover:scale-[1.02] relative"
+        className="rounded-2xl p-6 shadow-2xl transition-all duration-300 w-[350px] flex flex-col items-center cursor-pointer hover:scale-[1.02] relative"
         onClick={() => setIsModalOpen(true)}
         style={{
-          backgroundColor: '#111827', // Solid dark background
+          backgroundColor: '#111827', // Solid dark background - no transparency
+          border: '1px solid #374151', // Solid border
           backgroundImage: 'none', // No background image
           backdropFilter: 'none', // No backdrop filter
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)', // Strong shadow
         }}
       >
         {/* Content with high contrast */}
@@ -74,7 +82,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             {skills.map((skill, i) => (
               <span
                 key={i}
-                className="px-4 py-2 rounded-full bg-gray-800 border border-gray-600 text-gray-200 text-sm shadow-lg"
+                className="px-4 py-2 rounded-full text-gray-200 text-sm shadow-lg"
+                style={{
+                  backgroundColor: '#1f2937', // Solid background
+                  border: '1px solid #4b5563', // Solid border
+                  backgroundImage: 'none',
+                  backdropFilter: 'none'
+                }}
               >
                 {skill}
               </span>
@@ -93,14 +107,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <div 
           className="fixed inset-0 flex items-center justify-center z-50 p-4"
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.9)', // Solid dark overlay
+            backgroundColor: 'rgba(0, 0, 0, 0.95)', // Almost completely opaque overlay
             backdropFilter: 'none', // No backdrop filter
           }}
         >
           <div 
-            className="rounded-2xl p-6 border border-gray-700 shadow-2xl w-full max-w-4xl h-[90vh] overflow-y-auto relative"
+            className="rounded-2xl p-6 shadow-2xl w-full max-w-4xl h-[90vh] overflow-y-auto relative"
             style={{
               backgroundColor: '#111827', // Solid dark background
+              border: '1px solid #374151', // Solid border
               backgroundImage: 'none', // No background image
               backdropFilter: 'none', // No backdrop filter
               scrollbarWidth: 'none',
@@ -126,7 +141,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   </button>
                   <button
                     onClick={() => console.log('Edit profile clicked')}
-                    className="px-4 py-2 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-200 hover:text-white transition-colors border border-gray-600"
+                    className="px-4 py-2 rounded-full text-gray-200 hover:text-white transition-colors"
+                    style={{
+                      backgroundColor: '#1f2937',
+                      border: '1px solid #4b5563',
+                      backgroundImage: 'none',
+                      backdropFilter: 'none'
+                    }}
                   >
                     Edit Profile
                   </button>
@@ -152,7 +173,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                     {skills.map((skill, i) => (
                       <span
                         key={i}
-                        className="px-4 py-2 rounded-full bg-gray-800 border border-gray-600 text-gray-200 text-sm shadow-lg"
+                        className="px-4 py-2 rounded-full text-gray-200 text-sm shadow-lg"
+                        style={{
+                          backgroundColor: '#1f2937',
+                          border: '1px solid #4b5563',
+                          backgroundImage: 'none',
+                          backdropFilter: 'none'
+                        }}
                       >
                         {skill}
                       </span>
@@ -166,9 +193,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                   {sampleResume.experience.map((exp, i) => (
                     <div 
                       key={i} 
-                      className="mb-6 rounded-xl p-4 border border-gray-700"
+                      className="mb-6 rounded-xl p-4"
                       style={{
                         backgroundColor: '#1f2937', // Solid background
+                        border: '1px solid #374151',
                         backgroundImage: 'none',
                         backdropFilter: 'none',
                       }}
@@ -185,9 +213,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 <div>
                   <h3 className="text-xl font-bold text-white mb-4">Education</h3>
                   <div 
-                    className="rounded-xl p-4 border border-gray-700"
+                    className="rounded-xl p-4"
                     style={{
                       backgroundColor: '#1f2937', // Solid background
+                      border: '1px solid #374151',
                       backgroundImage: 'none',
                       backdropFilter: 'none',
                     }}
