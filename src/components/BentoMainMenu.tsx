@@ -141,8 +141,8 @@ export default function BentoMainMenu() {
   }
 
   return (
-    <div className="relative z-10">
-      <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
+    <div className="relative z-10 max-w-4xl mx-auto">
+      <BentoGrid className="md:auto-rows-[20rem]">
         {items.map((item, i) => (
           <BentoGridItem
             key={i}

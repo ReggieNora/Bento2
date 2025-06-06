@@ -68,8 +68,8 @@ const LetterGlitch = ({
   const hirlyCharWidth = 30;
 
   // Greeting font size
-  const greetingFontSize = 24;
-  const greetingCharWidth = 15;
+  const greetingFontSize = 28;
+  const greetingCharWidth = 18;
 
   const lettersAndSymbols = [
     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -160,10 +160,10 @@ const LetterGlitch = ({
     const { columns, rows } = grid.current;
     const message = greetingState.current.message;
     
-    // Position in top-right area
-    const topRow = Math.floor(rows * 0.15); // 15% from top
-    const charsPerLine = Math.floor(columns * 0.4); // Use 40% of width
-    const startCol = Math.floor(columns * 0.55); // Start at 55% from left
+    // Position in far right area - much further right to avoid tiles
+    const topRow = Math.floor(rows * 0.1); // 10% from top
+    const charsPerLine = Math.floor(columns * 0.25); // Use 25% of width
+    const startCol = Math.floor(columns * 0.72); // Start at 72% from left (far right)
     
     const positions = [];
     let currentRow = topRow;
@@ -173,7 +173,7 @@ const LetterGlitch = ({
       if (message[i] === ' ') {
         currentCol += Math.ceil(greetingCharWidth / charWidth);
       } else if (message[i] === '\n' || currentCol >= startCol + charsPerLine) {
-        currentRow += 2; // Move to next line with spacing
+        currentRow += 3; // More spacing between lines
         currentCol = startCol;
         if (message[i] !== '\n') {
           const index = currentRow * columns + currentCol;
@@ -256,13 +256,17 @@ const LetterGlitch = ({
         const rgbColor = hexToRgb(color);
         if (rgbColor) {
           ctx.fillStyle = `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha})`;
-          ctx.shadowColor = `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha * 0.8})`;
+          ctx.shadowColor = `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha * 0.9})`;
         } else {
           ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-          ctx.shadowColor = `rgba(255, 255, 255, ${alpha * 0.8})`;
+          ctx.shadowColor = `rgba(255, 255, 255, ${alpha * 0.9})`;
         }
-        ctx.shadowBlur = 15;
-        ctx.fillText(letter.char, x - 5, y - 5);
+        ctx.shadowBlur = 20;
+        ctx.fillText(letter.char, x - 8, y - 8);
+        
+        // Add extra glow for greeting
+        ctx.shadowBlur = 35;
+        ctx.fillText(letter.char, x - 8, y - 8);
       }
       // Use different styling for HIRLY characters
       else if (letter.isHirly) {
@@ -442,14 +446,14 @@ const LetterGlitch = ({
     
     // Handle greeting logic first (higher priority)
     if (greetingState.current.displayState === 'typing') {
-      if (now - lastTypingTime.current >= 100) { // Faster typing for greeting
+      if (now - lastTypingTime.current >= 80) { // Faster typing for greeting
         typeGreetingCharacter();
         drawLetters();
         lastTypingTime.current = now;
       }
     } else if (greetingState.current.displayState === 'displaying') {
       // Add some glitch effect to greeting while displaying
-      if ((now - greetingState.current.startTime) % 500 < 50) {
+      if ((now - greetingState.current.startTime) % 800 < 100) {
         greetingState.current.positions.forEach(position => {
           if (letters.current[position] && letters.current[position].isGreeting) {
             letters.current[position].color = getGreetingColor();
@@ -575,7 +579,7 @@ const LetterGlitch = ({
     height: "100%",
     backgroundColor: "transparent",
     overflow: "hidden",
-    zIndex: 1,
+    zIndex: 5, // Higher z-index to appear above tiles
     pointerEvents: "none" as const,
   };
 
@@ -583,7 +587,7 @@ const LetterGlitch = ({
     display: "block",
     width: "100%",
     height: "100%",
-    opacity: 0.4, // Increased opacity to make HIRLY more visible
+    opacity: 0.6, // Increased opacity for better visibility
   };
 
   const outerVignetteStyle = {
