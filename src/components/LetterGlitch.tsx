@@ -163,10 +163,9 @@ const LetterGlitch = ({
     const text = typingState.current.textToType;
     const centerRow = Math.floor(rows / 2);
     
-    // Calculate positions to center HIRLY with much larger spacing
-    // Increased offset significantly to move HIRLY more to the right and ensure H is visible
+    // Calculate positions to center HIRLY perfectly
     const totalWidth = text.length * Math.ceil(hirlyCharWidth / charWidth);
-    const startCol = Math.floor((columns - totalWidth) / 2) + 6; // Increased from +2 to +6 for better centering
+    const startCol = Math.floor((columns - totalWidth) / 2);
     
     const positions = [];
     for (let i = 0; i < text.length; i++) {
@@ -249,18 +248,34 @@ const LetterGlitch = ({
         ctx.strokeStyle = letter.color;
         ctx.lineWidth = 3; // Thicker stroke
         
-        // Draw the character with both fill and stroke for maximum prominence
-        // Adjusted offset to ensure H is fully visible - moved further right
-        const offsetX = x - 15; // Reduced from -25 to -15 to move text right
-        const offsetY = y - 35; // Better centering for larger font
+        // Calculate perfect centering for each character
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        
+        const canvasWidth = canvas.getBoundingClientRect().width;
+        const canvasHeight = canvas.getBoundingClientRect().height;
+        
+        // Get the character index within HIRLY
+        const hirlyIndex = typingState.current.hirlyPositions.indexOf(index);
+        if (hirlyIndex === -1) return;
+        
+        // Calculate the total width of "HIRLY" text
+        const totalTextWidth = typingState.current.textToType.length * hirlyCharWidth;
+        
+        // Calculate starting X position to center the entire word
+        const startX = (canvasWidth - totalTextWidth) / 2;
+        
+        // Calculate this character's position
+        const charX = startX + (hirlyIndex * hirlyCharWidth);
+        const charY = (canvasHeight - hirlyFontSize) / 2;
         
         // Multiple layers for maximum glow effect
         ctx.shadowBlur = 60;
-        ctx.fillText(letter.char, offsetX, offsetY);
+        ctx.fillText(letter.char, charX, charY);
         ctx.shadowBlur = 40;
-        ctx.strokeText(letter.char, offsetX, offsetY);
+        ctx.strokeText(letter.char, charX, charY);
         ctx.shadowBlur = 20;
-        ctx.fillText(letter.char, offsetX, offsetY);
+        ctx.fillText(letter.char, charX, charY);
       } else {
         ctx.font = `${fontSize}px monospace`;
         ctx.fillStyle = letter.color;
