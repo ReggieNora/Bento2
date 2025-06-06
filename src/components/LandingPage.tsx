@@ -68,7 +68,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
               transition={{ duration: 1, delay: 1 }}
               className="text-xl text-white/50 text-center mt-8"
             >
-              The future of hiring
+              Hiring, redefined.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
