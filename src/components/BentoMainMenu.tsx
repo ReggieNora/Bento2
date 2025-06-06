@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import SwipeApp from "./SwipeApp";
 import MessagesOverlay from "./MessagesOverlay";
 import SettingsOverlay from "./SettingsOverlay";
+import CoachOverlay from "./CoachOverlay";
 import ProfileCard from "./ProfileCard";
 
 const SkeletonSwipe = () => (
@@ -119,6 +120,7 @@ export default function BentoMainMenu() {
   const [messagesOpen, setMessagesOpen] = React.useState(false);
   const [profileOpen, setProfileOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [coachOpen, setCoachOpen] = React.useState(false);
 
   const handleGoHome = () => {
     // Reload the page to go back to landing page
@@ -135,6 +137,10 @@ export default function BentoMainMenu() {
 
   if (settingsOpen) {
     return <SettingsOverlay onCollapse={() => setSettingsOpen(false)} />;
+  }
+
+  if (coachOpen) {
+    return <CoachOverlay onCollapse={() => setCoachOpen(false)} />;
   }
 
   if (profileOpen) {
@@ -167,8 +173,9 @@ export default function BentoMainMenu() {
               if (item.title === "Messages") setMessagesOpen(true);
               if (item.title === "Profile") setProfileOpen(true);
               if (item.title === "Settings") setSettingsOpen(true);
+              if (item.title === "AI Interview Coach") setCoachOpen(true);
             }}
-            style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" || item.title === "Settings" ? "pointer" : "default" }}
+            style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" || item.title === "Settings" || item.title === "AI Interview Coach" ? "pointer" : "default" }}
           />
         ))}
       </BentoGrid>

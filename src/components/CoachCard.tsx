@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
 import { MessageSquare, Mic, Brain, ChevronRight } from 'lucide-react';
 import GradientButton from './GradientButton';
-import Orb from './Orb';
 
 interface CoachCardProps {
   onStartSession?: () => void;
+  forceExpanded?: boolean;
 }
 
-const CoachCard: React.FC<CoachCardProps> = ({ onStartSession = () => {} }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const CoachCard: React.FC<CoachCardProps> = ({ 
+  onStartSession = () => {}, 
+  forceExpanded = false 
+}) => {
+  const [isExpanded, setIsExpanded] = useState(forceExpanded);
+
+  // Force expanded state when forceExpanded prop is true
+  React.useEffect(() => {
+    if (forceExpanded) {
+      setIsExpanded(true);
+    }
+  }, [forceExpanded]);
 
   const features = [
     {
@@ -28,22 +38,12 @@ const CoachCard: React.FC<CoachCardProps> = ({ onStartSession = () => {} }) => {
     }
   ];
 
-  if (!isExpanded) {
+  if (!isExpanded && !forceExpanded) {
     return (
       <div className="relative w-[350px]">
         <div className="flex flex-col h-[480px] p-8 rounded-3xl 
                       bg-white/10 backdrop-blur-md border border-white/20
                       shadow-xl shadow-black/20 overflow-hidden">
-          
-          {/* Orb Background */}
-          <div className="absolute inset-0 z-0">
-            <Orb
-              hoverIntensity={0.5}
-              rotateOnHover={true}
-              hue={0}
-              forceHoverState={false}
-            />
-          </div>
           
           <div className="relative z-10">
             <h2 className="text-2xl font-bold text-white tracking-wide mb-6 text-center
@@ -91,32 +91,45 @@ const CoachCard: React.FC<CoachCardProps> = ({ onStartSession = () => {} }) => {
                     bg-white/10 backdrop-blur-md border border-white/20
                     shadow-xl shadow-black/20 overflow-hidden">
         
-        {/* Orb Background */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center">
-          <div className="w-[350px] h-[480px]">
-            <Orb
-              hoverIntensity={0.5}
-              rotateOnHover={true}
-              hue={0}
-              forceHoverState={false}
-            />
-          </div>
-        </div>
-        
         <div className="relative z-10">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-white tracking-wide
                          text-shadow-glow">AI Interview Coach</h2>
-            <button
-              onClick={() => setIsExpanded(false)}
-              className="px-4 py-2 bg-white/10 text-white rounded-xl
-                       hover:bg-white/20 transition-colors duration-200"
-            >
-              Collapse
-            </button>
+            {!forceExpanded && (
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="px-4 py-2 bg-white/10 text-white rounded-xl
+                         hover:bg-white/20 transition-colors duration-200"
+              >
+                Collapse
+              </button>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto pr-4 space-y-6">
+            {/* Welcome Message */}
+            <div className="bg-white/5 rounded-xl p-6 text-center">
+              <h3 className="text-white font-semibold mb-4 text-xl">Welcome to Your AI Interview Coach</h3>
+              <p className="text-white/80 mb-6">
+                Get ready to ace your next interview with personalized AI-powered coaching. 
+                Our advanced system will help you practice, improve, and build confidence.
+              </p>
+              <div className="flex items-center justify-center gap-4 text-sm text-white/60">
+                <div className="flex items-center gap-2">
+                  <Brain className="w-4 h-4" />
+                  <span>AI-Powered</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Interactive</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mic className="w-4 h-4" />
+                  <span>Voice Analysis</span>
+                </div>
+              </div>
+            </div>
+
             {/* Practice Session Setup */}
             <div className="bg-white/5 rounded-xl p-6">
               <h3 className="text-white font-semibold mb-4">Start a Practice Session</h3>
@@ -124,34 +137,34 @@ const CoachCard: React.FC<CoachCardProps> = ({ onStartSession = () => {} }) => {
                 <div className="flex items-center space-x-4">
                   <select className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2
                                   text-white focus:outline-none focus:border-white/40">
-                    <option value="">Select Interview Type</option>
-                    <option value="technical">Technical Interview</option>
-                    <option value="behavioral">Behavioral Interview</option>
-                    <option value="leadership">Leadership Interview</option>
+                    <option value="" className="bg-gray-800 text-white">Select Interview Type</option>
+                    <option value="technical" className="bg-gray-800 text-white">Technical Interview</option>
+                    <option value="behavioral" className="bg-gray-800 text-white">Behavioral Interview</option>
+                    <option value="leadership" className="bg-gray-800 text-white">Leadership Interview</option>
                   </select>
                   <select className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2
                                   text-white focus:outline-none focus:border-white/40">
-                    <option value="">Select Industry</option>
-                    <option value="tech">Technology</option>
-                    <option value="finance">Finance</option>
-                    <option value="healthcare">Healthcare</option>
+                    <option value="" className="bg-gray-800 text-white">Select Industry</option>
+                    <option value="tech" className="bg-gray-800 text-white">Technology</option>
+                    <option value="finance" className="bg-gray-800 text-white">Finance</option>
+                    <option value="healthcare" className="bg-gray-800 text-white">Healthcare</option>
                   </select>
                 </div>
                 
                 <div className="flex items-center space-x-4">
                   <select className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2
                                   text-white focus:outline-none focus:border-white/40">
-                    <option value="">Select Experience Level</option>
-                    <option value="entry">Entry Level</option>
-                    <option value="mid">Mid Level</option>
-                    <option value="senior">Senior Level</option>
+                    <option value="" className="bg-gray-800 text-white">Select Experience Level</option>
+                    <option value="entry" className="bg-gray-800 text-white">Entry Level</option>
+                    <option value="mid" className="bg-gray-800 text-white">Mid Level</option>
+                    <option value="senior" className="bg-gray-800 text-white">Senior Level</option>
                   </select>
                   <select className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2
                                   text-white focus:outline-none focus:border-white/40">
-                    <option value="">Select Duration</option>
-                    <option value="15">15 minutes</option>
-                    <option value="30">30 minutes</option>
-                    <option value="45">45 minutes</option>
+                    <option value="" className="bg-gray-800 text-white">Select Duration</option>
+                    <option value="15" className="bg-gray-800 text-white">15 minutes</option>
+                    <option value="30" className="bg-gray-800 text-white">30 minutes</option>
+                    <option value="45" className="bg-gray-800 text-white">45 minutes</option>
                   </select>
                 </div>
               </div>
@@ -159,8 +172,8 @@ const CoachCard: React.FC<CoachCardProps> = ({ onStartSession = () => {} }) => {
 
             {/* Features Section */}
             <div className="bg-white/5 rounded-xl p-6">
-              <h3 className="text-white font-semibold mb-4">Features</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <h3 className="text-white font-semibold mb-4">What You'll Get</h3>
+              <div className="grid grid-cols-1 gap-4">
                 {features.map((feature, index) => (
                   <div key={index} className="bg-white/5 rounded-xl p-4">
                     <div className="flex items-center space-x-3 mb-2">
@@ -197,7 +210,7 @@ const CoachCard: React.FC<CoachCardProps> = ({ onStartSession = () => {} }) => {
 
           <div className="mt-6">
             <GradientButton onClick={onStartSession}>
-              Start New Session
+              Begin
             </GradientButton>
           </div>
         </div>
@@ -209,4 +222,4 @@ const CoachCard: React.FC<CoachCardProps> = ({ onStartSession = () => {} }) => {
   );
 };
 
-export default CoachCard; 
+export default CoachCard;
