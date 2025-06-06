@@ -18,7 +18,7 @@ const SkeletonSwipe = () => (
   <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <div className="relative flex-1 flex items-center justify-center">
       <img 
-        src="/src/assets/meeting.png" 
+        src="/assets/meeting.png" 
         alt="Swipe Cards" 
         className="w-32 h-32 opacity-80"
       />
@@ -30,7 +30,7 @@ const SkeletonMessages = () => (
   <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <div className="relative flex-1 flex items-center justify-center">
       <img 
-        src="/src/assets/laptop.png" 
+        src="/assets/laptop.png" 
         alt="Messages" 
         className="w-32 h-32 opacity-80"
       />
@@ -45,7 +45,7 @@ const SkeletonProfile = () => (
   <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <div className="relative flex-1 flex items-center justify-center">
       <img 
-        src="/src/assets/image.png" 
+        src="/assets/image.png" 
         alt="Profile" 
         className="w-32 h-32 opacity-80"
       />
@@ -57,7 +57,7 @@ const SkeletonSettings = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <div className="relative flex-1 flex items-center justify-center">
       <img 
-        src="/src/assets/setting.png" 
+        src="/assets/setting.png" 
         alt="Settings" 
         className="w-32 h-32 opacity-80"
       />
@@ -69,7 +69,7 @@ const SkeletonCoach = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
      <div className="relative flex-1 flex items-center justify-center">
       <img 
-        src="/src/assets/implant.png" 
+        src="/assets/implant.png" 
         alt="Coach" 
         className="w-32 h-32 opacity-80"
       />
@@ -191,7 +191,7 @@ export default function BentoMainMenu() {
         whileTap={{ scale: 0.95 }}
       >
         <img 
-          src="/src/assets/house.png" 
+          src="/assets/house.png" 
           alt="Home" 
           className="w-6 h-6 opacity-80 group-hover:opacity-100 transition-opacity duration-300"
         />
