@@ -451,10 +451,13 @@ const LetterGlitch = ({
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "transparent",
+    backgroundColor: "transparent", // Completely transparent
     overflow: "hidden",
     zIndex: 1,
     pointerEvents: "none" as const,
+    border: "none", // Explicitly no border
+    outline: "none", // Explicitly no outline
+    boxShadow: "none", // Explicitly no box shadow
   };
 
   const canvasStyle = {
@@ -462,6 +465,10 @@ const LetterGlitch = ({
     width: "100%",
     height: "100%",
     opacity: 0.5, // Slightly increased opacity for better HIRLY visibility
+    backgroundColor: "transparent", // Ensure canvas background is transparent
+    border: "none", // Explicitly no border
+    outline: "none", // Explicitly no outline
+    boxShadow: "none", // Explicitly no box shadow
   };
 
   const outerVignetteStyle = {
