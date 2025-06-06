@@ -6,12 +6,18 @@ const LetterGlitch = ({
   centerVignette = false,
   outerVignette = true,
   smooth = true,
+  greetingMessage = null,
+  greetingDuration = 120000, // 2 minutes
+  userName = "Guest",
 }: {
   glitchColors?: string[];
   glitchSpeed?: number;
   centerVignette?: boolean;
   outerVignette?: boolean;
   smooth?: boolean;
+  greetingMessage?: string | null;
+  greetingDuration?: number;
+  userName?: string;
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -22,6 +28,7 @@ const LetterGlitch = ({
       targetColor: string;
       colorProgress: number;
       isHirly?: boolean;
+      isGreeting?: boolean;
     }[]
   >([]);
   const grid = useRef({ columns: 0, rows: 0 });
@@ -42,6 +49,16 @@ const LetterGlitch = ({
     typingSpeed: 200, // Speed of typing each character
   });
 
+  // Greeting state management
+  const greetingState = useRef({
+    displayState: 'hidden' as 'hidden' | 'typing' | 'displaying' | 'fading',
+    startTime: 0,
+    currentIndex: 0,
+    positions: [] as number[],
+    opacity: 1,
+    message: '',
+  });
+
   const fontSize = 16;
   const charWidth = 10;
   const charHeight = 20;
@@ -50,65 +67,16 @@ const LetterGlitch = ({
   const hirlyFontSize = 48;
   const hirlyCharWidth = 30;
 
+  // Greeting font size
+  const greetingFontSize = 24;
+  const greetingCharWidth = 15;
+
   const lettersAndSymbols = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-    "!",
-    "@",
-    "#",
-    "$",
-    "&",
-    "*",
-    "(",
-    ")",
-    "-",
-    "_",
-    "+",
-    "=",
-    "/",
-    "[",
-    "]",
-    "{",
-    "}",
-    ";",
-    ":",
-    "<",
-    ">",
-    ",",
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+    "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    "!", "@", "#", "$", "&", "*", "(", ")", "-", "_", "+", "=", "/",
+    "[", "]", "{", "}", ";", ":", "<", ">", ",", "0", "1", "2", "3",
+    "4", "5", "6", "7", "8", "9",
   ];
 
   const getRandomChar = () => {
@@ -124,6 +92,12 @@ const LetterGlitch = ({
   const getHirlyColor = () => {
     // Use a brighter, more prominent color for HIRLY with some variation
     const colors = ["#ffffff", "#7c3aed", "#ec4899"];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const getGreetingColor = () => {
+    // Use warm, welcoming colors for greeting
+    const colors = ["#fbbf24", "#f59e0b", "#d97706", "#ffffff"];
     return colors[Math.floor(Math.random() * colors.length)];
   };
 
@@ -182,6 +156,44 @@ const LetterGlitch = ({
     return positions;
   };
 
+  const calculateGreetingPositions = () => {
+    const { columns, rows } = grid.current;
+    const message = greetingState.current.message;
+    
+    // Position in top-right area
+    const topRow = Math.floor(rows * 0.15); // 15% from top
+    const charsPerLine = Math.floor(columns * 0.4); // Use 40% of width
+    const startCol = Math.floor(columns * 0.55); // Start at 55% from left
+    
+    const positions = [];
+    let currentRow = topRow;
+    let currentCol = startCol;
+    
+    for (let i = 0; i < message.length; i++) {
+      if (message[i] === ' ') {
+        currentCol += Math.ceil(greetingCharWidth / charWidth);
+      } else if (message[i] === '\n' || currentCol >= startCol + charsPerLine) {
+        currentRow += 2; // Move to next line with spacing
+        currentCol = startCol;
+        if (message[i] !== '\n') {
+          const index = currentRow * columns + currentCol;
+          if (index >= 0 && index < letters.current.length) {
+            positions.push(index);
+          }
+          currentCol += Math.ceil(greetingCharWidth / charWidth);
+        }
+      } else {
+        const index = currentRow * columns + currentCol;
+        if (index >= 0 && index < letters.current.length) {
+          positions.push(index);
+        }
+        currentCol += Math.ceil(greetingCharWidth / charWidth);
+      }
+    }
+    
+    return positions;
+  };
+
   const initializeLetters = (columns: number, rows: number) => {
     grid.current = { columns, rows };
     const totalLetters = columns * rows;
@@ -191,10 +203,14 @@ const LetterGlitch = ({
       targetColor: getRandomColor(),
       colorProgress: 1,
       isHirly: false,
+      isGreeting: false,
     }));
     
     // Reset typing state when grid changes
     typingState.current.hirlyPositions = calculateHirlyPositions();
+    if (greetingState.current.message) {
+      greetingState.current.positions = calculateGreetingPositions();
+    }
   };
 
   const resizeCanvas = () => {
@@ -232,8 +248,24 @@ const LetterGlitch = ({
       const x = (index % grid.current.columns) * charWidth;
       const y = Math.floor(index / grid.current.columns) * charHeight;
       
+      // Use different styling for greeting characters
+      if (letter.isGreeting) {
+        ctx.font = `bold ${greetingFontSize}px monospace`;
+        const alpha = greetingState.current.opacity;
+        const color = letter.color;
+        const rgbColor = hexToRgb(color);
+        if (rgbColor) {
+          ctx.fillStyle = `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha})`;
+          ctx.shadowColor = `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha * 0.8})`;
+        } else {
+          ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.shadowColor = `rgba(255, 255, 255, ${alpha * 0.8})`;
+        }
+        ctx.shadowBlur = 15;
+        ctx.fillText(letter.char, x - 5, y - 5);
+      }
       // Use different styling for HIRLY characters
-      if (letter.isHirly) {
+      else if (letter.isHirly) {
         ctx.font = `bold ${hirlyFontSize}px monospace`;
         ctx.fillStyle = letter.color;
         ctx.shadowColor = letter.color;
@@ -265,7 +297,7 @@ const LetterGlitch = ({
 
     for (let i = 0; i < updateCount; i++) {
       const index = Math.floor(Math.random() * letters.current.length);
-      if (!letters.current[index] || letters.current[index].isHirly) continue; // Skip HIRLY characters
+      if (!letters.current[index] || letters.current[index].isHirly || letters.current[index].isGreeting) continue; // Skip HIRLY and greeting characters
 
       letters.current[index].char = getRandomChar();
       letters.current[index].targetColor = getRandomColor();
@@ -302,7 +334,7 @@ const LetterGlitch = ({
         surroundingPositions.forEach(pos => {
           if (pos >= 0 && pos < letters.current.length && letters.current[pos]) {
             // Don't overwrite other HIRLY characters, but make surrounding area less prominent
-            if (!letters.current[pos].isHirly) {
+            if (!letters.current[pos].isHirly && !letters.current[pos].isGreeting) {
               letters.current[pos].char = ' '; // Clear surrounding characters
               letters.current[pos].color = 'rgba(0,0,0,0.1)';
             }
@@ -315,6 +347,28 @@ const LetterGlitch = ({
       if (typingState.current.currentIndex >= textToType.length) {
         typingState.current.mode = 'display';
         typingState.current.displayCycles = 0;
+      }
+    }
+  };
+
+  const typeGreetingCharacter = () => {
+    const { currentIndex, message, positions } = greetingState.current;
+    
+    if (currentIndex < message.length && currentIndex < positions.length) {
+      const position = positions[currentIndex];
+      if (letters.current[position] && message[currentIndex] !== ' ' && message[currentIndex] !== '\n') {
+        letters.current[position].char = message[currentIndex];
+        letters.current[position].color = getGreetingColor();
+        letters.current[position].targetColor = getGreetingColor();
+        letters.current[position].colorProgress = 1;
+        letters.current[position].isGreeting = true;
+      }
+      
+      greetingState.current.currentIndex++;
+      
+      if (greetingState.current.currentIndex >= message.length) {
+        greetingState.current.displayState = 'displaying';
+        greetingState.current.startTime = Date.now();
       }
     }
   };
@@ -346,10 +400,22 @@ const LetterGlitch = ({
     });
   };
 
+  const clearGreeting = () => {
+    greetingState.current.positions.forEach(position => {
+      if (position >= 0 && position < letters.current.length && letters.current[position]) {
+        letters.current[position].char = getRandomChar();
+        letters.current[position].color = getRandomColor();
+        letters.current[position].targetColor = getRandomColor();
+        letters.current[position].colorProgress = 1;
+        letters.current[position].isGreeting = false;
+      }
+    });
+  };
+
   const handleSmoothTransitions = () => {
     let needsRedraw = false;
     letters.current.forEach((letter) => {
-      if (letter.colorProgress < 1 && !letter.isHirly) { // Don't smooth transition HIRLY characters
+      if (letter.colorProgress < 1 && !letter.isHirly && !letter.isGreeting) { // Don't smooth transition HIRLY or greeting characters
         letter.colorProgress += 0.05;
         if (letter.colorProgress > 1) letter.colorProgress = 1;
 
@@ -374,46 +440,80 @@ const LetterGlitch = ({
   const animate = () => {
     const now = Date.now();
     
-    // Handle typing logic
-    if (typingState.current.mode === 'typing') {
-      if (now - lastTypingTime.current >= typingState.current.typingSpeed) {
-        typeHirlyCharacter();
+    // Handle greeting logic first (higher priority)
+    if (greetingState.current.displayState === 'typing') {
+      if (now - lastTypingTime.current >= 100) { // Faster typing for greeting
+        typeGreetingCharacter();
         drawLetters();
         lastTypingTime.current = now;
       }
-    } else if (typingState.current.mode === 'display') {
-      typingState.current.displayCycles++;
-      
-      // Add some glitch effect to HIRLY while displaying
-      if (typingState.current.displayCycles % 10 === 0) {
-        typingState.current.hirlyPositions.forEach(position => {
-          if (letters.current[position] && letters.current[position].isHirly) {
-            letters.current[position].color = getHirlyColor();
+    } else if (greetingState.current.displayState === 'displaying') {
+      // Add some glitch effect to greeting while displaying
+      if ((now - greetingState.current.startTime) % 500 < 50) {
+        greetingState.current.positions.forEach(position => {
+          if (letters.current[position] && letters.current[position].isGreeting) {
+            letters.current[position].color = getGreetingColor();
           }
         });
         drawLetters();
       }
       
-      if (typingState.current.displayCycles >= typingState.current.maxDisplayCycles) {
-        clearHirly();
-        typingState.current.mode = 'random';
-        typingState.current.currentCycle = 0;
-        typingState.current.currentIndex = 0;
-        drawLetters();
+      // Check if greeting duration has passed
+      if (now - greetingState.current.startTime >= greetingDuration) {
+        greetingState.current.displayState = 'fading';
       }
-    } else if (typingState.current.mode === 'random') {
-      // Handle random glitch updates
-      if (now - lastGlitchTime.current >= glitchSpeed) {
-        updateLetters();
-        drawLetters();
-        lastGlitchTime.current = now;
-        
-        typingState.current.currentCycle++;
-        if (typingState.current.currentCycle >= typingState.current.triggerCycle) {
-          typingState.current.mode = 'typing';
-          typingState.current.currentIndex = 0;
-          typingState.current.hirlyPositions = calculateHirlyPositions();
+    } else if (greetingState.current.displayState === 'fading') {
+      greetingState.current.opacity -= 0.02;
+      if (greetingState.current.opacity <= 0) {
+        greetingState.current.displayState = 'hidden';
+        greetingState.current.opacity = 1;
+        clearGreeting();
+      }
+      drawLetters();
+    }
+    
+    // Handle HIRLY typing logic (only if no greeting is active)
+    else if (greetingState.current.displayState === 'hidden') {
+      if (typingState.current.mode === 'typing') {
+        if (now - lastTypingTime.current >= typingState.current.typingSpeed) {
+          typeHirlyCharacter();
+          drawLetters();
           lastTypingTime.current = now;
+        }
+      } else if (typingState.current.mode === 'display') {
+        typingState.current.displayCycles++;
+        
+        // Add some glitch effect to HIRLY while displaying
+        if (typingState.current.displayCycles % 10 === 0) {
+          typingState.current.hirlyPositions.forEach(position => {
+            if (letters.current[position] && letters.current[position].isHirly) {
+              letters.current[position].color = getHirlyColor();
+            }
+          });
+          drawLetters();
+        }
+        
+        if (typingState.current.displayCycles >= typingState.current.maxDisplayCycles) {
+          clearHirly();
+          typingState.current.mode = 'random';
+          typingState.current.currentCycle = 0;
+          typingState.current.currentIndex = 0;
+          drawLetters();
+        }
+      } else if (typingState.current.mode === 'random') {
+        // Handle random glitch updates
+        if (now - lastGlitchTime.current >= glitchSpeed) {
+          updateLetters();
+          drawLetters();
+          lastGlitchTime.current = now;
+          
+          typingState.current.currentCycle++;
+          if (typingState.current.currentCycle >= typingState.current.triggerCycle) {
+            typingState.current.mode = 'typing';
+            typingState.current.currentIndex = 0;
+            typingState.current.hirlyPositions = calculateHirlyPositions();
+            lastTypingTime.current = now;
+          }
         }
       }
     }
@@ -424,6 +524,20 @@ const LetterGlitch = ({
 
     animationRef.current = requestAnimationFrame(animate);
   };
+
+  // Handle greeting message changes
+  useEffect(() => {
+    if (greetingMessage) {
+      greetingState.current.message = greetingMessage;
+      greetingState.current.displayState = 'typing';
+      greetingState.current.currentIndex = 0;
+      greetingState.current.opacity = 1;
+      greetingState.current.positions = calculateGreetingPositions();
+      lastTypingTime.current = Date.now();
+    } else if (greetingState.current.displayState !== 'hidden') {
+      greetingState.current.displayState = 'fading';
+    }
+  }, [greetingMessage]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
