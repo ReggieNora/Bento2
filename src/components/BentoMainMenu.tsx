@@ -118,6 +118,11 @@ export default function BentoMainMenu() {
   const [messagesOpen, setMessagesOpen] = React.useState(false);
   const [profileOpen, setProfileOpen] = React.useState(false);
 
+  const handleGoHome = () => {
+    // Reload the page to go back to landing page
+    window.location.reload();
+  };
+
   if (swipeOpen) {
     return <SwipeApp onCollapse={() => setSwipeOpen(false)} />;
   }
@@ -160,6 +165,24 @@ export default function BentoMainMenu() {
           />
         ))}
       </BentoGrid>
+      
+      {/* Home Button */}
+      <motion.button
+        onClick={handleGoHome}
+        className="fixed bottom-8 right-8 z-50 flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-2xl text-white font-semibold shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl group"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.4 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <img 
+          src="/src/assets/house.png" 
+          alt="Home" 
+          className="w-6 h-6 opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+        />
+        <span className="text-lg">Home</span>
+      </motion.button>
     </div>
   );
 }
