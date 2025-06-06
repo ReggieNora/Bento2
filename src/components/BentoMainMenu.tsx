@@ -141,23 +141,25 @@ export default function BentoMainMenu() {
   }
 
   return (
-    <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
-      {items.map((item, i) => (
-        <BentoGridItem
-          key={i}
-          title={item.title}
-          description={item.description}
-          header={item.header}
-          className={item.className}
-          icon={item.icon}
-          onClick={() => {
-            if (item.title === "Swipe") setSwipeOpen(true);
-            if (item.title === "Messages") setMessagesOpen(true);
-            if (item.title === "Profile") setProfileOpen(true);
-          }}
-          style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" ? "pointer" : "default" }}
-        />
-      ))}
-    </BentoGrid>
+    <div className="relative z-10">
+      <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
+        {items.map((item, i) => (
+          <BentoGridItem
+            key={i}
+            title={item.title}
+            description={item.description}
+            header={item.header}
+            className={item.className}
+            icon={item.icon}
+            onClick={() => {
+              if (item.title === "Swipe") setSwipeOpen(true);
+              if (item.title === "Messages") setMessagesOpen(true);
+              if (item.title === "Profile") setProfileOpen(true);
+            }}
+            style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" ? "pointer" : "default" }}
+          />
+        ))}
+      </BentoGrid>
+    </div>
   );
 }

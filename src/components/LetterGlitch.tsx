@@ -285,14 +285,15 @@ const LetterGlitch = ({
     height: "100%",
     backgroundColor: "transparent",
     overflow: "hidden",
-    zIndex: -1,
+    zIndex: 1,
+    pointerEvents: "none" as const,
   };
 
   const canvasStyle = {
     display: "block",
     width: "100%",
     height: "100%",
-    opacity: 0.15,
+    opacity: 0.25,
   };
 
   const outerVignetteStyle = {
