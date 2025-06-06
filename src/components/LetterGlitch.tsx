@@ -164,8 +164,9 @@ const LetterGlitch = ({
     const centerRow = Math.floor(rows / 2);
     
     // Calculate positions to center HIRLY with much larger spacing
+    // Added slight offset to move HIRLY to the right for better centering
     const totalWidth = text.length * Math.ceil(hirlyCharWidth / charWidth);
-    const startCol = Math.floor((columns - totalWidth) / 2);
+    const startCol = Math.floor((columns - totalWidth) / 2) + 2; // Added +2 offset to move right
     
     const positions = [];
     for (let i = 0; i < text.length; i++) {
