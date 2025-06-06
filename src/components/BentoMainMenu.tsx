@@ -69,7 +69,13 @@ const SkeletonSettings = () => (
 
 const SkeletonCoach = () => (
   <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
-    <motion.div className="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-400 to-orange-400 mb-2" />
+     <div className="relative flex-1 flex items-center justify-center">
+      <img 
+        src="/src/assets/implant.png" 
+        alt="Coach" 
+        className="w-32 h-32 opacity-80"
+      />
+    </div>
     <motion.div className="w-2/3 h-4 rounded-full bg-gray-100 dark:bg-neutral-900" />
   </motion.div>
 );
