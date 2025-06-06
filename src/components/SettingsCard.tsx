@@ -14,8 +14,12 @@ interface SettingSection {
   }[];
 }
 
-const SettingsCard: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+interface SettingsCardProps {
+  forceExpanded?: boolean;
+}
+
+const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) => {
+  const [isExpanded, setIsExpanded] = useState(forceExpanded);
   const [settings, setSettings] = useState({
     // Basic Settings
     darkMode: true,
@@ -33,6 +37,13 @@ const SettingsCard: React.FC = () => {
     dataCollection: true,
     marketingEmails: false,
   });
+
+  // Force expanded state when forceExpanded prop is true
+  React.useEffect(() => {
+    if (forceExpanded) {
+      setIsExpanded(true);
+    }
+  }, [forceExpanded]);
 
   const handleToggle = (setting: keyof typeof settings) => {
     setSettings(prev => ({
@@ -102,7 +113,7 @@ const SettingsCard: React.FC = () => {
     }
   ];
 
-  if (!isExpanded) {
+  if (!isExpanded && !forceExpanded) {
     return (
       <div className="relative w-[320px]">
         <div className="flex flex-col h-[480px] p-8 rounded-3xl 
@@ -155,13 +166,15 @@ const SettingsCard: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-white tracking-wide
                        text-shadow-glow">Settings</h2>
-          <button
-            onClick={() => setIsExpanded(false)}
-            className="px-4 py-2 bg-white/10 text-white rounded-xl
-                     hover:bg-white/20 transition-colors duration-200"
-          >
-            Collapse
-          </button>
+          {!forceExpanded && (
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="px-4 py-2 bg-white/10 text-white rounded-xl
+                       hover:bg-white/20 transition-colors duration-200"
+            >
+              Collapse
+            </button>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto pr-4 space-y-6">
@@ -180,7 +193,7 @@ const SettingsCard: React.FC = () => {
                       <ToggleSwitch
                         label={setting.label}
                         isOn={setting.value}
-                        onToggle={() => handleToggle(setting.label.toLowerCase().replace(/\s+/g, '') as keyof typeof settings)}
+                        onToggle={() => handleToggle(setting.label.toLowerCase().replace(/\s+/g, '').replace('-', '') as keyof typeof settings)}
                       />
                     )}
                     {setting.type === 'input' && (
@@ -202,7 +215,7 @@ const SettingsCard: React.FC = () => {
                                  transition-all duration-200"
                       >
                         {setting.options?.map(option => (
-                          <option key={option} value={option}>
+                          <option key={option} value={option} className="bg-gray-800 text-white">
                             {option.charAt(0).toUpperCase() + option.slice(1)}
                           </option>
                         ))}
@@ -215,9 +228,12 @@ const SettingsCard: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 flex gap-4">
           <GradientButton onClick={() => console.log('Save changes clicked')}>
             Save Changes
+          </GradientButton>
+          <GradientButton onClick={() => console.log('Log out clicked')}>
+            Log Out
           </GradientButton>
         </div>
       </div>

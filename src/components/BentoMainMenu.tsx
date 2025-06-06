@@ -10,6 +10,7 @@ import {
 import { motion } from "framer-motion";
 import SwipeApp from "./SwipeApp";
 import MessagesOverlay from "./MessagesOverlay";
+import SettingsOverlay from "./SettingsOverlay";
 import ProfileCard from "./ProfileCard";
 
 const SkeletonSwipe = () => (
@@ -117,6 +118,7 @@ export default function BentoMainMenu() {
   const [swipeOpen, setSwipeOpen] = React.useState(false);
   const [messagesOpen, setMessagesOpen] = React.useState(false);
   const [profileOpen, setProfileOpen] = React.useState(false);
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
 
   const handleGoHome = () => {
     // Reload the page to go back to landing page
@@ -129,6 +131,10 @@ export default function BentoMainMenu() {
 
   if (messagesOpen) {
     return <MessagesOverlay onCollapse={() => setMessagesOpen(false)} />;
+  }
+
+  if (settingsOpen) {
+    return <SettingsOverlay onCollapse={() => setSettingsOpen(false)} />;
   }
 
   if (profileOpen) {
@@ -160,8 +166,9 @@ export default function BentoMainMenu() {
               if (item.title === "Swipe") setSwipeOpen(true);
               if (item.title === "Messages") setMessagesOpen(true);
               if (item.title === "Profile") setProfileOpen(true);
+              if (item.title === "Settings") setSettingsOpen(true);
             }}
-            style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" ? "pointer" : "default" }}
+            style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" || item.title === "Settings" ? "pointer" : "default" }}
           />
         ))}
       </BentoGrid>
