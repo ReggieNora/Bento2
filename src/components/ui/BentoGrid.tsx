@@ -35,7 +35,7 @@ export function BentoGridItem({
 }) {
   return (
     <div
-      className={cn("rounded-2xl bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 shadow-lg p-6 flex flex-col gap-4 transition-all hover:scale-[1.03] hover:shadow-2xl", className)}
+      className={cn("rounded-2xl bg-white/5 dark:bg-black/5 backdrop-blur-sm border border-white/10 shadow-lg p-6 flex flex-col gap-4 transition-all hover:scale-[1.03] hover:shadow-2xl hover:bg-white/10 hover:border-white/20", className)}
       onClick={onClick}
       style={style}
     >
@@ -47,4 +47,4 @@ export function BentoGridItem({
       <div className="text-white/70 text-sm">{description}</div>
     </div>
   );
-} 
+}
