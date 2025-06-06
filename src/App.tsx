@@ -6,7 +6,6 @@ import SettingsCard from './components/SettingsCard';
 import ActionButtons from './components/ActionButtons';
 import Dashboard from './components/Dashboard';
 import CoachCard from './components/CoachCard';
-import Iridescence from './components/Iridescence';
 import CompanyProfileCard from './components/CompanyProfileCard';
 import LandingPage from './components/LandingPage';
 import JobCard from './components/JobCard';
@@ -359,11 +358,6 @@ function App() {
   // Render the new bento grid main menu after authentication
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
-      <Iridescence 
-        color={[0.4, 0.2, 0.8]}
-        speed={0.2}
-        amplitude={0.05}
-      />
       <LetterGlitch
         glitchColors={["#7c3aed", "#ec4899", "#2e1065"]}
         glitchSpeed={75}

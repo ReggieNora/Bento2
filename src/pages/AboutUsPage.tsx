@@ -4,7 +4,6 @@ import { ArrowLeft, Zap, Users, Heart, Target, Star, CheckCircle, Building2, Tre
 import GradientText from '../components/GradientText';
 import StarBorder from '../components/StarBorder';
 import { BentoGridItem } from '../components/ui/BentoGrid';
-import Iridescence from '../components/Iridescence';
 import LetterGlitch from '../components/LetterGlitch';
 
 const AboutUsPage: React.FC = () => {
@@ -95,11 +94,6 @@ const AboutUsPage: React.FC = () => {
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
       {/* Background Effects */}
-      <Iridescence 
-        color={[0.4, 0.2, 0.8]}
-        speed={0.2}
-        amplitude={0.05}
-      />
       <LetterGlitch
         glitchColors={["#7c3aed", "#ec4899", "#2e1065"]}
         glitchSpeed={75}
