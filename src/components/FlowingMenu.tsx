@@ -13,13 +13,45 @@ interface FlowingMenuProps {
 }
 
 const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) => {
+  const [selectedIdx, setSelectedIdx] = React.useState(0);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!items.length) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        setSelectedIdx(idx => (idx + 1) % items.length);
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        setSelectedIdx(idx => (idx - 1 + items.length) % items.length);
+        e.preventDefault();
+      } else if ((e.key === 'Enter' || e.key === ' ') && items[selectedIdx]) {
+        onItemClick?.(items[selectedIdx]);
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [items, selectedIdx, onItemClick]);
+
   return (
     <div style={{position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden'}}>
       <LampBackground />
+      {/* Brand background text */}
+      <h1
+        className="fixed top-1/2 left-1/2 -translate-x-[48%] -translate-y-1/2 text-[8rem] md:text-[12rem] font-bold bg-clip-text text-transparent bg-gradient-to-b from-white via-white/80 to-white/30 opacity-20 pointer-events-none select-none z-10 font-[Clash Display,sans-serif]"
+        style={{ fontFamily: 'Clash Display, sans-serif', userSelect: 'none', pointerEvents: 'none' }}
+      >
+        Hirly
+      </h1>
       <div className="menu-wrap glass" style={{position: 'absolute', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <nav className="menu">
           {items.map((item, idx) => (
-            <MenuItem key={idx} {...item} onClick={() => onItemClick?.(item)} />
+            <MenuItem
+              key={idx}
+              {...item}
+              onClick={() => onItemClick?.(item)}
+              selected={idx === selectedIdx}
+            />
           ))}
         </nav>
       </div>
@@ -39,12 +71,14 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   'Coach': <Brain size={36} />,
 };
 
-const MenuItem: React.FC<MenuItemProps & { onClick?: () => void }> = ({ link, text, onClick }) => {
+const MenuItem: React.FC<MenuItemProps & { onClick?: () => void; selected?: boolean }> = ({ link, text, onClick, selected }) => {
   return (
-    <div className="menu__item">
+    <div className={"menu__item" + (selected ? " menu__item--selected" : "") }>
       <a
-        className="menu__item-link"
+        className={"menu__item-link" + (selected ? " menu__item-link--selected" : "")}
         href={link}
+        tabIndex={selected ? 0 : -1}
+        aria-selected={selected}
         onClick={e => {
           e.preventDefault();
           onClick?.();
