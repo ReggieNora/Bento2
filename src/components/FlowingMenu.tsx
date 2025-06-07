@@ -16,6 +16,10 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) =>
   const [selectedIdx, setSelectedIdx] = React.useState(0);
   const [arrowNavActive, setArrowNavActive] = React.useState(false);
 
+  const handleItemClick = (item: FlowingMenuItem) => {
+    onItemClick?.(item);
+  };
+
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!items.length) return;
@@ -57,7 +61,7 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) =>
             <MenuItem
               key={idx}
               {...item}
-              onClick={() => onItemClick?.(item)}
+              onClick={() => handleItemClick(item)}
               selected={idx === selectedIdx}
             />
           ))}
@@ -73,6 +77,8 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) =>
           </a>
         </div>
       </footer>
+
+
     </div>
   );
 };

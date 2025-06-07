@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Users, MessageSquare, BarChart2, Settings, Briefcase, Building2 } from 'lucide-react';
-import ProfileCard from './components/ProfileCard';
+
+import ProfileCardGlass from './components/ProfileCardGlass';
 import MessagesCard from './components/MessagesCard';
 import SettingsCard from './components/SettingsCard';
 import ActionButtons from './components/ActionButtons';
@@ -45,7 +46,6 @@ function App() {
   const SettingsOverlay = React.lazy(() => import('./components/SettingsOverlay'));
   const CoachOverlay = React.lazy(() => import('./components/CoachOverlay'));
   const DashboardOverlay = React.lazy(() => import('./components/DashboardOverlay'));
-  const ProfileCard = React.lazy(() => import('./components/ProfileCard'));
   const overlayFallback = <div className="w-full h-full flex items-center justify-center text-white text-lg">Loading...</div>;
 
   // Job listings data for candidates
@@ -544,21 +544,6 @@ function App() {
       </React.Suspense>
     );
   }
-  if (profileOpen) {
-    return (
-      <React.Suspense fallback={overlayFallback}>
-        <div className="w-full h-full flex items-center justify-center">
-          <ProfileCard
-            name={userType === 'employer' ? "Hirly, Inc." : "Alex Johnson"}
-            title={userType === 'employer' ? "Technology Company" : "Senior Frontend Developer"}
-            skills={userType === 'employer' ? ["AI Recruitment", "Talent Matching", "HR Technology"] : ["React", "TypeScript", "Node.js", "AWS"]}
-            description={userType === 'employer' ? "Revolutionizing the hiring process with AI-powered recruitment solutions." : "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."}
-            onBack={() => setProfileOpen(false)}
-          />
-        </div>
-      </React.Suspense>
-    );
-  }
   // If not authenticated, show the landing/login page
   if (!isAuthenticated) {
     return (
@@ -571,7 +556,38 @@ function App() {
       </div>
     );
   }
-  // Render the new FlowingMenu main menu after authentication
+
+  const placeholderCandidate = {
+    name: 'Jane Doe',
+    title: 'Software Engineer',
+    location: 'San Francisco, CA',
+    avatarSrc: 'https://randomuser.me/api/portraits/women/44.jpg',
+    description: 'Creative software engineer with 5+ years of experience building scalable web apps.',
+    skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
+    resume: {
+      experience: [
+        {
+          title: 'Frontend Developer',
+          company: 'TechCo',
+          duration: '2020-2023',
+          description: 'Built and maintained core UI features for SaaS platform.'
+        },
+        {
+          title: 'Software Engineer',
+          company: 'Webify',
+          duration: '2018-2020',
+          description: 'Worked on cross-functional teams to deliver new product features.'
+        }
+      ],
+      education: {
+        degree: 'B.Sc. Computer Science',
+        school: 'UC Berkeley',
+        duration: '2014-2018',
+        honors: 'Summa Cum Laude'
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
       <GradientBackground animated={true} />
@@ -589,6 +605,11 @@ function App() {
           }
         }}
       />
+      {profileOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-lg">
+          <ProfileCardGlass candidate={placeholderCandidate} onBack={() => setProfileOpen(false)} />
+        </div>
+      )}
     </div>
   );
 }

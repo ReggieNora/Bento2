@@ -14,7 +14,7 @@ const MessagesOverlay = React.lazy(() => import("./MessagesOverlay"));
 const SettingsOverlay = React.lazy(() => import("./SettingsOverlay"));
 const CoachOverlay = React.lazy(() => import("./CoachOverlay"));
 const DashboardOverlay = React.lazy(() => import("./DashboardOverlay"));
-const ProfileCard = React.lazy(() => import("./ProfileCard"));
+import ProfileCardGlass from "./ProfileCardGlass";
 
 interface BentoMainMenuProps {
   userType: 'candidate' | 'employer' | null;
@@ -253,18 +253,41 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
   }
 
   if (profileOpen) {
+    // Example candidate data, replace with real user data if available
+    const exampleCandidate = {
+      name: "Alex Johnson",
+      title: "Senior Frontend Developer",
+      skills: ["React", "TypeScript", "Node.js", "AWS"],
+      description: "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development.",
+      location: "San Francisco, CA",
+      avatarSrc: "/assets/avatar.png",
+      resume: {
+        experience: [
+          {
+            title: "Senior Frontend Developer",
+            company: "Google",
+            duration: "2020 - Present",
+            description: "Led development of core UI features, mentored junior devs, and improved app performance by 40%."
+          },
+          {
+            title: "Frontend Developer",
+            company: "Facebook",
+            duration: "2018 - 2020",
+            description: "Built and maintained React components, implemented new features, and collaborated with design team."
+          }
+        ],
+        education: {
+          degree: "B.S. Computer Science",
+          school: "Stanford University",
+          duration: "2014 - 2018",
+          honors: "Graduated with honors. Focus on Software Engineering and AI."
+        }
+      }
+    };
     return (
-      <React.Suspense fallback={overlayFallback}>
-        <div className="w-full h-full flex items-center justify-center">
-          <ProfileCard
-            name={userType === 'employer' ? "Hirly, Inc." : "Alex Johnson"}
-            title={userType === 'employer' ? "Technology Company" : "Senior Frontend Developer"}
-            skills={userType === 'employer' ? ["AI Recruitment", "Talent Matching", "HR Technology"] : ["React", "TypeScript", "Node.js", "AWS"]}
-            description={userType === 'employer' ? "Revolutionizing the hiring process with AI-powered recruitment solutions." : "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."}
-            onBack={() => setProfileOpen(false)}
-          />
-        </div>
-      </React.Suspense>
+      <div className="w-full h-full flex items-center justify-center">
+        <ProfileCardGlass candidate={exampleCandidate} onBack={() => setProfileOpen(false)} />
+      </div>
     );
   }
 
