@@ -27,6 +27,9 @@ function getRandomLayout(num: number) {
 
 
 export default function SwipeApp({ onCollapse, userType, candidateProfiles = [], jobListings = [] }: SwipeAppProps) {
+  // Track if the visually top card is expanded for drag lock
+  const [isTopCardExpanded, setIsTopCardExpanded] = React.useState(false);
+
   // Use the appropriate data based on user type
   const data = userType === 'employer' ? candidateProfiles : jobListings;
   
@@ -213,8 +216,6 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
               <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
                 <AnimatePresence>
                   {(() => {
-                    // Only the visually top card (last in .reverse()) gets the expanded drag lock
-                    const [isTopCardExpanded, setIsTopCardExpanded] = React.useState(false);
                     const reversedStack = [...stack].reverse();
                     const topIdx = reversedStack.length - 1;
                     return reversedStack.map((item, index) => {
