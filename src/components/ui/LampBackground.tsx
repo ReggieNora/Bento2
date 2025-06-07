@@ -13,7 +13,7 @@ export const LampBackground = ({
   return (
     <div
       className={cn(
-        "absolute inset-0 flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black w-full z-0",
+        "fixed inset-0 flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black w-full h-full z-0",
         className
       )}
     >
