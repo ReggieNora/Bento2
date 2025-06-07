@@ -1,23 +1,58 @@
-import React, { useState } from 'react';
-import { MapPin, Clock, DollarSign, Briefcase, Building2, ChevronRight, Users, Globe, Award, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Clock, DollarSign, ChevronRight, Users, Globe, Award, Heart } from 'lucide-react';
 
 interface JobCardProps {
   job: {
-    company: string;
-    title: string;
-    location: string;
-    type: string;
-    salary: string;
-    posted: string;
-    logo: string;
-    requirements: string[];
-    description: string;
-    benefits: string[];
+    company?: string;
+    title?: string;
+    location?: string;
+    type?: string;
+    salary?: string;
+    posted?: string;
+    logo?: string;
+    requirements?: string[];
+    description?: string;
+    benefits?: string[];
+    avatarSrc?: string; // for candidate
+    name?: string; // for candidate
+    skills?: string[];
+    experience?: string;
   };
+  justCollapsed?: boolean;
+  isCandidate?: boolean;
+  forceCollapse?: boolean;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandidate = false, forceCollapse = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
+
+  useEffect(() => {
+    if (justCollapsed) {
+      setCooldown(true);
+      setTimeout(() => setCooldown(false), 300);
+    }
+  }, [justCollapsed]);
+
+  // Collapse immediately when forceCollapse is true
+  useEffect(() => {
+    if (forceCollapse) setIsExpanded(false);
+  }, [forceCollapse]);
+
+  // Prevent expansion if justCollapsed is true or cooldown is active
+  const handleExpand = () => {
+    if (justCollapsed || cooldown) return;
+    setIsExpanded((prev) => !prev);
+  };
+
+  // For candidate rendering, adjust fields
+  const displayName = isCandidate ? job.name : job.company;
+  const displayTitle = isCandidate ? job.title : job.title;
+  const displayAvatar = isCandidate ? job.avatarSrc : job.logo;
+  const displayLocation = isCandidate ? job.location : job.location;
+  const displayType = isCandidate ? job.experience : job.type;
+  const displaySalary = job.salary;
+  const displayPosted = job.posted;
 
   return (
     <div 
@@ -32,16 +67,16 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       {/* Company Logo */}
       <div className="absolute top-6 left-6 w-16 h-16 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center overflow-hidden">
         <img 
-          src={job.logo} 
-          alt={`${job.company} logo`}
+          src={displayAvatar} 
+          alt={`${displayName} logo`}
           className="w-full h-full object-contain p-2"
         />
       </div>
 
       {/* Job Info */}
       <div className="absolute top-6 right-6 text-right">
-        <h3 className="text-white/60 text-sm font-medium">{job.type}</h3>
-        <p className="text-white/40 text-xs">Posted {job.posted}</p>
+        <h3 className="text-white/60 text-sm font-medium">{displayType}</h3>
+        <p className="text-white/40 text-xs">Posted {displayPosted}</p>
       </div>
 
       {/* Main Content */}
@@ -50,21 +85,21 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         transition-all duration-300 ease-in-out
         ${isExpanded ? 'opacity-0 translate-y-[-20px]' : 'opacity-100 translate-y-0'}
       `}>
-        <h2 className="text-2xl font-bold text-white mb-2">{job.title}</h2>
-        <h3 className="text-xl text-white/80 mb-4">{job.company}</h3>
+        <h2 className="text-2xl font-bold text-white mb-2">{displayTitle}</h2>
+        <h3 className="text-xl text-white/80 mb-4">{displayName}</h3>
 
         <div className="space-y-3">
           <div className="flex items-center text-white/60">
             <MapPin className="w-4 h-4 mr-2" />
-            <span>{job.location}</span>
+            <span>{displayLocation}</span>
           </div>
           <div className="flex items-center text-white/60">
             <Clock className="w-4 h-4 mr-2" />
-            <span>{job.type}</span>
+            <span>{displayType}</span>
           </div>
           <div className="flex items-center text-white/60">
             <DollarSign className="w-4 h-4 mr-2" />
-            <span>{job.salary}</span>
+            <span>{displaySalary}</span>
           </div>
         </div>
       </div>
@@ -72,7 +107,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
       {/* Show More Button */}
       <div className="absolute bottom-6 left-0 right-0 px-6 z-10">
         <button 
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={handleExpand}
           className="w-full py-2 px-4 bg-white/10 hover:bg-white/20 
                    text-white/80 hover:text-white rounded-xl
                    transition-all duration-200 flex items-center justify-center"
@@ -110,7 +145,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           <div className="mb-6">
             <h4 className="text-white/80 font-medium mb-2">Requirements</h4>
             <ul className="text-white/60 text-sm space-y-1">
-              {job.requirements.map((req, index) => (
+              {(job.requirements || []).map((req, index) => (
                 <li key={index}>• {req}</li>
               ))}
             </ul>
@@ -126,7 +161,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           <div className="mb-4">
             <h4 className="text-white/80 font-medium mb-2">Benefits</h4>
             <ul className="text-white/60 text-sm space-y-1">
-              {job.benefits.map((benefit, index) => (
+              {(job.benefits || []).map((benefit, index) => (
                 <li key={index}>• {benefit}</li>
               ))}
             </ul>
