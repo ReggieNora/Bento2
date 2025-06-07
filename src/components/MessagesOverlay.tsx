@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MessagesCard from './MessagesCard';
-import { ArrowLeft } from 'lucide-react';
+import backArrow from '../assets/back-arrow.svg';
 
 interface MessagesOverlayProps {
   onCollapse: () => void;
@@ -15,10 +15,10 @@ export default function MessagesOverlay({ onCollapse }: MessagesOverlayProps) {
         <div className="absolute top-8 right-8 z-60" style={{ zIndex: 60 }}>
           <button
             onClick={onCollapse}
-            className="px-4 py-2 rounded-xl bg-white/20 text-white font-semibold shadow-lg hover:bg-white/30 transition flex items-center gap-2 border border-white/30 backdrop-blur-md"
+            className="p-2 rounded-full bg-white/20 shadow-lg hover:bg-white/30 transition border border-white/30 backdrop-blur-md flex items-center justify-center"
+            aria-label="Back"
           >
-            <ArrowLeft className="w-5 h-5" />
-            Back to Menu
+            <img src={backArrow} alt="Back" className="w-7 h-7" />
           </button>
         </div>
         {/* Glass/modal content */}

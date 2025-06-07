@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { DraggableCardContainer, DraggableCardBody } from "./ui/draggable-card";
 import { Heart, X, Star, RotateCcw } from "lucide-react";
+import backArrow from '../assets/back-arrow.svg';
 import JobCard from "./JobCard";
 
 interface SwipeAppProps {
@@ -158,11 +159,12 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
               Reset
             </button>
             <button
-              onClick={handleCollapse}
-              className="px-4 py-2 rounded-xl bg-white/20 text-white font-semibold shadow hover:bg-white/30 transition"
-            >
-              Back to Menu
-            </button>
+               onClick={handleCollapse}
+               className="p-2 rounded-full bg-white/20 shadow-lg hover:bg-white/30 transition border border-white/30 backdrop-blur-md flex items-center justify-center"
+               aria-label="Back"
+             >
+               <img src={backArrow} alt="Back" className="w-7 h-7" />
+             </button>
           </div>
           <div className="w-full max-w-md mx-auto flex flex-col items-center justify-center">
             {/* Animated Swipe Direction Indicators */}
