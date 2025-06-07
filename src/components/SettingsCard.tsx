@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ToggleSwitch from './ToggleSwitch';
 import GradientButton from './GradientButton';
-import { User, Bell, MapPin, CreditCard, Mail, Lock, Shield, HelpCircle } from 'lucide-react';
+import { User, Bell, CreditCard, Shield, HelpCircle } from 'lucide-react';
 
 interface SettingSection {
   title: string;
@@ -158,81 +158,89 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) =>
   }
 
   return (
-    <div className="relative w-[700px]">
-      <div className="flex flex-col h-[600px] p-8 rounded-3xl 
-                    bg-white/10 backdrop-blur-md border border-white/20
-                    shadow-xl shadow-black/20">
+    <div className="relative w-full max-w-[700px]">
+      <div
+        className="flex flex-col h-[600px] p-8 rounded-2xl shadow-xl shadow-black/20 border"
+        style={{
+          background: 'rgba(255,255,255,0.15)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+        }}
+      >
         
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-white tracking-wide
-                       text-shadow-glow">Settings</h2>
+          <h2 className="text-2xl font-bold text-white tracking-wide drop-shadow-lg" style={{letterSpacing: '0.04em'}}>Settings</h2>
           {!forceExpanded && (
             <button
               onClick={() => setIsExpanded(false)}
-              className="px-4 py-2 bg-white/10 text-white rounded-xl
-                       hover:bg-white/20 transition-colors duration-200"
+              className="p-2 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors duration-200 shadow border border-white/20"
+              aria-label="Collapse"
             >
-              Collapse
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-4 space-y-6">
-          {settingSections.map((section, index) => (
-            <div key={section.title} className="bg-white/5 rounded-xl p-4">
-              <div className="flex items-center space-x-2 mb-4">
-                {section.icon}
-                <h3 className="text-white font-semibold">{section.title}</h3>
+        <div className="flex-1 overflow-y-auto pr-4 space-y-6 scrollbar-hide">
+          {settingSections.map((section) => (
+            <div key={section.title} className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="flex items-center space-x-2 mb-4 bg-white/10 rounded-lg px-2 py-1">
+                <span className="text-green-400 drop-shadow-glow">{section.icon}</span>
+                <h3 className="text-white font-semibold tracking-wide drop-shadow-md" style={{letterSpacing: '0.03em'}}>{section.title}</h3>
               </div>
-              
               <div className="space-y-4">
                 {section.settings.map((setting) => (
-                  <div key={setting.label} className="flex items-center justify-between">
-                    <span className="text-white/80">{setting.label}</span>
-                    {setting.type === 'toggle' && (
-                      <ToggleSwitch
-                        label={setting.label}
-                        isOn={setting.value}
-                        onToggle={() => handleToggle(setting.label.toLowerCase().replace(/\s+/g, '').replace('-', '') as keyof typeof settings)}
-                      />
-                    )}
-                    {setting.type === 'input' && (
-                      <input
-                        type={setting.label.toLowerCase().includes('password') ? 'password' : 'text'}
-                        value={setting.value}
-                        onChange={(e) => handleInputChange(setting.label.toLowerCase().replace(/\s+/g, '') as keyof typeof settings, e.target.value)}
-                        className="bg-white/10 border border-white/20 rounded-lg px-3 py-1
-                                 text-white placeholder-white/40 focus:outline-none focus:border-white/40
-                                 transition-all duration-200"
-                      />
-                    )}
-                    {setting.type === 'select' && (
-                      <select
-                        value={setting.value}
-                        onChange={(e) => handleInputChange(setting.label.toLowerCase().replace(/\s+/g, '') as keyof typeof settings, e.target.value)}
-                        className="bg-white/10 border border-white/20 rounded-lg px-3 py-1
-                                 text-white focus:outline-none focus:border-white/40
-                                 transition-all duration-200"
-                      >
-                        {setting.options?.map(option => (
-                          <option key={option} value={option} className="bg-gray-800 text-white">
-                            {option.charAt(0).toUpperCase() + option.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    )}
+                  <div key={setting.label} className="flex items-center gap-4 py-2">
+                    <span className="text-white/80 font-medium text-base min-w-[180px] w-[180px] text-left">
+                      {setting.label}
+                    </span>
+                    <div className="flex-1 flex justify-end">
+                      {setting.type === 'toggle' && (
+                        <ToggleSwitch
+                          label={setting.label}
+                          isOn={setting.value}
+                          onToggle={() => handleToggle(setting.label.toLowerCase().replace(/\s+/g, '').replace('-', '') as keyof typeof settings)}
+                        />
+                      )}
+                      {setting.type === 'input' && (
+                        <input
+                          type={setting.label.toLowerCase().includes('password') ? 'password' : 'text'}
+                          value={setting.value}
+                          onChange={(e) => handleInputChange(setting.label.toLowerCase().replace(/\s+/g, '') as keyof typeof settings, e.target.value)}
+                          className="bg-white/15 border border-white/25 rounded-lg px-3 py-2 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-400/40 focus:border-green-400/40 transition-all duration-200 backdrop-blur-sm w-[220px] min-w-0"
+                        />
+                      )}
+                      {setting.type === 'select' && (
+                        <select
+                          value={setting.value}
+                          onChange={(e) => handleInputChange(setting.label.toLowerCase().replace(/\s+/g, '') as keyof typeof settings, e.target.value)}
+                          className="bg-white/15 border border-white/25 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400/40 focus:border-green-400/40 transition-all duration-200 backdrop-blur-sm w-[220px] min-w-0"
+                        >
+                          {setting.options?.map(option => (
+                            <option key={option} value={option} className="bg-gray-800 text-white">
+                              {option.charAt(0).toUpperCase() + option.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           ))}
         </div>
+        <style>{`
+          .scrollbar-hide::-webkit-scrollbar { display: none; }
+          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        `}</style>
 
-        <div className="mt-6 flex gap-4">
-          <GradientButton onClick={() => console.log('Save changes clicked')}>
+        <div className="mt-8 flex gap-6 justify-end">
+          <GradientButton className="rounded-2xl px-6 py-2 shadow-lg border border-white/25" onClick={() => console.log('Save changes clicked')}>
             Save Changes
           </GradientButton>
-          <GradientButton onClick={() => console.log('Log out clicked')}>
+          <GradientButton className="rounded-2xl px-6 py-2 shadow-lg border border-white/25" onClick={() => console.log('Log out clicked')}>
             Log Out
           </GradientButton>
         </div>
