@@ -99,10 +99,30 @@ const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandida
         />
       </div>
 
-      {/* Job Info */}
-      <div className="absolute top-6 right-6 text-right">
-        <h3 className="text-white/60 text-sm font-medium">{displayType}</h3>
-        <p className="text-white/40 text-xs">Posted {displayPosted}</p>
+      {/* Match Indicator */}
+      <div className="absolute top-6 right-6 flex flex-col items-end">
+        {/* Dummy match value for now: 82% Good Match */}
+        {/* In real use, replace matchValue and matchLabel with actual logic */}
+        {(() => {
+          const matchValue = 82; // Example: 82% match
+          let matchColor = 'bg-green-500';
+          let matchLabel = 'Good Match';
+          if (matchValue < 60) {
+            matchColor = 'bg-red-500';
+            matchLabel = 'Bad Match';
+          } else if (matchValue < 80) {
+            matchColor = 'bg-yellow-400';
+            matchLabel = 'Okay Match';
+          }
+          return (
+            <div className="flex flex-col items-end">
+              <div className={`w-8 h-8 rounded-full ${matchColor} flex items-center justify-center text-white font-bold text-sm mb-1`}>
+                {matchValue}%
+              </div>
+              <span className="text-xs font-semibold text-white/80">{matchLabel}</span>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Main Content */}
