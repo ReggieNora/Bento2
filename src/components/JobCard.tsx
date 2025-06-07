@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, DollarSign, ChevronRight, Users, Globe, Award, Heart } from 'lucide-react';
 
+interface CandidateExperience {
+  title: string;
+  company: string;
+  duration: string;
+  description: string;
+}
+interface CandidateEducation {
+  degree: string;
+  school: string;
+  duration: string;
+  honors?: string;
+}
+// Updated JobCardProps to allow nested resume for candidates
 interface JobCardProps {
   job: {
+    // Job fields
     company?: string;
     title?: string;
     location?: string;
@@ -13,10 +27,17 @@ interface JobCardProps {
     requirements?: string[];
     description?: string;
     benefits?: string[];
-    avatarSrc?: string; // for candidate
-    name?: string; // for candidate
+    // Candidate fields
+    avatarSrc?: string;
+    name?: string;
     skills?: string[];
-    experience?: string;
+    experience?: string | CandidateExperience[];
+    education?: CandidateEducation;
+    // Resume (for candidates)
+    resume?: {
+      experience?: CandidateExperience[];
+      education?: CandidateEducation;
+    };
   };
   justCollapsed?: boolean;
   isCandidate?: boolean;
@@ -194,75 +215,136 @@ const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandida
         ${isExpanded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[20px] pointer-events-none'}
       `}>
         <div className="mt-32 h-[calc(600px-8rem)] overflow-y-auto scrollbar-hide">
-          <h2 className="text-2xl font-bold text-white mb-2">{job.title}</h2>
-          <h3 className="text-xl text-white/80 mb-4">{job.company}</h3>
-
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center text-white/60">
-              <MapPin className="w-4 h-4 mr-2" />
-              <span>{job.location}</span>
-            </div>
-            <div className="flex items-center text-white/60">
-              <Clock className="w-4 h-4 mr-2" />
-              <span>{job.type}</span>
-            </div>
-            <div className="flex items-center text-white/60">
-              <DollarSign className="w-4 h-4 mr-2" />
-              <span>{job.salary}</span>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <h4 className="text-white/80 font-medium mb-2">Requirements</h4>
-            <ul className="text-white/60 text-sm space-y-1">
-              {(job.requirements || []).map((req, index) => (
-                <li key={index}>• {req}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mb-4">
-            <h4 className="text-white/80 font-medium mb-2">About the Role</h4>
-            <p className="text-white/60 text-sm">
-              {job.description}
-            </p>
-          </div>
-
-          <div className="mb-4">
-            <h4 className="text-white/80 font-medium mb-2">Benefits</h4>
-            <ul className="text-white/60 text-sm space-y-1">
-              {(job.benefits || []).map((benefit, index) => (
-                <li key={index}>• {benefit}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="flex items-center text-white/60">
-              <Users className="w-4 h-4 mr-2" />
-              <span className="text-sm">Team Size: 10-15</span>
-            </div>
-            <div className="flex items-center text-white/60">
-              <Globe className="w-4 h-4 mr-2" />
-              <span className="text-sm">Remote Friendly</span>
-            </div>
-            <div className="flex items-center text-white/60">
-              <Award className="w-4 h-4 mr-2" />
-              <span className="text-sm">Career Growth</span>
-            </div>
-            <div className="flex items-center text-white/60">
-              <Heart className="w-4 h-4 mr-2" />
-              <span className="text-sm">Great Culture</span>
-            </div>
-          </div>
-
-          <div className="text-white/60 text-sm mb-6">
-            <p>• Flexible working hours</p>
-            <p>• Regular team events</p>
-            <p>• Learning & development budget</p>
-            <p>• Health & wellness programs</p>
-          </div>
-
+          {isCandidate ? (
+            // Candidate Resume Details
+            <>
+              <h2 className="text-2xl font-bold text-white mb-2">{job.name}</h2>
+              <h3 className="text-xl text-white/80 mb-4">{job.title}</h3>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-white/60">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  <span>{job.location}</span>
+                </div>
+                {/* Experience Section */}
+                {(() => {
+                  // Prefer resume.experience if present
+                  const experienceArr = job.resume?.experience || job.experience;
+                  if (Array.isArray(experienceArr) && experienceArr.length > 0) {
+                    return (
+                      <div className="mb-4">
+                        <h4 className="text-white/80 font-medium mb-2">Experience</h4>
+                        <div className="space-y-2">
+                          {(experienceArr as CandidateExperience[]).map((exp: CandidateExperience, idx: number) => (
+                            <div key={idx} className="bg-white/5 rounded-lg p-3">
+                              <div className="font-semibold text-white">{exp.title}</div>
+                              <div className="text-xs text-white/60 mb-1">{exp.company}</div>
+                              <div className="text-xs text-white/60 mb-1">{exp.duration}</div>
+                              <div className="text-xs text-white/80">{exp.description}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  } else {
+                    return null;
+                  }
+                })()}
+                {/* Education Section (if present) */}
+                {(job.resume?.education || job.education) && (
+                  <div className="mb-4">
+                    <h4 className="text-white/80 font-medium mb-2">Education</h4>
+                    <div className="bg-white/5 rounded-lg p-3">
+                      <div className="font-semibold text-white">{(job.resume?.education || job.education)?.degree ?? ''}</div>
+                      <div className="text-xs text-white/60 mb-1">{(job.resume?.education || job.education)?.school ?? ''}</div>
+                      <div className="text-xs text-white/60 mb-1">{(job.resume?.education || job.education)?.duration ?? ''}</div>
+                      {(job.resume?.education || job.education)?.honors && <div className="text-xs text-white/80">{(job.resume?.education || job.education)?.honors}</div>}
+                    </div>
+                  </div>
+                )}
+                {/* Skills Section */}
+                {job.skills && job.skills.length > 0 && (
+                  <div className="flex items-center text-white/60 flex-wrap gap-2">
+                    <span className="font-semibold mr-2">Skills:</span>
+                    {job.skills.map((skill, idx) => (
+                      <span key={idx} className="bg-white/10 px-2 py-1 rounded text-xs text-white/80">{skill}</span>
+                    ))}
+                  </div>
+                )}
+                {/* Fallback if no resume details */}
+                {(!Array.isArray(job.resume?.experience || job.experience) || (job.resume?.experience || job.experience)?.length === 0)
+                  && !(job.resume?.education || job.education)
+                  && (!job.skills || job.skills.length === 0) && (
+                  <div className="text-white/60 text-sm">No resume details available.</div>
+                )}
+              </div>
+            </>
+          ) : (
+            // Job Details
+            <>
+              <h2 className="text-2xl font-bold text-white mb-2">{job.title}</h2>
+              <h3 className="text-xl text-white/80 mb-4">{job.company}</h3>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center text-white/60">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  <span>{job.location}</span>
+                </div>
+                <div className="flex items-center text-white/60">
+                  <Clock className="w-4 h-4 mr-2" />
+                  <span>{job.type}</span>
+                </div>
+                <div className="flex items-center text-white/60">
+                  <DollarSign className="w-4 h-4 mr-2" />
+                  <span>{job.salary}</span>
+                </div>
+              </div>
+              <div className="mb-6">
+                <h4 className="text-white/80 font-medium mb-2">Requirements</h4>
+                <ul className="text-white/60 text-sm space-y-1">
+                  {(job.requirements || []).map((req, index) => (
+                    <li key={index}>• {req}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-white/80 font-medium mb-2">About the Role</h4>
+                <p className="text-white/60 text-sm">
+                  {job.description}
+                </p>
+              </div>
+              <div className="mb-4">
+                <h4 className="text-white/80 font-medium mb-2">Benefits</h4>
+                <ul className="text-white/60 text-sm space-y-1">
+                  {(job.benefits || []).map((benefit, index) => (
+                    <li key={index}>• {benefit}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="flex items-center text-white/60">
+                  <Users className="w-4 h-4 mr-2" />
+                  <span className="text-sm">Team Size: 10-15</span>
+                </div>
+                <div className="flex items-center text-white/60">
+                  <Globe className="w-4 h-4 mr-2" />
+                  <span className="text-sm">Remote Friendly</span>
+                </div>
+                <div className="flex items-center text-white/60">
+                  <Award className="w-4 h-4 mr-2" />
+                  <span className="text-sm">Career Growth</span>
+                </div>
+                <div className="flex items-center text-white/60">
+                  <Heart className="w-4 h-4 mr-2" />
+                  <span className="text-sm">Great Culture</span>
+                </div>
+              </div>
+              <div className="text-white/60 text-sm mb-6">
+                <p>• Flexible working hours</p>
+                <p>• Regular team events</p>
+                <p>• Learning & development budget</p>
+                <p>• Health & wellness programs</p>
+              </div>
+            </>
+          )}
           {/* Extra padding at bottom for better scrolling */}
           <div className="h-24"></div>
         </div>
