@@ -34,13 +34,14 @@
   position: relative;
   overflow: hidden;
   text-align: center;
-  /* box-shadow: 0 -1px #fff; */
   border-radius: 2em;
   margin: 0 auto;
-  background: rgba(255,255,255,0.03);
-  transition: transform 0.2s;
+  background: transparent;
+  box-shadow: none;
   border: none;
+  transition: transform 0.2s;
 }
+
 .menu__item:hover {
   transform: scale(1.05);
   background: rgba(255,255,255,0.07);
@@ -63,10 +64,13 @@
   letter-spacing: 0.08em;
   padding: 0 3vw;
   border-radius: 2em;
-  box-shadow: 0 2px 18px 0 rgba(0,0,0,0.07);
   background: transparent;
+  box-shadow: none;
+  border: none;
+  outline: none;
   transition: color 0.2s, background 0.2s, transform 0.18s cubic-bezier(.4,2,.6,1), box-shadow 0.18s cubic-bezier(.4,2,.6,1);
 }
+
 
 .menu__item-link:hover {
   color: #fff;
