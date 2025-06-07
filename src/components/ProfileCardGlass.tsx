@@ -35,7 +35,7 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
     <div
       className="relative w-[350px] rounded-2xl overflow-hidden shadow-xl shadow-black/20 transition-all duration-300 h-[600px]"
       style={{
-        background: 'rgba(34,197,94,0.25)', // glassy green
+        background: 'rgba(255,255,255,0.15)', // glassy clear/white
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         border: '1px solid rgba(255,255,255,0.2)',
@@ -85,14 +85,26 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
         {candidate.resume?.experience && candidate.resume.experience.length > 0 && (
           <div className="w-full">
             <h4 className="text-white/80 font-medium mb-2">Experience</h4>
-            {candidate.resume.experience.map((exp, idx) => (
-              <div key={idx} className="bg-white/5 rounded-lg p-3 mb-2">
-                <div className="font-semibold text-white">{exp.title}</div>
-                <div className="text-xs text-white/60 mb-1">{exp.company}</div>
-                <div className="text-xs text-white/60 mb-1">{exp.duration}</div>
-                <div className="text-xs text-white/80">{exp.description}</div>
-              </div>
-            ))}
+            <div
+              className="rounded-lg overflow-y-auto pr-1"
+              style={{
+                maxHeight: '140px',
+                scrollbarWidth: 'none', // Firefox
+                msOverflowStyle: 'none', // IE/Edge
+              }}
+            >
+              {candidate.resume.experience.map((exp, idx) => (
+                <div key={idx} className="bg-white/5 rounded-lg p-3 mb-2">
+                  <div className="font-semibold text-white">{exp.title}</div>
+                  <div className="text-xs text-white/60 mb-1">{exp.company}</div>
+                  <div className="text-xs text-white/60 mb-1">{exp.duration}</div>
+                  <div className="text-xs text-white/80">{exp.description}</div>
+                </div>
+              ))}
+            </div>
+            <style>{`
+              .overflow-y-auto::-webkit-scrollbar { display: none; }
+            `}</style>
           </div>
         )}
         {/* Education */}
