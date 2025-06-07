@@ -61,7 +61,7 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
         </div>
       )}
       {/* Candidate Info */}
-      <div className="pt-28 pb-6 px-6 flex flex-col items-center">
+      <div className="pt-28 pb-6 px-6 flex flex-col items-center h-full">
         <h2 className="text-2xl font-bold text-white mb-2">{candidate.name}</h2>
         <h3 className="text-xl text-white/80 mb-4">{candidate.title}</h3>
         {candidate.location && (
@@ -81,18 +81,18 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
             ))}
           </div>
         )}
-        {/* Experience */}
-        {candidate.resume?.experience && candidate.resume.experience.length > 0 && (
-          <div className="w-full">
-            <h4 className="text-white/80 font-medium mb-2">Experience</h4>
-            <div
-              className="rounded-lg overflow-y-auto pr-1"
-              style={{
-                maxHeight: '140px',
-                scrollbarWidth: 'none', // Firefox
-                msOverflowStyle: 'none', // IE/Edge
-              }}
-            >
+        {/* Scrollable section: Everything below Experience */}
+        <div
+          className="w-full flex-1 overflow-y-auto mt-2"
+          style={{
+            scrollbarWidth: 'none', // Firefox
+            msOverflowStyle: 'none', // IE/Edge
+          }}
+        >
+          {/* Experience */}
+          {candidate.resume?.experience && candidate.resume.experience.length > 0 && (
+            <div className="w-full">
+              <h4 className="text-white/80 font-medium mb-2">Experience</h4>
               {candidate.resume.experience.map((exp, idx) => (
                 <div key={idx} className="bg-white/5 rounded-lg p-3 mb-2">
                   <div className="font-semibold text-white">{exp.title}</div>
@@ -102,25 +102,25 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
                 </div>
               ))}
             </div>
-            <style>{`
-              .overflow-y-auto::-webkit-scrollbar { display: none; }
-            `}</style>
-          </div>
-        )}
-        {/* Education */}
-        {candidate.resume?.education && (
-          <div className="w-full mt-4">
-            <h4 className="text-white/80 font-medium mb-2">Education</h4>
-            <div className="bg-white/5 rounded-lg p-3">
-              <div className="font-semibold text-white">{candidate.resume.education.degree}</div>
-              <div className="text-xs text-white/60 mb-1">{candidate.resume.education.school}</div>
-              <div className="text-xs text-white/60 mb-1">{candidate.resume.education.duration}</div>
-              {candidate.resume.education.honors && (
-                <div className="text-xs text-white/80">{candidate.resume.education.honors}</div>
-              )}
+          )}
+          {/* Education */}
+          {candidate.resume?.education && (
+            <div className="w-full mt-4">
+              <h4 className="text-white/80 font-medium mb-2">Education</h4>
+              <div className="bg-white/5 rounded-lg p-3">
+                <div className="font-semibold text-white">{candidate.resume.education.degree}</div>
+                <div className="text-xs text-white/60 mb-1">{candidate.resume.education.school}</div>
+                <div className="text-xs text-white/60 mb-1">{candidate.resume.education.duration}</div>
+                {candidate.resume.education.honors && (
+                  <div className="text-xs text-white/80">{candidate.resume.education.honors}</div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+        <style>{`
+          .overflow-y-auto::-webkit-scrollbar { display: none; }
+        `}</style>
       </div>
     </div>
   );
