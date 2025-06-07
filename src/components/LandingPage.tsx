@@ -26,7 +26,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
         >
           <div className="flex justify-center items-center px-12 py-6">
             <motion.div 
-              className="flex items-center gap-8 bg-black/50 backdrop-blur-xl px-8 py-3 rounded-full border border-white/20 shadow-2xl"
+              className="flex items-center gap-8 bg-black/50 backdrop-blur-xl px-8 py-3 rounded-full shadow-2xl"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
@@ -45,7 +45,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
               </Link>
               <motion.button 
                 onClick={() => setShowAuthModal(true)}
-                className="px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white font-medium border border-white/20 hover:border-white/30"
+                className="px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white font-medium"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
