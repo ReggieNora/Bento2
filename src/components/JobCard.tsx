@@ -84,11 +84,30 @@ const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandida
       id={`job-card-root-${job.title || job.name}`}
       className={`
         relative w-[350px] rounded-2xl overflow-hidden
-        bg-white/10 backdrop-blur-md border border-white/20
         shadow-xl shadow-black/20
         transition-all duration-300 ease-in-out
         ${isExpanded ? 'h-[600px]' : 'h-[480px]'}
       `}
+      style={{
+        // Randomize match value for demo (will persist per render)
+        ...(function() {
+          // Use a stable random value per card (based on title/name)
+          let seed = 0;
+          const str = job.title || job.name || '';
+          for (let i = 0; i <str.length; i++) seed += str.charCodeAt(i);
+          // Force Microsoft card to be a bad match
+          let matchValue = job.company === 'Microsoft' ? 55 : 50 + Math.floor(50 * Math.abs(Math.sin(seed)));
+          let matchColor = 'rgba(34,197,94,0.25)'; // green-500/25
+          if (matchValue < 60) matchColor = 'rgba(239,68,68,0.25)'; // red-500/25
+          else if (matchValue < 80) matchColor = 'rgba(250,204,21,0.25)'; // yellow-400/25
+          return {
+            background: `${matchColor}`,
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(255,255,255,0.2)',
+          };
+        })()
+      }}
     >
       {/* Company Logo */}
       <div className="absolute top-6 left-6 w-16 h-16 rounded-xl bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center overflow-hidden">
@@ -104,7 +123,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandida
         {/* Dummy match value for now: 82% Good Match */}
         {/* In real use, replace matchValue and matchLabel with actual logic */}
         {(() => {
-          const matchValue = 82; // Example: 82% match
+          // Use the same random match value as the card background
+          let seed = 0;
+          const str = job.title || job.name || '';
+          for (let i = 0; i < str.length; i++) seed += str.charCodeAt(i);
+          // Force Microsoft card to be a bad match
+          let matchValue = job.company === 'Microsoft' ? 55 : 50 + Math.floor(50 * Math.abs(Math.sin(seed)));
           let matchColor = 'bg-green-500';
           let matchLabel = 'Good Match';
           if (matchValue < 60) {
