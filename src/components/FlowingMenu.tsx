@@ -14,10 +14,18 @@ interface FlowingMenuProps {
 
 const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) => {
   const [selectedIdx, setSelectedIdx] = React.useState(0);
+  const [arrowNavActive, setArrowNavActive] = React.useState(false);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!items.length) return;
+      if (!arrowNavActive) {
+        if (["ArrowDown","ArrowUp","ArrowLeft","ArrowRight"].includes(e.key)) {
+          setArrowNavActive(true);
+          e.preventDefault();
+        }
+        return;
+      }
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         setSelectedIdx(idx => (idx + 1) % items.length);
         e.preventDefault();
@@ -31,7 +39,7 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) =>
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [items, selectedIdx, onItemClick]);
+  }, [items, selectedIdx, onItemClick, arrowNavActive]);
 
   return (
     <div style={{position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden'}}>
@@ -55,11 +63,21 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) =>
           ))}
         </nav>
       </div>
+      {/* Footer */}
+      <footer style={{position: 'fixed', bottom: 0, left: 0, width: '100vw', zIndex: 20}}>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2.5rem', width: '100%', color: 'rgba(255,255,255,0.72)', fontSize: '1.1rem', fontFamily: 'Clash Display, sans-serif', background: 'rgba(20,16,36,0.12)', backdropFilter: 'blur(6px)'}}>
+          <span>Hirly, Inc. 2025</span>
+          <a href="mailto:support@hirly.com" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'inherit', textDecoration: 'none', fontWeight: 500}}>
+            <LifeBuoy size={22} style={{marginRight: 4}} />
+            Support
+          </a>
+        </div>
+      </footer>
     </div>
   );
 };
 
-import { User, Briefcase, MessageSquare, Settings, BarChart2, Brain } from 'lucide-react';
+import { User, Briefcase, MessageSquare, Settings, BarChart2, Brain, LifeBuoy } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   'Candidates': <Briefcase size={36} />,
