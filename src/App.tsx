@@ -11,7 +11,7 @@ import LandingPage from './components/LandingPage';
 import JobCard from './components/JobCard';
 import AboutPage from './components/AboutPage';
 import BentoMainMenu from './components/BentoMainMenu';
-import LetterGlitch from './components/LetterGlitch';
+import GradientBackground from './components/GradientBackground';
 
 function App() {
   const [selectedRole, setSelectedRole] = useState<'candidate' | 'employer' | null>(null);
@@ -489,13 +489,7 @@ function App() {
   // Render the new bento grid main menu after authentication
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
-      <LetterGlitch
-        glitchColors={["#7c3aed", "#ec4899", "#2e1065"]}
-        glitchSpeed={75}
-        centerVignette={false}
-        outerVignette={true}
-        smooth={true}
-      />
+      <GradientBackground animated={true} />
       <BentoMainMenu 
         userType={userType} 
         candidateProfiles={candidateProfiles}
