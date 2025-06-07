@@ -45,7 +45,7 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
       {onBack && (
         <button
           onClick={onBack}
-          className="absolute top-4 left-4 px-4 py-2 rounded-full text-white bg-black/30 border border-white/30 shadow"
+          className="absolute top-4 right-4 px-4 py-2 rounded-full text-white bg-black/30 border border-white/30 shadow z-10"
         >
           Back
         </button>
@@ -87,6 +87,10 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
           style={{
             scrollbarWidth: 'none', // Firefox
             msOverflowStyle: 'none', // IE/Edge
+            willChange: 'transform',
+            overscrollBehavior: 'contain',
+            scrollBehavior: 'smooth',
+            WebkitOverflowScrolling: 'touch',
           }}
         >
           {/* Experience */}
