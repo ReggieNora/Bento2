@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SettingsCard from './SettingsCard';
-import { ArrowLeft, X } from 'lucide-react';
+import backArrow from '../assets/back-arrow.svg';
 
 interface SettingsOverlayProps {
   onCollapse: () => void;
@@ -17,13 +17,13 @@ export default function SettingsOverlay({ onCollapse }: SettingsOverlayProps) {
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="absolute top-8 right-8">
+        <div className="absolute top-8 right-8 z-10">
           <button
             onClick={onCollapse}
-            className="px-4 py-2 rounded-xl bg-white/20 text-white font-semibold shadow hover:bg-white/30 transition flex items-center gap-2"
+            className="p-2 rounded-full bg-black/30 border border-white/30 shadow flex items-center justify-center hover:bg-white/20 transition"
+            aria-label="Back"
           >
-            <X className="w-5 h-5" />
-            Close
+            <img src={backArrow} alt="Back" className="w-5 h-5" />
           </button>
         </div>
         

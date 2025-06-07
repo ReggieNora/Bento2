@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CoachCard from './CoachCard';
-import { ArrowLeft, X } from 'lucide-react';
+import backArrow from '../assets/back-arrow.svg';
 import Orb from './Orb';
 
 interface CoachOverlayProps {
@@ -29,35 +29,36 @@ export default function CoachOverlay({ onCollapse }: CoachOverlayProps) {
         </div>
 
         {/* Close Button */}
-        <div className="absolute top-8 right-8 z-20">
+        <div className="absolute top-2 right-2 md:top-8 md:right-8 z-20">
           <button
             onClick={onCollapse}
-            className="px-4 py-2 rounded-xl bg-white/20 text-white font-semibold shadow hover:bg-white/30 transition flex items-center gap-2 backdrop-blur-md border border-white/20"
+            className="p-2 rounded-full bg-black/30 border border-white/30 shadow flex items-center justify-center hover:bg-white/20 transition"
+            aria-label="Back"
           >
-            <X className="w-5 h-5" />
-            Close
+            <img src={backArrow} alt="Back" className="w-5 h-5" />
           </button>
         </div>
         
         {/* Scrollable Container */}
-        <div className="w-full h-full flex items-center justify-center relative z-10 p-8">
+        <div className="w-full h-full flex items-center justify-center relative z-10 p-4 md:p-8">
           <div 
-            className="w-full max-w-4xl h-full overflow-y-auto flex items-center justify-center"
+            className="w-full max-w-full h-auto max-h-full flex items-center justify-center overflow-y-auto"
             style={{
               scrollbarWidth: 'none', /* Firefox */
               msOverflowStyle: 'none', /* Internet Explorer 10+ */
             }}
           >
             {/* Hide scrollbar for WebKit browsers */}
-            <style jsx>{`
+            <style>{`
               div::-webkit-scrollbar {
                 display: none;
               }
             `}</style>
-            
             {/* Coach Card Content */}
-            <div className="py-8">
-              <CoachCard forceExpanded={true} onStartSession={() => console.log('Begin AI Interview Session')} />
+            <div className="w-full max-w-[95vw] md:max-w-2xl max-h-[90vh] flex items-center justify-center">
+              <div className="w-full">
+                <CoachCard forceExpanded={true} onStartSession={() => console.log('Begin AI Interview Session')} />
+              </div>
             </div>
           </div>
         </div>
