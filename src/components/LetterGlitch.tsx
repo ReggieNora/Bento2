@@ -2,13 +2,13 @@ import { useRef, useEffect } from "react";
 
 const LetterGlitch = ({
   glitchColors = ["#7c3aed", "#ec4899", "#2e1065"],
-  glitchSpeed = 50,
+  glitchSpeed = 75, // Increased from 50 to reduce update frequency
   centerVignette = false,
   outerVignette = true,
   smooth = true,
 }: {
   glitchColors?: string[];
-  glitchSpeed?: number;
+  glitchSpeed?: number; // Now represents milliseconds between updates (higher = less frequent)
   centerVignette?: boolean;
   outerVignette?: boolean;
   smooth?: boolean;
@@ -288,7 +288,8 @@ const LetterGlitch = ({
   const updateLetters = () => {
     if (!letters.current || letters.current.length === 0) return;
 
-    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.08));
+    // Reduced update count for better performance
+    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.05)); // Reduced from 0.08 to 0.05
 
     for (let i = 0; i < updateCount; i++) {
       const index = Math.floor(Math.random() * letters.current.length);
