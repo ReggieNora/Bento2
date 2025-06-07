@@ -1,13 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Zap, Users, Heart, Target, Star, CheckCircle, Building2, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Zap, Users, User, Heart, Target, Star, CheckCircle, Building2, TrendingUp } from 'lucide-react';
 import GradientText from '../components/GradientText';
 import StarBorder from '../components/StarBorder';
 import { BentoGridItem } from '../components/ui/BentoGrid';
 import GradientBackground from '../components/GradientBackground';
 
 const AboutUsPage: React.FC = () => {
-  const features = [
+  const navigate = useNavigate();
+  // Memoize the features array to prevent unnecessary re-renders
+  const features = React.useMemo(() => [
     {
       icon: <Zap className="w-8 h-8" />,
       title: "Lightning Fast Matching",
@@ -28,45 +31,46 @@ const AboutUsPage: React.FC = () => {
       title: "Precision Targeting",
       description: "No more spray-and-pray. Every match is intentional, relevant, and meaningful."
     }
-  ];
+  ], []);
 
-  const testimonials = [
+  // Memoize testimonials and use local images for better performance
+  const testimonials = React.useMemo(() => [
     {
       quote: "Hirly completely transformed our hiring process. We went from 6 weeks to 2 weeks average time-to-hire.",
       author: "Sarah Chen",
       role: "Head of Talent, TechFlow",
-      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=600"
+      avatar: "/images/testimonials/sarah.jpg"
     },
     {
       quote: "As a developer, I loved how Hirly showed me only relevant opportunities. No more irrelevant spam.",
       author: "Marcus Rodriguez",
       role: "Senior Software Engineer",
-      avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=600"
+      avatar: "/images/testimonials/marcus.jpg"
     },
     {
       quote: "The swipe interface made candidate review actually enjoyable. Our team loves using Hirly.",
       author: "Emily Watson",
       role: "Recruiting Manager, InnovateCorp",
-      avatar: "https://images.pexels.com/photos/762020/pexels-photo-762020.jpeg?auto=compress&cs=tinysrgb&w=600"
+      avatar: "/images/testimonials/emily.jpg"
     }
-  ];
+  ], []);
 
   const caseStudies = [
     {
       company: "TechFlow",
-      logo: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600",
+      logo: "/images/case-studies/techflow.jpg",
       metric: "67% faster hiring",
       description: "Reduced time-to-hire from 6 weeks to 2 weeks"
     },
     {
       company: "InnovateCorp",
-      logo: "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=600",
+      logo: "/images/case-studies/innovatecorp.jpg",
       metric: "3x more qualified candidates",
       description: "Improved candidate quality through AI matching"
     },
     {
       company: "StartupXYZ",
-      logo: "https://images.pexels.com/photos/3184293/pexels-photo-3184293.jpeg?auto=compress&cs=tinysrgb&w=600",
+      logo: "/images/case-studies/startupxyz.jpg",
       metric: "90% candidate satisfaction",
       description: "Candidates love the transparent process"
     }
@@ -93,8 +97,8 @@ const AboutUsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
-      {/* Performance-Optimized Gradient Background */}
-      <GradientBackground animated={true} />
+      {/* Optimized Gradient Background */}
+      <GradientBackground animated={false} />
 
       {/* Navigation */}
       <nav className="relative z-50 flex justify-between items-center w-full px-12 py-6">
@@ -109,7 +113,12 @@ const AboutUsPage: React.FC = () => {
         </motion.button>
         
         <div className="flex items-center gap-8">
-          <a href="/#pricing" className="text-white/70 hover:text-white transition-colors">Pricing</a>
+          <button
+            onClick={() => navigate('/pricing')}
+            className="text-white/70 hover:text-white transition-colors px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20"
+          >
+            Pricing
+          </button>
           <StarBorder
             as="button"
             color="rgb(147, 51, 234)"
@@ -276,9 +285,8 @@ const AboutUsPage: React.FC = () => {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
           >
             <GradientText
               colors={["#6a11cb", "#2575fc", "#3a1859", "#6a11cb", "#1e215d"]}
@@ -348,11 +356,9 @@ const AboutUsPage: React.FC = () => {
                   "{testimonial.quote}"
                 </p>
                 <div className="flex items-center gap-4">
-                  <img
-                    src={testimonial.avatar}
-                    alt={testimonial.author}
-                    className="w-12 h-12 rounded-full border-2 border-white/20"
-                  />
+                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                    <User className="w-6 h-6 text-white/70" />
+                  </div>
                   <div>
                     <h4 className="text-white font-semibold">{testimonial.author}</h4>
                     <p className="text-white/60 text-sm">{testimonial.role}</p>
@@ -398,7 +404,7 @@ const AboutUsPage: React.FC = () => {
                 <h3 className="text-2xl font-bold text-white mb-2">{study.company}</h3>
                 <div className="text-3xl font-bold text-purple-400 mb-2">{study.metric}</div>
                 <p className="text-white/70">{study.description}</p>
-                <button className="mt-6 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors">
+                <button className="mt-6 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors">
                   Read Case Study
                 </button>
               </motion.div>

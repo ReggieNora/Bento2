@@ -56,7 +56,7 @@ const PricingPage: React.FC = () => {
           <img src={hirlyLogo} alt="Hirly Logo" className="w-24 h-auto drop-shadow-lg transition-transform group-hover:scale-105" style={{ borderRadius: '8px' }} />
         </Link>
         <div className="flex items-center gap-8">
-          <a href="/#about" className="hover:text-white transition">About</a>
+          <Link to="/about" className="hover:text-white transition">About</Link>
           <Link to="/pricing" className="hover:text-white transition font-bold underline underline-offset-4">Pricing</Link>
           <Link to="/" className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-2">
             <ArrowLeft className="w-5 h-5" /> Home
