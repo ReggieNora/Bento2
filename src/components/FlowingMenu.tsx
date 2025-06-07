@@ -89,26 +89,32 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   'Coach': <Brain size={36} />,
 };
 
-const MenuItem: React.FC<MenuItemProps & { onClick?: () => void; selected?: boolean }> = ({ link, text, onClick, selected }) => {
-  return (
-    <div className={"menu__item" + (selected ? " menu__item--selected" : "") }>
-      <a
-        className={"menu__item-link" + (selected ? " menu__item-link--selected" : "")}
-        href={link}
-        tabIndex={selected ? 0 : -1}
-        aria-selected={selected}
-        onClick={e => {
-          e.preventDefault();
-          onClick?.();
-        }}
+const MenuItem = React.memo(
+  ({ link, text, onClick, selected, onMouseEnter }: MenuItemProps & { onClick?: () => void; selected?: boolean; onMouseEnter?: () => void }) => {
+    return (
+      <div className={"menu__item" + (selected ? " menu__item--selected" : "")}
+        onMouseEnter={onMouseEnter}
       >
-        <span className="menu__item-icon" style={{marginRight: '1.5vw', display: 'flex', alignItems: 'center'}}>
-          {ICON_MAP[text] || <User size={36} />}
-        </span>
-        <span>{text}</span>
-      </a>
-    </div>
-  );
-};
+        <a
+          className={"menu__item-link" + (selected ? " menu__item-link--selected" : "")}
+          href={link}
+          tabIndex={selected ? 0 : -1}
+          aria-selected={selected}
+          onClick={e => {
+            e.preventDefault();
+            onClick?.();
+          }}
+        >
+          <span className="menu__item-icon" style={{marginRight: '1.5vw', display: 'flex', alignItems: 'center'}}>
+            {ICON_MAP[text] || <User size={36} />}
+          </span>
+          <span>{text}</span>
+        </a>
+      </div>
+    );
+  },
+  (prev, next) => prev.selected === next.selected && prev.link === next.link && prev.text === next.text
+);
+
 
 export default FlowingMenu;
