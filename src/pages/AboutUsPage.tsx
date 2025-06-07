@@ -4,7 +4,7 @@ import { ArrowLeft, Zap, Users, Heart, Target, Star, CheckCircle, Building2, Tre
 import GradientText from '../components/GradientText';
 import StarBorder from '../components/StarBorder';
 import { BentoGridItem } from '../components/ui/BentoGrid';
-import LetterGlitch from '../components/LetterGlitch';
+import GradientBackground from '../components/GradientBackground';
 
 const AboutUsPage: React.FC = () => {
   const features = [
@@ -93,14 +93,8 @@ const AboutUsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
-      {/* Background Effects */}
-      <LetterGlitch
-        glitchColors={["#7c3aed", "#ec4899", "#2e1065"]}
-        glitchSpeed={75}
-        centerVignette={false}
-        outerVignette={true}
-        smooth={true}
-      />
+      {/* Performance-Optimized Gradient Background */}
+      <GradientBackground animated={true} />
 
       {/* Navigation */}
       <nav className="relative z-50 flex justify-between items-center w-full px-12 py-6">
