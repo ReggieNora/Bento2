@@ -110,12 +110,12 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
     setResetKey((k) => k + 1);
   };
 
-  const renderJobCard = (job: any, idx: number) => (
-    <JobCard job={job} justCollapsed={justCollapsed} forceCollapse={forceCollapseIdx === idx} />
+  const renderJobCard = (job: any, idx: number, setIsExpandedState?: (expanded: boolean) => void) => (
+    <JobCard job={job} justCollapsed={justCollapsed} forceCollapse={forceCollapseIdx === idx} setIsExpandedState={setIsExpandedState} />
   );
 
-  const renderCandidateCard = (candidate: any, idx: number) => (
-    <JobCard job={candidate} justCollapsed={justCollapsed} isCandidate forceCollapse={forceCollapseIdx === idx} />
+  const renderCandidateCard = (candidate: any, idx: number, setIsExpandedState?: (expanded: boolean) => void) => (
+    <JobCard job={candidate} justCollapsed={justCollapsed} isCandidate forceCollapse={forceCollapseIdx === idx} setIsExpandedState={setIsExpandedState} />
   );
 
   return (
@@ -212,31 +212,37 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
             {stack.length > 0 ? (
               <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
                 <AnimatePresence>
-                  {[...stack].reverse().map((item, index) => {
-                    const layout = index === stack.length - 1
-                      ? { rotate: 0, x: 0, y: 0 }
-                      : cardLayout[index] || { rotate: 0, x: 0, y: 0 };
-                    const realIdx = stack.length - 1 - index;
-                    return (
-                      <DraggableCardBody
-                        key={(item.company || item.name) + index}
-                        className="absolute left-1/2 top-1/2"
-                        onDismiss={(direction) => handleDismiss(realIdx, direction)}
-                        onDrag={(x) => dragX.set(x)}
-                        
-                      >
-                        <div
-                          style={{
-                            width: CARD_WIDTH,
-                            height: CARD_HEIGHT,
-                            transform: `translate(-50%, -50%) translate(${layout.x}px, ${layout.y}px) rotate(${layout.rotate}deg)`
-                          }}
+                  {(() => {
+                    // Only the top card can be expanded and thus locked
+                    const [isTopCardExpanded, setIsTopCardExpanded] = React.useState(false);
+                    return [...stack].reverse().map((item, index) => {
+                      const layout = index === stack.length - 1
+                        ? { rotate: 0, x: 0, y: 0 }
+                        : cardLayout[index] || { rotate: 0, x: 0, y: 0 };
+                      const realIdx = stack.length - 1 - index;
+                      const isTop = index === 0;
+                      return (
+                        <DraggableCardBody
+                          key={(item.company || item.name) + index}
+                          className="absolute left-1/2 top-1/2"
+                          onDismiss={(direction) => handleDismiss(realIdx, direction)}
+                          onDrag={(x) => dragX.set(x)}
+                          dragDisabled={isTop ? isTopCardExpanded : false}
                         >
-                          {userType === 'employer' ? renderCandidateCard(item, realIdx) : renderJobCard(item, realIdx)}
-                        </div>
-                      </DraggableCardBody>
-                    );
-                  })}
+                          <div
+                            style={{
+                              width: CARD_WIDTH,
+                              height: CARD_HEIGHT,
+                              transform: `translate(-50%, -50%) translate(${layout.x}px, ${layout.y}px) rotate(${layout.rotate}deg)`
+                            }}
+                          >
+                            {userType === 'employer' ? renderCandidateCard(item, realIdx, isTop ? setIsTopCardExpanded : undefined) : renderJobCard(item, realIdx, isTop ? setIsTopCardExpanded : undefined)}
+                          </div>
+                        </DraggableCardBody>
+                      );
+                    });
+                  })()}
+
                 </AnimatePresence>
               </DraggableCardContainer>
             ) : (

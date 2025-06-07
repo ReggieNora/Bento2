@@ -12,6 +12,7 @@ interface DraggableCardBodyProps {
   onDismiss?: (direction: 'left' | 'right') => void;
   onDrag?: (x: number) => void;
   onTap?: () => void;
+  dragDisabled?: boolean;
 }
 
 // Emoji burst component
@@ -61,6 +62,7 @@ export function DraggableCardBody({
   onDismiss,
   onDrag,
   onTap,
+  dragDisabled = false,
 }: DraggableCardBodyProps) {
   const x = useMotionValue(0);
   const [exitDirection, setExitDirection] = useState<'left' | 'right'>('right');
@@ -85,7 +87,7 @@ export function DraggableCardBody({
   return (
     <motion.div
       className={`cursor-grab active:cursor-grabbing ${className}`}
-      drag
+      drag={!dragDisabled}
       dragElastic={0.7}
       dragConstraints={{ left: -400, right: 400, top: -200, bottom: 200 }}
       style={{ x }}
@@ -97,8 +99,8 @@ export function DraggableCardBody({
         damping: 20,
         mass: 0.8
       }}
-      onDragEnd={handleDragEnd}
-      onDrag={(_, info) => onDrag?.(info.offset.x)}
+      onDragEnd={dragDisabled ? undefined : handleDragEnd}
+      onDrag={dragDisabled ? undefined : ((_, info) => onDrag?.(info.offset.x))}
       onClick={onTap}
     >
       <motion.div

@@ -21,11 +21,36 @@ interface JobCardProps {
   justCollapsed?: boolean;
   isCandidate?: boolean;
   forceCollapse?: boolean;
+  setIsExpandedState?: (expanded: boolean) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandidate = false, forceCollapse = false }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandidate = false, forceCollapse = false, setIsExpandedState }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [cooldown, setCooldown] = useState(false);
+
+  // Notify parent of expanded state changes
+  useEffect(() => {
+    if (setIsExpandedState) setIsExpandedState(isExpanded);
+  }, [isExpanded, setIsExpandedState]);
+
+  // Collapse card if user clicks/taps outside when expanded
+  React.useEffect(() => {
+    if (!isExpanded) return;
+    function handleOutside(e: MouseEvent | TouchEvent) {
+      // Only collapse if click is outside this card
+      if (!(e.target instanceof Node)) return;
+      const card = document.getElementById(`job-card-root-${job.title || job.name}`);
+      if (card && !card.contains(e.target)) {
+        setIsExpanded(false);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside as EventListener);
+    document.addEventListener('touchstart', handleOutside as EventListener);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside as EventListener);
+      document.removeEventListener('touchstart', handleOutside as EventListener);
+    };
+  }, [isExpanded, job.title, job.name]);
 
   useEffect(() => {
     if (justCollapsed) {
@@ -56,6 +81,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandida
 
   return (
     <div 
+      id={`job-card-root-${job.title || job.name}`}
       className={`
         relative w-[350px] rounded-2xl overflow-hidden
         bg-white/10 backdrop-blur-md border border-white/20
