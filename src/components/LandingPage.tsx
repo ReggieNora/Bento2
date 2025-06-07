@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LampBackground } from './ui/LampBackground';
 import { motion, AnimatePresence } from 'framer-motion';
+import BlurText from './BlurText';
 import StarBorder from './StarBorder';
 import AuthModal from './AuthModal';
 
@@ -66,14 +67,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
             >
               Hirly
             </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1 }}
+            <BlurText
+              text="Hiring, redefined."
+              animateBy="words"
+              direction="top"
               className="text-xl text-white/50 text-center mt-8"
-            >
-              Hiring, redefined.
-            </motion.p>
+            />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
