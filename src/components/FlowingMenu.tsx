@@ -10,15 +10,19 @@ interface MenuItemProps extends FlowingMenuItem {}
 interface FlowingMenuProps {
   items?: FlowingMenuItem[];
   onItemClick?: (item: FlowingMenuItem) => void;
+  userName?: string;
+  userRole?: 'Candidate' | 'Employer';
 }
 
-const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick }) => {
+
+const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick, userName = 'John Doe', userRole = 'Candidate' }) => {
   const [selectedIdx, setSelectedIdx] = React.useState(0);
   const [arrowNavActive, setArrowNavActive] = React.useState(false);
 
   const handleItemClick = (item: FlowingMenuItem) => {
     onItemClick?.(item);
   };
+
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

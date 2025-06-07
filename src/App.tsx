@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, ChevronDown, Users, MessageSquare, BarChart2
 
 import ProfileCardGlass from './components/ProfileCardGlass';
 import MessagesCard from './components/MessagesCard';
+import HamburgerMenu from './components/HamburgerMenu';
 import SettingsCard from './components/SettingsCard';
 import ActionButtons from './components/ActionButtons';
 import Dashboard from './components/Dashboard';
@@ -591,6 +592,8 @@ function App() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
       <GradientBackground animated={true} />
+      {/* Always-visible Hamburger Menu */}
+      <HamburgerMenu userName={"John Doe"} userRole={userType === 'employer' ? 'Employer' : 'Candidate'} />
       <FlowingMenu 
         items={getFlowingMenuItems(userType)}
         onItemClick={(item: FlowingMenuItem) => {
