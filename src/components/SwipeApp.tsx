@@ -1,110 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { DraggableCardContainer, DraggableCardBody } from "./ui/draggable-card";
-import { Heart, X, MapPin, Clock, DollarSign, Users, Building2, Star, Pointer, RotateCcw } from "lucide-react";
+import { Heart, X, MapPin, Clock, DollarSign, Users, Building2, Star, Pointer, RotateCcw, User, Briefcase } from "lucide-react";
 
-const jobs = [
-  {
-    company: "Google",
-    logo: "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
-    title: "Senior Frontend Developer",
-    location: "Mountain View, CA (Remote)",
-    description: "Build the next generation of web apps with a world-class team. React, TypeScript, and more.",
-    salary: "$180,000 - $250,000",
-    experience: "5+ years",
-    teamSize: "15-20 people",
-    matchScore: 92,
-    benefits: [
-      "Comprehensive health coverage",
-      "401(k) matching",
-      "Flexible work hours",
-      "Remote work options",
-      "Professional development budget"
-    ],
-    requirements: [
-      "Expert in React and TypeScript",
-      "Strong understanding of web performance",
-      "Experience with large-scale applications",
-      "Excellent communication skills"
-    ],
-    techStack: ["React", "TypeScript", "Node.js", "GraphQL", "AWS"]
-  },
-  {
-    company: "Microsoft",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg",
-    title: "Software Engineer",
-    location: "Seattle, WA (Hybrid)",
-    description: "Join our cloud and AI team to deliver enterprise solutions at scale.",
-    salary: "$160,000 - $220,000",
-    experience: "4+ years",
-    teamSize: "10-15 people",
-    matchScore: 68,
-    benefits: [
-      "Health, dental, and vision insurance",
-      "Stock options",
-      "Gym membership",
-      "Learning resources",
-      "Parental leave"
-    ],
-    requirements: [
-      "Strong background in cloud technologies",
-      "Experience with Azure or AWS",
-      "Proficiency in C# or Java",
-      "Understanding of distributed systems"
-    ],
-    techStack: ["C#", "Azure", "Kubernetes", "Docker", "SQL Server"]
-  },
-  {
-    company: "Meta",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
-    title: "Full Stack Engineer",
-    location: "San Francisco, CA",
-    description: "Work on social platforms that connect billions. Node.js, React, GraphQL.",
-    salary: "$190,000 - $260,000",
-    experience: "5+ years",
-    teamSize: "20-25 people",
-    matchScore: 35,
-    benefits: [
-      "Competitive salary and equity",
-      "Health and wellness programs",
-      "Flexible PTO",
-      "Remote work options",
-      "Learning and development"
-    ],
-    requirements: [
-      "Full-stack development experience",
-      "Strong system design skills",
-      "Experience with large-scale applications",
-      "Excellent problem-solving abilities"
-    ],
-    techStack: ["React", "Node.js", "GraphQL", "Python", "MySQL"]
-  },
-  {
-    company: "Netflix",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
-    title: "UI Engineer",
-    location: "Los Gatos, CA (Remote)",
-    description: "Design and build beautiful, performant interfaces for millions of viewers.",
-    salary: "$170,000 - $240,000",
-    experience: "4+ years",
-    teamSize: "12-18 people",
-    matchScore: 78,
-    benefits: [
-      "Unlimited vacation",
-      "Health insurance",
-      "Stock options",
-      "Remote work flexibility",
-      "Professional development"
-    ],
-    requirements: [
-      "Strong UI/UX skills",
-      "Experience with modern frontend frameworks",
-      "Understanding of performance optimization",
-      "Excellent design sense"
-    ],
-    techStack: ["React", "TypeScript", "CSS-in-JS", "Jest", "Webpack"]
-  },
-];
+interface SwipeAppProps {
+  onCollapse: () => void;
+  userType: 'candidate' | 'employer' | null;
+  candidateProfiles?: any[];
+  jobListings?: any[];
+}
 
 const CARD_WIDTH = 340;
 const CARD_HEIGHT = 400;
@@ -145,16 +49,19 @@ function getMatchShadowColor(score: number) {
   return '239,68,68'; // red-500
 }
 
-export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
-  const [stack, setStack] = useState(jobs);
-  const [cardLayout, setCardLayout] = useState(() => getRandomLayout(jobs.length));
+export default function SwipeApp({ onCollapse, userType, candidateProfiles = [], jobListings = [] }: SwipeAppProps) {
+  // Use the appropriate data based on user type
+  const data = userType === 'employer' ? candidateProfiles : jobListings;
+  
+  const [stack, setStack] = useState(data);
+  const [cardLayout, setCardLayout] = useState(() => getRandomLayout(data.length));
   const [expanded, setExpanded] = useState(true);
   const [resetKey, setResetKey] = useState(0);
-  const [interested, setInterested] = useState<typeof jobs>([]);
-  const [rejected, setRejected] = useState<typeof jobs>([]);
+  const [interested, setInterested] = useState<typeof data>([]);
+  const [rejected, setRejected] = useState<typeof data>([]);
   const [showTutorial, setShowTutorial] = useState(true);
-  const [selectedJob, setSelectedJob] = useState<typeof jobs[0] | null>(null);
-  const [lastDismissed, setLastDismissed] = useState<{ job: typeof jobs[0], direction: 'left' | 'right' } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<typeof data[0] | null>(null);
+  const [lastDismissed, setLastDismissed] = useState<{ item: typeof data[0], direction: 'left' | 'right' } | null>(null);
   
   // Create motion values for drag position
   const dragX = useMotionValue(0);
@@ -165,11 +72,20 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
   const leftIconOpacity = useTransform(dragX, [-150, 0], [1, 0.3]);
   const rightIconOpacity = useTransform(dragX, [0, 150], [0.3, 1]);
 
+  // Update stack when data changes
+  useEffect(() => {
+    setStack(data);
+    setCardLayout(getRandomLayout(data.length));
+    setInterested([]);
+    setRejected([]);
+    setResetKey(k => k + 1);
+  }, [data, userType]);
+
   const handleDismiss = (idx: number, direction: 'left' | 'right') => {
-    const job = stack[idx];
-    setLastDismissed({ job, direction });
-    if (direction === 'right') setInterested((prev) => [...prev, job]);
-    if (direction === 'left') setRejected((prev) => [...prev, job]);
+    const item = stack[idx];
+    setLastDismissed({ item, direction });
+    if (direction === 'right') setInterested((prev) => [...prev, item]);
+    if (direction === 'left') setRejected((prev) => [...prev, item]);
     setStack((prev) => prev.filter((_, i) => i !== idx));
     setCardLayout((prev) => prev.filter((_, i) => i !== idx));
     // Reset drag position
@@ -181,13 +97,13 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
     
     // Remove from the appropriate list
     if (lastDismissed.direction === 'right') {
-      setInterested(prev => prev.filter(job => job !== lastDismissed.job));
+      setInterested(prev => prev.filter(item => item !== lastDismissed.item));
     } else {
-      setRejected(prev => prev.filter(job => job !== lastDismissed.job));
+      setRejected(prev => prev.filter(item => item !== lastDismissed.item));
     }
     
     // Add back to the stack
-    setStack(prev => [lastDismissed.job, ...prev]);
+    setStack(prev => [lastDismissed.item, ...prev]);
     setCardLayout(prev => [{ rotate: 0, x: 0, y: 0 }, ...prev]);
     setLastDismissed(null);
   };
@@ -203,11 +119,353 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
   };
 
   const handleReset = () => {
-    setStack(jobs);
-    setCardLayout(getRandomLayout(jobs.length));
+    setStack(data);
+    setCardLayout(getRandomLayout(data.length));
     setInterested([]);
     setRejected([]);
     setResetKey((k) => k + 1);
+  };
+
+  const renderJobCard = (job: any) => (
+    <div
+      style={{
+        width: CARD_WIDTH,
+        height: CARD_HEIGHT,
+      }}
+      className="bg-white/90 border border-gray-200 rounded-lg shadow-2xl flex flex-col items-center justify-between overflow-hidden relative"
+    >
+      {/* Match Score Indicator */}
+      <motion.div
+        className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full text-xs font-bold text-white shadow border-2 border-white ${getMatchColor(job.matchScore || 75)}`}
+        title={`Match Score: ${job.matchScore || 75}%`}
+        initial={{ scale: 0 }}
+        animate={{
+          scale: [0, 1.2, 1],
+          boxShadow: [
+            `0 0 0 0 rgba(${getMatchShadowColor(job.matchScore || 75)},0.5)`,
+            `0 0 12px 6px rgba(${getMatchShadowColor(job.matchScore || 75)},0.3)`,
+            `0 0 0 0 rgba(${getMatchShadowColor(job.matchScore || 75)},0.0)`
+          ]
+        }}
+        transition={{ duration: 0.7, times: [0, 0.5, 1] }}
+      >
+        {job.matchScore || 75}%
+      </motion.div>
+      <div className="flex flex-col items-center justify-center w-full h-full p-6">
+        <img src={job.logo} alt={job.company} className="h-14 mb-4" />
+        <h3 className="text-xl font-bold mb-2 text-gray-900">{job.title}</h3>
+        <div className="text-gray-700 font-semibold mb-1">{job.company}</div>
+        <div className="text-gray-500 text-sm mb-3">{job.location}</div>
+        <p className="text-gray-700 text-center text-sm mb-4">{job.description}</p>
+        <div className="flex items-center gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-1">
+            <DollarSign className="w-4 h-4" />
+            <span>{job.salary}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Clock className="w-4 h-4" />
+            <span>{job.experience || job.type}</span>
+          </div>
+        </div>
+        <div className="mt-4 text-sm text-gray-500">
+          Tap for more details
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCandidateCard = (candidate: any) => (
+    <div
+      style={{
+        width: CARD_WIDTH,
+        height: CARD_HEIGHT,
+      }}
+      className="bg-white/90 border border-gray-200 rounded-lg shadow-2xl flex flex-col items-center justify-between overflow-hidden relative"
+    >
+      {/* Match Score Indicator */}
+      <motion.div
+        className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full text-xs font-bold text-white shadow border-2 border-white ${getMatchColor(candidate.matchScore || 85)}`}
+        title={`Match Score: ${candidate.matchScore || 85}%`}
+        initial={{ scale: 0 }}
+        animate={{
+          scale: [0, 1.2, 1],
+          boxShadow: [
+            `0 0 0 0 rgba(${getMatchShadowColor(candidate.matchScore || 85)},0.5)`,
+            `0 0 12px 6px rgba(${getMatchShadowColor(candidate.matchScore || 85)},0.3)`,
+            `0 0 0 0 rgba(${getMatchShadowColor(candidate.matchScore || 85)},0.0)`
+          ]
+        }}
+        transition={{ duration: 0.7, times: [0, 0.5, 1] }}
+      >
+        {candidate.matchScore || 85}%
+      </motion.div>
+      <div className="flex flex-col items-center justify-center w-full h-full p-6">
+        <img 
+          src={candidate.avatarSrc} 
+          alt={candidate.name} 
+          className="w-20 h-20 rounded-full border-2 border-gray-300 mb-4 object-cover"
+        />
+        <h3 className="text-xl font-bold mb-2 text-gray-900">{candidate.name}</h3>
+        <div className="text-gray-700 font-semibold mb-1">{candidate.title}</div>
+        <div className="text-gray-500 text-sm mb-3">{candidate.location}</div>
+        <p className="text-gray-700 text-center text-sm mb-4">{candidate.description}</p>
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
+          {candidate.skills.slice(0, 3).map((skill: string, i: number) => (
+            <span
+              key={i}
+              className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+        <div className="flex items-center gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-1">
+            <DollarSign className="w-4 h-4" />
+            <span>{candidate.salary}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Clock className="w-4 h-4" />
+            <span>{candidate.experience}</span>
+          </div>
+        </div>
+        <div className="mt-4 text-sm text-gray-500">
+          Tap for full resume
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderDetailModal = () => {
+    if (!selectedItem) return null;
+
+    if (userType === 'employer') {
+      // Candidate detail modal
+      const candidate = selectedItem;
+      return (
+        <motion.div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setSelectedItem(null)}
+        >
+          <motion.div
+            className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto relative"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Match Score */}
+            <motion.div
+              className={`absolute right-8 top-8 flex items-center gap-2`}
+              initial={{ scale: 0 }}
+              animate={{
+                scale: [0, 1.2, 1],
+                boxShadow: [
+                  `0 0 0 0 rgba(${getMatchShadowColor(candidate.matchScore || 85)},0.5)`,
+                  `0 0 16px 8px rgba(${getMatchShadowColor(candidate.matchScore || 85)},0.3)`,
+                  `0 0 0 0 rgba(${getMatchShadowColor(candidate.matchScore || 85)},0.0)`
+                ]
+              }}
+              transition={{ duration: 0.8, times: [0, 0.5, 1] }}
+            >
+              <motion.div
+                className={`w-12 h-12 flex items-center justify-center rounded-full text-white text-lg font-bold shadow-lg border-4 border-white ${getMatchColor(candidate.matchScore || 85)}`}
+              >
+                {candidate.matchScore || 85}%
+              </motion.div>
+            </motion.div>
+
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <img 
+                  src={candidate.avatarSrc} 
+                  alt={candidate.name} 
+                  className="w-16 h-16 rounded-full border-2 border-gray-300 object-cover"
+                />
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">{candidate.name}</h2>
+                  <p className="text-gray-600">{candidate.title}</p>
+                  <p className="text-gray-500 text-sm">{candidate.location}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Skills */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-2">Skills</h3>
+              <div className="flex flex-wrap gap-2">
+                {candidate.skills.map((skill: string, i: number) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Experience */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-2">Experience</h3>
+              {candidate.resume?.experience?.map((exp: any, i: number) => (
+                <div key={i} className="mb-4 p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-semibold">{exp.title}</h4>
+                  <p className="text-gray-600 text-sm">{exp.company} • {exp.duration}</p>
+                  <p className="text-gray-700 text-sm mt-2">{exp.description}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Education */}
+            {candidate.resume?.education && (
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">Education</h3>
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <h4 className="font-semibold">{candidate.resume.education.degree}</h4>
+                  <p className="text-gray-600 text-sm">{candidate.resume.education.school} • {candidate.resume.education.duration}</p>
+                  <p className="text-gray-700 text-sm mt-2">{candidate.resume.education.honors}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-8 text-center text-sm text-gray-500">
+              Tap anywhere outside to close
+            </div>
+          </motion.div>
+        </motion.div>
+      );
+    } else {
+      // Job detail modal (existing code)
+      const job = selectedItem;
+      return (
+        <motion.div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setSelectedItem(null)}
+        >
+          <motion.div
+            className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto relative"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Match Score Emphasis */}
+            <motion.div
+              className={`absolute right-8 top-8 flex items-center gap-2`}
+              initial={{ scale: 0 }}
+              animate={{
+                scale: [0, 1.2, 1],
+                boxShadow: [
+                  `0 0 0 0 rgba(${getMatchShadowColor(job.matchScore || 75)},0.5)`,
+                  `0 0 16px 8px rgba(${getMatchShadowColor(job.matchScore || 75)},0.3)`,
+                  `0 0 0 0 rgba(${getMatchShadowColor(job.matchScore || 75)},0.0)`
+                ]
+              }}
+              transition={{ duration: 0.8, times: [0, 0.5, 1] }}
+            >
+              <motion.div
+                className={`w-12 h-12 flex items-center justify-center rounded-full text-white text-lg font-bold shadow-lg border-4 border-white ${getMatchColor(job.matchScore || 75)}`}
+              >
+                {job.matchScore || 75}%
+              </motion.div>
+            </motion.div>
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <img src={job.logo} alt={job.company} className="h-12" />
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">{job.title}</h2>
+                  <p className="text-gray-600">{job.company}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Match Message */}
+            <div className="mb-6 text-center">
+              <span className="text-lg font-semibold text-gray-800 flex items-center justify-center gap-2">
+                {getMatchMessage(job.matchScore || 75).icon}
+                {getMatchMessage(job.matchScore || 75).msg}
+              </span>
+              {(job.matchScore || 75) < 40 && (
+                <ul className="mt-2 text-sm text-red-600 list-disc list-inside">
+                  {mockMissingSkills.map((skill, i) => (
+                    <li key={i}>{skill}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="flex items-center gap-2 text-gray-700">
+                <MapPin className="w-5 h-5" />
+                <span>{job.location}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-700">
+                <DollarSign className="w-5 h-5" />
+                <span>{job.salary}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-700">
+                <Clock className="w-5 h-5" />
+                <span>{job.experience || job.type}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-700">
+                <Users className="w-5 h-5" />
+                <span>{job.teamSize || "Team Size: 10-15"}</span>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Description</h3>
+                <p className="text-gray-700">{job.description}</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Requirements</h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  {job.requirements?.map((req: string, i: number) => (
+                    <li key={i}>{req}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Tech Stack</h3>
+                <div className="flex flex-wrap gap-2">
+                  {(job.techStack || ["React", "TypeScript", "Node.js"]).map((tech: string, i: number) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Benefits</h3>
+                <ul className="list-disc list-inside space-y-1 text-gray-700">
+                  {job.benefits?.map((benefit: string, i: number) => (
+                    <li key={i}>{benefit}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-8 text-center text-sm text-gray-500">
+              Tap anywhere outside to close
+            </div>
+          </motion.div>
+        </motion.div>
+      );
+    }
   };
 
   return (
@@ -235,7 +493,9 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <h3 className="text-3xl font-bold mb-6">How to Use Swipe</h3>
+                  <h3 className="text-3xl font-bold mb-6">
+                    {userType === 'employer' ? 'How to Review Candidates' : 'How to Use Swipe'}
+                  </h3>
                   
                   <div className="space-y-8">
                     {/* Swipe Actions */}
@@ -246,7 +506,7 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                         transition={{ repeat: Infinity, duration: 2 }}
                       >
                         <X className="w-12 h-12 text-red-500 mb-2" />
-                        <span>Skip</span>
+                        <span>{userType === 'employer' ? 'Pass' : 'Skip'}</span>
                       </motion.div>
                       <motion.div
                         className="flex flex-col items-center"
@@ -254,7 +514,7 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                         transition={{ repeat: Infinity, duration: 2 }}
                       >
                         <Heart className="w-12 h-12 text-green-500 mb-2" />
-                        <span>Like</span>
+                        <span>{userType === 'employer' ? 'Interested' : 'Like'}</span>
                       </motion.div>
                     </div>
 
@@ -290,7 +550,12 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                       >
                         <Pointer className="w-8 h-8 text-white" />
                       </motion.div>
-                      <span>Tap any card to see full details</span>
+                      <span>
+                        {userType === 'employer' 
+                          ? 'Tap any card to see full resume' 
+                          : 'Tap any card to see full details'
+                        }
+                      </span>
                     </div>
                   </div>
 
@@ -305,142 +570,9 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
             )}
           </AnimatePresence>
 
-          {/* Job Details Modal */}
+          {/* Detail Modal */}
           <AnimatePresence>
-            {selectedJob && (
-              <motion.div
-                className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedJob(null)}
-              >
-                <motion.div
-                  className="bg-white/90 backdrop-blur-lg rounded-2xl p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto relative"
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.9, opacity: 0 }}
-                  onClick={e => e.stopPropagation()}
-                >
-                  {/* Match Score Emphasis */}
-                  <motion.div
-                    className={`absolute right-8 top-8 flex items-center gap-2`}
-                    initial={{ scale: 0 }}
-                    animate={{
-                      scale: [0, 1.2, 1],
-                      boxShadow: [
-                        `0 0 0 0 rgba(${getMatchShadowColor(selectedJob.matchScore)},0.5)`,
-                        `0 0 16px 8px rgba(${getMatchShadowColor(selectedJob.matchScore)},0.3)`,
-                        `0 0 0 0 rgba(${getMatchShadowColor(selectedJob.matchScore)},0.0)`
-                      ]
-                    }}
-                    transition={{ duration: 0.8, times: [0, 0.5, 1] }}
-                  >
-                    <motion.div
-                      className={`w-12 h-12 flex items-center justify-center rounded-full text-white text-lg font-bold shadow-lg border-4 border-white ${getMatchColor(selectedJob.matchScore)}`}
-                      initial={{ scale: 0 }}
-                      animate={{
-                        scale: [0, 1.2, 1],
-                        boxShadow: [
-                          `0 0 0 0 rgba(${getMatchShadowColor(selectedJob.matchScore)},0.5)`,
-                          `0 0 16px 8px rgba(${getMatchShadowColor(selectedJob.matchScore)},0.3)`,
-                          `0 0 0 0 rgba(${getMatchShadowColor(selectedJob.matchScore)},0.0)`
-                        ]
-                      }}
-                      transition={{ duration: 0.8, times: [0, 0.5, 1] }}
-                    >
-                      {selectedJob.matchScore}%
-                    </motion.div>
-                  </motion.div>
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center gap-4">
-                      <img src={selectedJob.logo} alt={selectedJob.company} className="h-12" />
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-900">{selectedJob.title}</h2>
-                        <p className="text-gray-600">{selectedJob.company}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Match Message */}
-                  <div className="mb-6 text-center">
-                    <span className="text-lg font-semibold text-gray-800 flex items-center justify-center gap-2">
-                      {getMatchMessage(selectedJob.matchScore).icon}
-                      {getMatchMessage(selectedJob.matchScore).msg}
-                    </span>
-                    {selectedJob.matchScore < 40 && (
-                      <ul className="mt-2 text-sm text-red-600 list-disc list-inside">
-                        {mockMissingSkills.map((skill, i) => (
-                          <li key={i}>{skill}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <MapPin className="w-5 h-5" />
-                      <span>{selectedJob.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <DollarSign className="w-5 h-5" />
-                      <span>{selectedJob.salary}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <Clock className="w-5 h-5" />
-                      <span>{selectedJob.experience}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <Users className="w-5 h-5" />
-                      <span>{selectedJob.teamSize}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Description</h3>
-                      <p className="text-gray-700">{selectedJob.description}</p>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Requirements</h3>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700">
-                        {selectedJob.requirements.map((req, i) => (
-                          <li key={i}>{req}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Tech Stack</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedJob.techStack.map((tech, i) => (
-                          <span
-                            key={i}
-                            className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Benefits</h3>
-                      <ul className="list-disc list-inside space-y-1 text-gray-700">
-                        {selectedJob.benefits.map((benefit, i) => (
-                          <li key={i}>{benefit}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 text-center text-sm text-gray-500">
-                    Tap anywhere outside to close
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
+            {renderDetailModal()}
           </AnimatePresence>
 
           <div className="absolute top-8 right-8 flex gap-2">
@@ -492,7 +624,7 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                 className="text-sm font-medium text-white"
                 style={{ opacity: leftIconOpacity }}
               >
-                Not Interested
+                {userType === 'employer' ? 'Pass' : 'Not Interested'}
               </motion.span>
             </motion.div>
 
@@ -515,25 +647,25 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                 className="text-sm font-medium text-white"
                 style={{ opacity: rightIconOpacity }}
               >
-                Interested
+                {userType === 'employer' ? 'Interested' : 'Interested'}
               </motion.span>
             </motion.div>
 
             {stack.length > 0 ? (
               <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
                 <AnimatePresence>
-                  {[...stack].reverse().map((job, index) => {
+                  {[...stack].reverse().map((item, index) => {
                     const layout = index === stack.length - 1
                       ? { rotate: 0, x: 0, y: 0 }
                       : cardLayout[index] || { rotate: 0, x: 0, y: 0 };
                     const realIdx = stack.length - 1 - index;
                     return (
                       <DraggableCardBody
-                        key={job.company + index}
+                        key={(item.company || item.name) + index}
                         className="absolute left-1/2 top-1/2"
                         onDismiss={(direction) => handleDismiss(realIdx, direction)}
                         onDrag={(x) => dragX.set(x)}
-                        onTap={() => setSelectedJob(job)}
+                        onTap={() => setSelectedItem(item)}
                       >
                         <div
                           style={{
@@ -541,45 +673,8 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                             height: CARD_HEIGHT,
                             transform: `translate(-50%, -50%) translate(${layout.x}px, ${layout.y}px) rotate(${layout.rotate}deg)`
                           }}
-                          className="bg-white/90 border border-gray-200 rounded-lg shadow-2xl flex flex-col items-center justify-between overflow-hidden relative"
                         >
-                          {/* Match Score Indicator */}
-                          <motion.div
-                            className={`absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full text-xs font-bold text-white shadow border-2 border-white ${getMatchColor(job.matchScore)}`}
-                            title={`Match Score: ${job.matchScore}%`}
-                            initial={{ scale: 0 }}
-                            animate={{
-                              scale: [0, 1.2, 1],
-                              boxShadow: [
-                                `0 0 0 0 rgba(${getMatchShadowColor(job.matchScore)},0.5)`,
-                                `0 0 12px 6px rgba(${getMatchShadowColor(job.matchScore)},0.3)`,
-                                `0 0 0 0 rgba(${getMatchShadowColor(job.matchScore)},0.0)`
-                              ]
-                            }}
-                            transition={{ duration: 0.7, times: [0, 0.5, 1] }}
-                          >
-                            {job.matchScore}%
-                          </motion.div>
-                          <div className="flex flex-col items-center justify-center w-full h-full p-6">
-                            <img src={job.logo} alt={job.company} className="h-14 mb-4" />
-                            <h3 className="text-xl font-bold mb-2 text-gray-900">{job.title}</h3>
-                            <div className="text-gray-700 font-semibold mb-1">{job.company}</div>
-                            <div className="text-gray-500 text-sm mb-3">{job.location}</div>
-                            <p className="text-gray-700 text-center text-sm mb-4">{job.description}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
-                              <div className="flex items-center gap-1">
-                                <DollarSign className="w-4 h-4" />
-                                <span>{job.salary}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Clock className="w-4 h-4" />
-                                <span>{job.experience}</span>
-                              </div>
-                            </div>
-                            <div className="mt-4 text-sm text-gray-500">
-                              Tap for more details
-                            </div>
-                          </div>
+                          {userType === 'employer' ? renderCandidateCard(item) : renderJobCard(item)}
                         </div>
                       </DraggableCardBody>
                     );
@@ -594,7 +689,9 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                 exit={{ opacity: 0, y: 40 }}
                 transition={{ duration: 0.4 }}
               >
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">No more matches</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  {userType === 'employer' ? 'No more candidates' : 'No more matches'}
+                </h2>
                 <p className="text-gray-600">Check back later for new opportunities!</p>
                 <button
                   onClick={handleCollapse}
@@ -604,7 +701,9 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
                 </button>
                 <div className="mt-6 text-center">
                   <div className="text-green-600 font-semibold">Interested: {interested.length}</div>
-                  <div className="text-red-600 font-semibold">Rejected: {rejected.length}</div>
+                  <div className="text-red-600 font-semibold">
+                    {userType === 'employer' ? 'Passed: ' : 'Rejected: '}{rejected.length}
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -613,4 +712,4 @@ export default function SwipeApp({ onCollapse }: { onCollapse: () => void }) {
       )}
     </AnimatePresence>
   );
-} 
+}

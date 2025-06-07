@@ -31,7 +31,7 @@ function App() {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Job listings data
+  // Job listings data for candidates
   const jobListings = [
     {
       company: "Google",
@@ -101,37 +101,167 @@ function App() {
     }
   ];
 
-  // All candidate profiles
+  // Candidate profiles data for employers
   const candidateProfiles = [
     {
       avatarSrc: "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=600",
       name: "Alex Johnson",
-      title: "Front-End Developer",
-      skills: ["React", "Tailwind", "Figma"],
+      title: "Senior Frontend Developer",
+      skills: ["React", "TypeScript", "Node.js", "AWS"],
+      experience: "8+ years",
+      location: "San Francisco, CA",
+      salary: "$150k - $180k",
+      description: "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development.",
+      resume: {
+        experience: [
+          {
+            title: "Senior Frontend Developer",
+            company: "TechCorp",
+            duration: "2020 - Present",
+            description: "Led development of core UI features, mentored junior developers, and improved application performance by 40%."
+          },
+          {
+            title: "Frontend Developer",
+            company: "StartupXYZ",
+            duration: "2018 - 2020",
+            description: "Built and maintained React components, implemented new features, and collaborated with design team."
+          }
+        ],
+        education: {
+          degree: "B.S. Computer Science",
+          school: "Stanford University",
+          duration: "2014 - 2018",
+          honors: "Graduated with honors. Focus on Software Engineering and AI."
+        }
+      }
     },
     {
       avatarSrc: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=600",
       name: "Jordan Rivers",
       title: "Product Designer",
-      skills: ["UX", "Sketch", "Notion", "Adobe XD"],
+      skills: ["UX", "Sketch", "Figma", "Adobe XD"],
+      experience: "6+ years",
+      location: "New York, NY",
+      salary: "$120k - $150k",
+      description: "Creative product designer with a passion for user-centered design and innovative digital experiences.",
+      resume: {
+        experience: [
+          {
+            title: "Senior Product Designer",
+            company: "DesignStudio",
+            duration: "2019 - Present",
+            description: "Led design for multiple product launches, conducted user research, and established design systems."
+          },
+          {
+            title: "UX Designer",
+            company: "CreativeAgency",
+            duration: "2017 - 2019",
+            description: "Designed user interfaces for web and mobile applications, created wireframes and prototypes."
+          }
+        ],
+        education: {
+          degree: "B.A. Graphic Design",
+          school: "Art Institute",
+          duration: "2013 - 2017",
+          honors: "Magna Cum Laude. Focus on Digital Design and User Experience."
+        }
+      }
     },
     {
       avatarSrc: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=600",
       name: "Sam Chen",
       title: "Backend Engineer",
       skills: ["Node.js", "Python", "AWS", "MongoDB"],
+      experience: "7+ years",
+      location: "Austin, TX",
+      salary: "$140k - $170k",
+      description: "Experienced backend engineer specializing in scalable microservices and cloud architecture.",
+      resume: {
+        experience: [
+          {
+            title: "Senior Backend Engineer",
+            company: "CloudTech",
+            duration: "2018 - Present",
+            description: "Architected and implemented microservices handling millions of requests daily."
+          },
+          {
+            title: "Software Engineer",
+            company: "DataCorp",
+            duration: "2016 - 2018",
+            description: "Developed APIs and database systems, optimized query performance."
+          }
+        ],
+        education: {
+          degree: "M.S. Computer Science",
+          school: "University of Texas",
+          duration: "2014 - 2016",
+          honors: "Thesis on Distributed Systems. GPA: 3.9/4.0"
+        }
+      }
     },
     {
       avatarSrc: "https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=600",
       name: "Maya Patel",
       title: "Full Stack Developer",
       skills: ["TypeScript", "React", "Node.js", "PostgreSQL"],
+      experience: "5+ years",
+      location: "Seattle, WA",
+      salary: "$130k - $160k",
+      description: "Versatile full-stack developer with expertise in modern web technologies and agile development practices.",
+      resume: {
+        experience: [
+          {
+            title: "Full Stack Developer",
+            company: "WebSolutions",
+            duration: "2019 - Present",
+            description: "Built end-to-end web applications, managed database design, and implemented CI/CD pipelines."
+          },
+          {
+            title: "Junior Developer",
+            company: "TechStart",
+            duration: "2018 - 2019",
+            description: "Contributed to frontend and backend development, learned modern development practices."
+          }
+        ],
+        education: {
+          degree: "B.S. Software Engineering",
+          school: "University of Washington",
+          duration: "2014 - 2018",
+          honors: "Dean's List. Capstone project on real-time collaboration tools."
+        }
+      }
     },
     {
       avatarSrc: "https://images.pexels.com/photos/2406949/pexels-photo-2406949.jpeg?auto=compress&cs=tinysrgb&w=600",
       name: "Chris Taylor",
       title: "DevOps Engineer",
       skills: ["Docker", "Kubernetes", "CI/CD", "Terraform"],
+      experience: "6+ years",
+      location: "Denver, CO",
+      salary: "$135k - $165k",
+      description: "DevOps specialist focused on automation, infrastructure as code, and reliable deployment pipelines.",
+      resume: {
+        experience: [
+          {
+            title: "Senior DevOps Engineer",
+            company: "CloudOps",
+            duration: "2020 - Present",
+            description: "Managed Kubernetes clusters, implemented monitoring solutions, and reduced deployment time by 60%."
+          },
+          {
+            title: "Systems Engineer",
+            company: "InfraTech",
+            duration: "2018 - 2020",
+            description: "Automated infrastructure provisioning, maintained CI/CD pipelines, and improved system reliability."
+          }
+        ],
+        education: {
+          degree: "B.S. Information Technology",
+          school: "Colorado State University",
+          duration: "2014 - 2018",
+          honors: "Summa Cum Laude. Focus on Systems Administration and Network Security."
+        }
+      }
     }
   ];
 
@@ -252,7 +382,8 @@ function App() {
           name={candidateProfiles[currentCandidateIndex].name}
           title={candidateProfiles[currentCandidateIndex].title}
           skills={candidateProfiles[currentCandidateIndex].skills}
-          description="Senior software engineer with expertise in React, Node.js, and cloud architectures. Passionate about building scalable web applications and mentoring junior developers."
+          description={candidateProfiles[currentCandidateIndex].description}
+          onBack={() => console.log("Back clicked")}
         />
       )
     },
@@ -365,7 +496,11 @@ function App() {
         outerVignette={true}
         smooth={true}
       />
-      <BentoMainMenu />
+      <BentoMainMenu 
+        userType={userType} 
+        candidateProfiles={candidateProfiles}
+        jobListings={jobListings}
+      />
     </div>
   );
 }

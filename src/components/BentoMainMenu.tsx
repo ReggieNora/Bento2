@@ -6,6 +6,7 @@ import {
   IconMessage,
   IconSettings,
   IconRobotFace,
+  IconChartBar,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import SwipeApp from "./SwipeApp";
@@ -14,12 +15,18 @@ import SettingsOverlay from "./SettingsOverlay";
 import CoachOverlay from "./CoachOverlay";
 import ProfileCard from "./ProfileCard";
 
-const SkeletonSwipe = () => (
+interface BentoMainMenuProps {
+  userType: 'candidate' | 'employer' | null;
+  candidateProfiles?: any[];
+  jobListings?: any[];
+}
+
+const SkeletonSwipe = ({ userType }: { userType: 'candidate' | 'employer' | null }) => (
   <motion.div className="relative flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
     <div className="relative flex-1 flex items-center justify-center">
       <img 
         src="/assets/meeting.png" 
-        alt="Swipe Cards" 
+        alt={userType === 'employer' ? "Candidate Profiles" : "Job Opportunities"} 
         className="w-32 h-32 opacity-80"
       />
     </div>
@@ -77,45 +84,19 @@ const SkeletonCoach = () => (
   </motion.div>
 );
 
-const items = [
-  {
-    title: "Swipe",
-    description: <span className="text-sm">Find matches. Candidates see jobs, Employers see candidates.</span>,
-    header: <SkeletonSwipe />,
-    className: "md:col-span-1",
-    icon: <IconBriefcase className="h-5 w-5 text-neutral-500" />,
-  },
-  {
-    title: "Messages",
-    description: <span className="text-sm">Chat with matches and connections.</span>,
-    header: <SkeletonMessages />,
-    className: "md:col-span-1",
-    icon: <IconMessage className="h-5 w-5 text-neutral-500" />,
-  },
-  {
-    title: "Profile",
-    description: <span className="text-sm">View and edit your profile information.</span>,
-    header: <SkeletonProfile />,
-    className: "md:col-span-1",
-    icon: <IconUser className="h-5 w-5 text-neutral-500" />,
-  },
-  {
-    title: "Settings",
-    description: <span className="text-sm">Customize your app experience.</span>,
-    header: <SkeletonSettings />,
-    className: "md:col-span-1",
-    icon: <IconSettings className="h-5 w-5 text-neutral-500" />,
-  },
-  {
-    title: "AI Interview Coach",
-    description: <span className="text-sm">Practice interviews with AI-powered feedback.</span>,
-    header: <SkeletonCoach />,
-    className: "md:col-span-2",
-    icon: <IconRobotFace className="h-5 w-5 text-neutral-500" />,
-  },
-];
+const SkeletonDashboard = () => (
+  <motion.div className="flex flex-1 w-full h-full min-h-[6rem] bg-dot-black/[0.2] dark:bg-dot-white/[0.2] flex-col space-y-2 justify-center items-center">
+     <div className="relative flex-1 flex items-center justify-center">
+      <img 
+        src="/assets/meeting.png" 
+        alt="Dashboard" 
+        className="w-32 h-32 opacity-80"
+      />
+    </div>
+  </motion.div>
+);
 
-export default function BentoMainMenu() {
+export default function BentoMainMenu({ userType, candidateProfiles = [], jobListings = [] }: BentoMainMenuProps) {
   const [swipeOpen, setSwipeOpen] = React.useState(false);
   const [messagesOpen, setMessagesOpen] = React.useState(false);
   const [profileOpen, setProfileOpen] = React.useState(false);
@@ -127,8 +108,104 @@ export default function BentoMainMenu() {
     window.location.reload();
   };
 
+  // Different items based on user type
+  const candidateItems = [
+    {
+      title: "Jobs",
+      description: <span className="text-sm">Swipe through job opportunities tailored for you.</span>,
+      header: <SkeletonSwipe userType={userType} />,
+      className: "md:col-span-1",
+      icon: <IconBriefcase className="h-5 w-5 text-neutral-500" />,
+      action: () => setSwipeOpen(true)
+    },
+    {
+      title: "Messages",
+      description: <span className="text-sm">Chat with recruiters and hiring managers.</span>,
+      header: <SkeletonMessages />,
+      className: "md:col-span-1",
+      icon: <IconMessage className="h-5 w-5 text-neutral-500" />,
+      action: () => setMessagesOpen(true)
+    },
+    {
+      title: "Profile",
+      description: <span className="text-sm">Manage your professional profile and resume.</span>,
+      header: <SkeletonProfile />,
+      className: "md:col-span-1",
+      icon: <IconUser className="h-5 w-5 text-neutral-500" />,
+      action: () => setProfileOpen(true)
+    },
+    {
+      title: "Settings",
+      description: <span className="text-sm">Customize your job search preferences.</span>,
+      header: <SkeletonSettings />,
+      className: "md:col-span-1",
+      icon: <IconSettings className="h-5 w-5 text-neutral-500" />,
+      action: () => setSettingsOpen(true)
+    },
+    {
+      title: "AI Interview Coach",
+      description: <span className="text-sm">Practice interviews with AI-powered feedback.</span>,
+      header: <SkeletonCoach />,
+      className: "md:col-span-2",
+      icon: <IconRobotFace className="h-5 w-5 text-neutral-500" />,
+      action: () => setCoachOpen(true)
+    },
+  ];
+
+  const employerItems = [
+    {
+      title: "Candidates",
+      description: <span className="text-sm">Swipe through qualified candidate profiles.</span>,
+      header: <SkeletonSwipe userType={userType} />,
+      className: "md:col-span-1",
+      icon: <IconUser className="h-5 w-5 text-neutral-500" />,
+      action: () => setSwipeOpen(true)
+    },
+    {
+      title: "Messages",
+      description: <span className="text-sm">Chat with potential candidates.</span>,
+      header: <SkeletonMessages />,
+      className: "md:col-span-1",
+      icon: <IconMessage className="h-5 w-5 text-neutral-500" />,
+      action: () => setMessagesOpen(true)
+    },
+    {
+      title: "Dashboard",
+      description: <span className="text-sm">View hiring analytics and performance metrics.</span>,
+      header: <SkeletonDashboard />,
+      className: "md:col-span-1",
+      icon: <IconChartBar className="h-5 w-5 text-neutral-500" />,
+      action: () => console.log("Dashboard clicked") // TODO: Implement dashboard overlay
+    },
+    {
+      title: "Settings",
+      description: <span className="text-sm">Manage your company settings and preferences.</span>,
+      header: <SkeletonSettings />,
+      className: "md:col-span-1",
+      icon: <IconSettings className="h-5 w-5 text-neutral-500" />,
+      action: () => setSettingsOpen(true)
+    },
+    {
+      title: "AI Interview Coach",
+      description: <span className="text-sm">Prepare better interview questions and techniques.</span>,
+      header: <SkeletonCoach />,
+      className: "md:col-span-2",
+      icon: <IconRobotFace className="h-5 w-5 text-neutral-500" />,
+      action: () => setCoachOpen(true)
+    },
+  ];
+
+  const items = userType === 'employer' ? employerItems : candidateItems;
+
   if (swipeOpen) {
-    return <SwipeApp onCollapse={() => setSwipeOpen(false)} />;
+    return (
+      <SwipeApp 
+        onCollapse={() => setSwipeOpen(false)} 
+        userType={userType}
+        candidateProfiles={candidateProfiles}
+        jobListings={jobListings}
+      />
+    );
   }
 
   if (messagesOpen) {
@@ -147,10 +224,10 @@ export default function BentoMainMenu() {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <ProfileCard
-          name="Alex Johnson"
-          title="Senior Frontend Developer"
-          skills={["React", "TypeScript", "Node.js", "AWS"]}
-          description="Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."
+          name={userType === 'employer' ? "Hirly, Inc." : "Alex Johnson"}
+          title={userType === 'employer' ? "Technology Company" : "Senior Frontend Developer"}
+          skills={userType === 'employer' ? ["AI Recruitment", "Talent Matching", "HR Technology"] : ["React", "TypeScript", "Node.js", "AWS"]}
+          description={userType === 'employer' ? "Revolutionizing the hiring process with AI-powered recruitment solutions." : "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."}
           onBack={() => setProfileOpen(false)}
         />
       </div>
@@ -159,6 +236,28 @@ export default function BentoMainMenu() {
 
   return (
     <div className="relative z-10">
+      {/* User Type Indicator */}
+      <div className="text-center mb-8">
+        <motion.div
+          className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {userType === 'employer' ? (
+            <>
+              <IconBriefcase className="w-5 h-5 text-purple-400" />
+              <span className="text-white font-semibold">Employer Dashboard</span>
+            </>
+          ) : (
+            <>
+              <IconUser className="w-5 h-5 text-purple-400" />
+              <span className="text-white font-semibold">Candidate Dashboard</span>
+            </>
+          )}
+        </motion.div>
+      </div>
+
       <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
         {items.map((item, i) => (
           <BentoGridItem
@@ -168,14 +267,8 @@ export default function BentoMainMenu() {
             header={item.header}
             className={item.className}
             icon={item.icon}
-            onClick={() => {
-              if (item.title === "Swipe") setSwipeOpen(true);
-              if (item.title === "Messages") setMessagesOpen(true);
-              if (item.title === "Profile") setProfileOpen(true);
-              if (item.title === "Settings") setSettingsOpen(true);
-              if (item.title === "AI Interview Coach") setCoachOpen(true);
-            }}
-            style={{ cursor: item.title === "Swipe" || item.title === "Messages" || item.title === "Profile" || item.title === "Settings" || item.title === "AI Interview Coach" ? "pointer" : "default" }}
+            onClick={item.action}
+            style={{ cursor: "pointer" }}
           />
         ))}
       </BentoGrid>
