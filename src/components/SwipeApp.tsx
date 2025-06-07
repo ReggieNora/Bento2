@@ -213,14 +213,16 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
               <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
                 <AnimatePresence>
                   {(() => {
-                    // Only the top card can be expanded and thus locked
+                    // Only the visually top card (last in .reverse()) gets the expanded drag lock
                     const [isTopCardExpanded, setIsTopCardExpanded] = React.useState(false);
-                    return [...stack].reverse().map((item, index) => {
+                    const reversedStack = [...stack].reverse();
+                    const topIdx = reversedStack.length - 1;
+                    return reversedStack.map((item, index) => {
                       const layout = index === stack.length - 1
                         ? { rotate: 0, x: 0, y: 0 }
                         : cardLayout[index] || { rotate: 0, x: 0, y: 0 };
                       const realIdx = stack.length - 1 - index;
-                      const isTop = index === 0;
+                      const isTop = index === topIdx;
                       return (
                         <DraggableCardBody
                           key={(item.company || item.name) + index}
