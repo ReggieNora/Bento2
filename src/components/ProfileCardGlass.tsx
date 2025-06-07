@@ -1,4 +1,5 @@
 import React from 'react';
+import backArrow from '../assets/back-arrow.svg';
 import { MapPin } from 'lucide-react';
 
 interface Experience {
@@ -45,9 +46,10 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
       {onBack && (
         <button
           onClick={onBack}
-          className="absolute top-4 right-4 px-4 py-2 rounded-full text-white bg-black/30 border border-white/30 shadow z-10"
+          className="absolute top-4 right-4 p-2 rounded-full text-white bg-black/30 border border-white/30 shadow z-10 flex items-center justify-center"
+          aria-label="Back"
         >
-          Back
+          <img src={backArrow} alt="Back" className="w-5 h-5" />
         </button>
       )}
       {/* Avatar */}
