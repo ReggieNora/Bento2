@@ -53,6 +53,7 @@
 }
 
 .menu__item-link {
+  font-family: 'Clash Display', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
