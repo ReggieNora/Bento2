@@ -37,7 +37,7 @@ export function getFlowingMenuItems(userType: 'candidate' | 'employer' | null): 
       },
       {
         link: '#coach',
-        text: 'AI Interview Coach',
+        text: 'Coach',
         image: '/assets/implant.png',
         overlay: 'coach',
       },
@@ -71,7 +71,7 @@ export function getFlowingMenuItems(userType: 'candidate' | 'employer' | null): 
     },
     {
       link: '#coach',
-      text: 'AI Interview Coach',
+      text: 'Coach',
       image: '/assets/implant.png',
       overlay: 'coach',
     },

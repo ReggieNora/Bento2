@@ -36,7 +36,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   'Settings': <Settings size={36} />,
   'Dashboard': <BarChart2 size={36} />,
   'Profile': <User size={36} />,
-  'AI Interview Coach': <Brain size={36} />,
+  'Coach': <Brain size={36} />,
 };
 
 const MenuItem: React.FC<MenuItemProps & { onClick?: () => void }> = ({ link, text, onClick }) => {
