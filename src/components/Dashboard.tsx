@@ -54,8 +54,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
 );
 
 const Dashboard: React.FC = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
   // Sample data for charts
   const applicationsData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -127,89 +125,17 @@ const Dashboard: React.FC = () => {
     },
   };
 
-  if (!isExpanded) {
-    return (
-      <div className={`
-        bg-white/10 backdrop-blur-md rounded-2xl p-6
-        border border-white/20 shadow-xl overflow-hidden
-        transition-all duration-300 ease-in-out
-        w-[350px]
-      `}>
-        <div className="flex flex-col h-[500px]">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2">Dashboard</h2>
-            <p className="text-white/60 text-sm">Key metrics and insights</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <MetricCard
-              icon={<TrendingUp className="w-5 h-5" />}
-              title="Total Applications"
-              value="1,234"
-              change="+12.5%"
-              isPositive={true}
-            />
-            <MetricCard
-              icon={<Users className="w-5 h-5" />}
-              title="Active Candidates"
-              value="456"
-              change="+8.2%"
-              isPositive={true}
-            />
-            <MetricCard
-              icon={<Briefcase className="w-5 h-5" />}
-              title="Open Positions"
-              value="23"
-              change="-2.1%"
-              isPositive={false}
-            />
-            <MetricCard
-              icon={<Clock className="w-5 h-5" />}
-              title="Avg. Time to Hire"
-              value="28 days"
-              change="-5.3%"
-              isPositive={true}
-            />
-          </div>
-
-          <button
-            onClick={() => setIsExpanded(true)}
-            className="mt-auto px-4 py-2 bg-purple-600 text-white rounded-xl
-                     hover:bg-purple-500 transition-colors duration-200
-                     focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-          >
-            View More
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={`
-      bg-white/10 backdrop-blur-md rounded-2xl p-6
-      border border-white/20 shadow-xl overflow-hidden
-      transition-all duration-300 ease-in-out
-      w-[700px]
-    `}>
-      <div className="flex flex-col h-[500px]">
+    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl w-full max-w-6xl mx-auto">
+      <div className="flex flex-col h-[80vh] max-h-[600px]">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-2">Dashboard</h2>
-            <p className="text-white/60 text-sm">Detailed metrics and analytics</p>
-          </div>
-          <button
-            onClick={() => setIsExpanded(false)}
-            className="px-4 py-2 bg-white/10 text-white rounded-xl
-                     hover:bg-white/20 transition-colors duration-200"
-          >
-            Collapse
-          </button>
+        <div className="mb-6 flex-shrink-0">
+          <h2 className="text-2xl font-bold text-white mb-2">Employer Dashboard</h2>
+          <p className="text-white/60 text-sm">Comprehensive hiring analytics and insights</p>
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 flex-shrink-0">
           <MetricCard
             icon={<TrendingUp className="w-5 h-5" />}
             title="Total Applications"
@@ -240,19 +166,140 @@ const Dashboard: React.FC = () => {
           />
         </div>
 
-        {/* Charts Grid */}
-        <div className="grid grid-cols-2 gap-6 flex-1">
-          <div className="bg-white/5 rounded-xl p-4">
-            <h3 className="text-white font-semibold mb-4">Applications Over Time</h3>
-            <Line data={applicationsData} options={chartOptions} />
-          </div>
-          <div className="bg-white/5 rounded-xl p-4">
-            <h3 className="text-white font-semibold mb-4">Candidate Sources</h3>
-            <Doughnut data={candidateSourcesData} options={chartOptions} />
-          </div>
-          <div className="bg-white/5 rounded-xl p-4 col-span-2">
-            <h3 className="text-white font-semibold mb-4">Skills in Demand</h3>
-            <Bar data={skillsDemandData} options={chartOptions} />
+        {/* Charts Grid - Scrollable */}
+        <div 
+          className="flex-1 overflow-y-auto pr-4"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          
+          <div className="space-y-6">
+            {/* Top Row Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white/5 rounded-xl p-4">
+                <h3 className="text-white font-semibold mb-4">Applications Over Time</h3>
+                <div className="h-64">
+                  <Line data={applicationsData} options={chartOptions} />
+                </div>
+              </div>
+              <div className="bg-white/5 rounded-xl p-4">
+                <h3 className="text-white font-semibold mb-4">Candidate Sources</h3>
+                <div className="h-64">
+                  <Doughnut data={candidateSourcesData} options={chartOptions} />
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Chart */}
+            <div className="bg-white/5 rounded-xl p-4">
+              <h3 className="text-white font-semibold mb-4">Skills in Demand</h3>
+              <div className="h-64">
+                <Bar data={skillsDemandData} options={chartOptions} />
+              </div>
+            </div>
+
+            {/* Additional Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white/5 rounded-xl p-6">
+                <h3 className="text-white font-semibold mb-4">Hiring Funnel</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">Applications Received</span>
+                    <span className="text-white font-semibold">1,234</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-purple-500 h-2 rounded-full" style={{ width: '100%' }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">Phone Screens</span>
+                    <span className="text-white font-semibold">456</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: '37%' }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">Final Interviews</span>
+                    <span className="text-white font-semibold">123</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-green-500 h-2 rounded-full" style={{ width: '10%' }}></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-white/80">Offers Extended</span>
+                    <span className="text-white font-semibold">45</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div className="bg-yellow-500 h-2 rounded-full" style={{ width: '4%' }}></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-xl p-6">
+                <h3 className="text-white font-semibold mb-4">Recent Activity</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div>
+                      <p className="text-white/80 text-sm">New application from Sarah Chen</p>
+                      <p className="text-white/60 text-xs">2 minutes ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div>
+                      <p className="text-white/80 text-sm">Interview scheduled with Alex Johnson</p>
+                      <p className="text-white/60 text-xs">15 minutes ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <div>
+                      <p className="text-white/80 text-sm">Offer accepted by Maya Patel</p>
+                      <p className="text-white/60 text-xs">1 hour ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    <div>
+                      <p className="text-white/80 text-sm">New job posting published</p>
+                      <p className="text-white/60 text-xs">3 hours ago</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Team Performance */}
+            <div className="bg-white/5 rounded-xl p-6">
+              <h3 className="text-white font-semibold mb-4">Team Performance</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-400 mb-2">87%</div>
+                  <div className="text-white/60 text-sm">Interview Show Rate</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-400 mb-2">92%</div>
+                  <div className="text-white/60 text-sm">Offer Acceptance Rate</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-400 mb-2">4.8</div>
+                  <div className="text-white/60 text-sm">Candidate Experience Rating</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Extra padding for better scrolling */}
+            <div className="h-8"></div>
           </div>
         </div>
       </div>
@@ -260,4 +307,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

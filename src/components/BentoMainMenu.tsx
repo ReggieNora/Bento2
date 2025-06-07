@@ -13,6 +13,7 @@ import SwipeApp from "./SwipeApp";
 import MessagesOverlay from "./MessagesOverlay";
 import SettingsOverlay from "./SettingsOverlay";
 import CoachOverlay from "./CoachOverlay";
+import DashboardOverlay from "./DashboardOverlay";
 import ProfileCard from "./ProfileCard";
 
 interface BentoMainMenuProps {
@@ -102,6 +103,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
   const [profileOpen, setProfileOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [coachOpen, setCoachOpen] = React.useState(false);
+  const [dashboardOpen, setDashboardOpen] = React.useState(false);
 
   const handleGoHome = () => {
     // Reload the page to go back to landing page
@@ -175,7 +177,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonDashboard />,
       className: "md:col-span-1",
       icon: <IconChartBar className="h-5 w-5 text-neutral-500" />,
-      action: () => console.log("Dashboard clicked") // TODO: Implement dashboard overlay
+      action: () => setDashboardOpen(true) // Now properly opens dashboard overlay
     },
     {
       title: "Settings",
@@ -218,6 +220,10 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
 
   if (coachOpen) {
     return <CoachOverlay onCollapse={() => setCoachOpen(false)} />;
+  }
+
+  if (dashboardOpen) {
+    return <DashboardOverlay onCollapse={() => setDashboardOpen(false)} />;
   }
 
   if (profileOpen) {
