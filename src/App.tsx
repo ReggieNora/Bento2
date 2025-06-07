@@ -10,10 +10,12 @@ import CompanyProfileCard from './components/CompanyProfileCard';
 import LandingPage from './components/LandingPage';
 import JobCard from './components/JobCard';
 import AboutPage from './components/AboutPage';
-import BentoMainMenu from './components/BentoMainMenu';
+import FlowingMenu from './components/FlowingMenu';
+import { getFlowingMenuItems, FlowingMenuItem } from './components/FlowingMenuItems';
 import GradientBackground from './components/GradientBackground';
 
 function App() {
+  // Move ALL hooks to the top (including overlay/modal states and lazy imports)
   const [selectedRole, setSelectedRole] = useState<'candidate' | 'employer' | null>(null);
   const [userType, setUserType] = useState<'candidate' | 'employer' | null>(null);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -30,9 +32,25 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Overlay/modal state for FlowingMenu overlays
+  const [swipeOpen, setSwipeOpen] = useState(false);
+  const [messagesOpen, setMessagesOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [coachOpen, setCoachOpen] = useState(false);
+  const [dashboardOpen, setDashboardOpen] = useState(false);
+  // Lazy load overlays
+  const SwipeApp = React.lazy(() => import('./components/SwipeApp'));
+  const MessagesOverlay = React.lazy(() => import('./components/MessagesOverlay'));
+  const SettingsOverlay = React.lazy(() => import('./components/SettingsOverlay'));
+  const CoachOverlay = React.lazy(() => import('./components/CoachOverlay'));
+  const DashboardOverlay = React.lazy(() => import('./components/DashboardOverlay'));
+  const ProfileCard = React.lazy(() => import('./components/ProfileCard'));
+  const overlayFallback = <div className="w-full h-full flex items-center justify-center text-white text-lg">Loading...</div>;
 
   // Job listings data for candidates
   const jobListings = [
+
     {
       company: "Google",
       title: "Senior Frontend Developer",
@@ -486,14 +504,90 @@ function App() {
     }} />;
   }
 
-  // Render the new bento grid main menu after authentication
+  if (swipeOpen) {
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <SwipeApp 
+          onCollapse={() => setSwipeOpen(false)} 
+          userType={userType}
+          candidateProfiles={candidateProfiles}
+          jobListings={jobListings}
+        />
+      </React.Suspense>
+    );
+  }
+  if (messagesOpen) {
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <MessagesOverlay onCollapse={() => setMessagesOpen(false)} />
+      </React.Suspense>
+    );
+  }
+  if (settingsOpen) {
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <SettingsOverlay onCollapse={() => setSettingsOpen(false)} />
+      </React.Suspense>
+    );
+  }
+  if (coachOpen) {
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <CoachOverlay onCollapse={() => setCoachOpen(false)} />
+      </React.Suspense>
+    );
+  }
+  if (dashboardOpen) {
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <DashboardOverlay onCollapse={() => setDashboardOpen(false)} />
+      </React.Suspense>
+    );
+  }
+  if (profileOpen) {
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <div className="w-full h-full flex items-center justify-center">
+          <ProfileCard
+            name={userType === 'employer' ? "Hirly, Inc." : "Alex Johnson"}
+            title={userType === 'employer' ? "Technology Company" : "Senior Frontend Developer"}
+            skills={userType === 'employer' ? ["AI Recruitment", "Talent Matching", "HR Technology"] : ["React", "TypeScript", "Node.js", "AWS"]}
+            description={userType === 'employer' ? "Revolutionizing the hiring process with AI-powered recruitment solutions." : "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."}
+            onBack={() => setProfileOpen(false)}
+          />
+        </div>
+      </React.Suspense>
+    );
+  }
+  // If not authenticated, show the landing/login page
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
+        <GradientBackground animated={true} />
+        <LandingPage onAuthSuccess={() => {
+          setIsAuthenticated(true);
+          setUserType('candidate'); // Default to candidate after login; adjust as needed
+        }} />
+      </div>
+    );
+  }
+  // Render the new FlowingMenu main menu after authentication
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
       <GradientBackground animated={true} />
-      <BentoMainMenu 
-        userType={userType} 
-        candidateProfiles={candidateProfiles}
-        jobListings={jobListings}
+      <FlowingMenu 
+        items={getFlowingMenuItems(userType)}
+        onItemClick={(item: FlowingMenuItem) => {
+          switch (item.overlay) {
+            case 'swipe': setSwipeOpen(true); break;
+            case 'messages': setMessagesOpen(true); break;
+            case 'profile': setProfileOpen(true); break;
+            case 'settings': setSettingsOpen(true); break;
+            case 'coach': setCoachOpen(true); break;
+            case 'dashboard': setDashboardOpen(true); break;
+            default: break;
+          }
+        }}
       />
     </div>
   );

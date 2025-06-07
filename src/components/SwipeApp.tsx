@@ -655,30 +655,30 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
               <DraggableCardContainer key={resetKey} className="relative w-[340px] h-[400px]">
                 <AnimatePresence>
                   {[...stack].reverse().map((item, index) => {
-                    const layout = index === stack.length - 1
-                      ? { rotate: 0, x: 0, y: 0 }
-                      : cardLayout[index] || { rotate: 0, x: 0, y: 0 };
-                    const realIdx = stack.length - 1 - index;
-                    return (
-                      <DraggableCardBody
-                        key={(item.company || item.name) + index}
-                        className="absolute left-1/2 top-1/2"
-                        onDismiss={(direction) => handleDismiss(realIdx, direction)}
-                        onDrag={(x) => dragX.set(x)}
-                        onTap={() => setSelectedItem(item)}
-                      >
-                        <div
-                          style={{
-                            width: CARD_WIDTH,
-                            height: CARD_HEIGHT,
-                            transform: `translate(-50%, -50%) translate(${layout.x}px, ${layout.y}px) rotate(${layout.rotate}deg)`
-                          }}
-                        >
-                          {userType === 'employer' ? renderCandidateCard(item) : renderJobCard(item)}
-                        </div>
-                      </DraggableCardBody>
-                    );
-                  })}
+  const layout = index === stack.length - 1
+    ? { rotate: 0, x: 0, y: 0 }
+    : cardLayout[index] || { rotate: 0, x: 0, y: 0 };
+  const realIdx = stack.length - 1 - index;
+  return (
+    <DraggableCardBody
+      key={(item.company || item.name) + index}
+      className="absolute left-1/2 top-1/2"
+      onDismiss={(direction) => handleDismiss(realIdx, direction)}
+      onDrag={(x) => dragX.set(x)}
+      onTap={() => setSelectedItem(item)}
+    >
+      <div
+        style={{
+          width: CARD_WIDTH,
+          height: CARD_HEIGHT,
+          transform: `translate(-50%, -50%) translate(${layout.x}px, ${layout.y}px) rotate(${layout.rotate}deg)`
+        }}
+      >
+        {userType === 'employer' ? renderCandidateCard(item) : renderJobCard(item)}
+      </div>
+    </DraggableCardBody>
+  );
+})}
                 </AnimatePresence>
               </DraggableCardContainer>
             ) : (
