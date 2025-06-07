@@ -16,7 +16,7 @@ export function BentoGrid({ className, children }: { className?: string; childre
   );
 }
 
-export function BentoGridItem({
+const BentoGridItem = React.memo(function BentoGridItem({
   title,
   description,
   header,
@@ -47,4 +47,8 @@ export function BentoGridItem({
       <div className="text-white/70 text-sm">{description}</div>
     </div>
   );
-}
+});
+
+BentoGridItem.displayName = "BentoGridItem";
+
+export { BentoGridItem };

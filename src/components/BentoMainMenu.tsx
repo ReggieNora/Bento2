@@ -9,12 +9,12 @@ import {
   IconChartBar,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
-import SwipeApp from "./SwipeApp";
-import MessagesOverlay from "./MessagesOverlay";
-import SettingsOverlay from "./SettingsOverlay";
-import CoachOverlay from "./CoachOverlay";
-import DashboardOverlay from "./DashboardOverlay";
-import ProfileCard from "./ProfileCard";
+const SwipeApp = React.lazy(() => import("./SwipeApp"));
+const MessagesOverlay = React.lazy(() => import("./MessagesOverlay"));
+const SettingsOverlay = React.lazy(() => import("./SettingsOverlay"));
+const CoachOverlay = React.lazy(() => import("./CoachOverlay"));
+const DashboardOverlay = React.lazy(() => import("./DashboardOverlay"));
+const ProfileCard = React.lazy(() => import("./ProfileCard"));
 
 interface BentoMainMenuProps {
   userType: 'candidate' | 'employer' | null;
@@ -105,20 +105,26 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
   const [coachOpen, setCoachOpen] = React.useState(false);
   const [dashboardOpen, setDashboardOpen] = React.useState(false);
 
-  const handleGoHome = () => {
+  const handleGoHome = React.useCallback(() => {
     // Reload the page to go back to landing page
     window.location.reload();
-  };
+  }, []);
 
-  // Different items based on user type
-  const candidateItems = [
+  const handleSwipeOpen = React.useCallback(() => setSwipeOpen(true), []);
+  const handleMessagesOpen = React.useCallback(() => setMessagesOpen(true), []);
+  const handleProfileOpen = React.useCallback(() => setProfileOpen(true), []);
+  const handleSettingsOpen = React.useCallback(() => setSettingsOpen(true), []);
+  const handleCoachOpen = React.useCallback(() => setCoachOpen(true), []);
+  const handleDashboardOpen = React.useCallback(() => setDashboardOpen(true), []);
+
+  const candidateItems = React.useMemo(() => [
     {
       title: "Jobs",
       description: <span className="text-sm">Swipe through job opportunities tailored for you.</span>,
       header: <SkeletonSwipe userType={userType} />,
       className: "md:col-span-1",
       icon: <IconBriefcase className="h-5 w-5 text-neutral-500" />,
-      action: () => setSwipeOpen(true)
+      action: handleSwipeOpen
     },
     {
       title: "Messages",
@@ -126,7 +132,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonMessages />,
       className: "md:col-span-1",
       icon: <IconMessage className="h-5 w-5 text-neutral-500" />,
-      action: () => setMessagesOpen(true)
+      action: handleMessagesOpen
     },
     {
       title: "Profile",
@@ -134,7 +140,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonProfile />,
       className: "md:col-span-1",
       icon: <IconUser className="h-5 w-5 text-neutral-500" />,
-      action: () => setProfileOpen(true)
+      action: handleProfileOpen
     },
     {
       title: "Settings",
@@ -142,7 +148,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonSettings />,
       className: "md:col-span-1",
       icon: <IconSettings className="h-5 w-5 text-neutral-500" />,
-      action: () => setSettingsOpen(true)
+      action: handleSettingsOpen
     },
     {
       title: "AI Interview Coach",
@@ -150,18 +156,18 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonCoach />,
       className: "md:col-span-2",
       icon: <IconRobotFace className="h-5 w-5 text-neutral-500" />,
-      action: () => setCoachOpen(true)
+      action: handleCoachOpen
     },
-  ];
+  ], [userType, handleSwipeOpen, handleMessagesOpen, handleProfileOpen, handleSettingsOpen, handleCoachOpen]);
 
-  const employerItems = [
+  const employerItems = React.useMemo(() => [
     {
       title: "Candidates",
       description: <span className="text-sm">Swipe through qualified candidate profiles.</span>,
       header: <SkeletonSwipe userType={userType} />,
       className: "md:col-span-1",
       icon: <IconUser className="h-5 w-5 text-neutral-500" />,
-      action: () => setSwipeOpen(true)
+      action: handleSwipeOpen
     },
     {
       title: "Messages",
@@ -169,7 +175,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonMessages />,
       className: "md:col-span-1",
       icon: <IconMessage className="h-5 w-5 text-neutral-500" />,
-      action: () => setMessagesOpen(true)
+      action: handleMessagesOpen
     },
     {
       title: "Dashboard",
@@ -177,7 +183,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonDashboard />,
       className: "md:col-span-1",
       icon: <IconChartBar className="h-5 w-5 text-neutral-500" />,
-      action: () => setDashboardOpen(true) // Now properly opens dashboard overlay
+      action: handleDashboardOpen
     },
     {
       title: "Settings",
@@ -185,7 +191,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonSettings />,
       className: "md:col-span-1",
       icon: <IconSettings className="h-5 w-5 text-neutral-500" />,
-      action: () => setSettingsOpen(true)
+      action: handleSettingsOpen
     },
     {
       title: "AI Interview Coach",
@@ -193,50 +199,72 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       header: <SkeletonCoach />,
       className: "md:col-span-2",
       icon: <IconRobotFace className="h-5 w-5 text-neutral-500" />,
-      action: () => setCoachOpen(true)
+      action: handleCoachOpen
     },
-  ];
+  ], [userType, handleSwipeOpen, handleMessagesOpen, handleDashboardOpen, handleSettingsOpen, handleCoachOpen]);
 
-  const items = userType === 'employer' ? employerItems : candidateItems;
+  const items = React.useMemo(() => userType === 'employer' ? employerItems : candidateItems, [userType, employerItems, candidateItems]);
+
+  const overlayFallback = <div className="w-full h-full flex items-center justify-center text-white text-lg">Loading...</div>;
 
   if (swipeOpen) {
     return (
-      <SwipeApp 
-        onCollapse={() => setSwipeOpen(false)} 
-        userType={userType}
-        candidateProfiles={candidateProfiles}
-        jobListings={jobListings}
-      />
+      <React.Suspense fallback={overlayFallback}>
+        <SwipeApp 
+          onCollapse={() => setSwipeOpen(false)} 
+          userType={userType}
+          candidateProfiles={candidateProfiles}
+          jobListings={jobListings}
+        />
+      </React.Suspense>
     );
   }
 
   if (messagesOpen) {
-    return <MessagesOverlay onCollapse={() => setMessagesOpen(false)} />;
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <MessagesOverlay onCollapse={() => setMessagesOpen(false)} />
+      </React.Suspense>
+    );
   }
 
   if (settingsOpen) {
-    return <SettingsOverlay onCollapse={() => setSettingsOpen(false)} />;
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <SettingsOverlay onCollapse={() => setSettingsOpen(false)} />
+      </React.Suspense>
+    );
   }
 
   if (coachOpen) {
-    return <CoachOverlay onCollapse={() => setCoachOpen(false)} />;
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <CoachOverlay onCollapse={() => setCoachOpen(false)} />
+      </React.Suspense>
+    );
   }
 
   if (dashboardOpen) {
-    return <DashboardOverlay onCollapse={() => setDashboardOpen(false)} />;
+    return (
+      <React.Suspense fallback={overlayFallback}>
+        <DashboardOverlay onCollapse={() => setDashboardOpen(false)} />
+      </React.Suspense>
+    );
   }
 
   if (profileOpen) {
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <ProfileCard
-          name={userType === 'employer' ? "Hirly, Inc." : "Alex Johnson"}
-          title={userType === 'employer' ? "Technology Company" : "Senior Frontend Developer"}
-          skills={userType === 'employer' ? ["AI Recruitment", "Talent Matching", "HR Technology"] : ["React", "TypeScript", "Node.js", "AWS"]}
-          description={userType === 'employer' ? "Revolutionizing the hiring process with AI-powered recruitment solutions." : "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."}
-          onBack={() => setProfileOpen(false)}
-        />
-      </div>
+      <React.Suspense fallback={overlayFallback}>
+        <div className="w-full h-full flex items-center justify-center">
+          <ProfileCard
+            name={userType === 'employer' ? "Hirly, Inc." : "Alex Johnson"}
+            title={userType === 'employer' ? "Technology Company" : "Senior Frontend Developer"}
+            skills={userType === 'employer' ? ["AI Recruitment", "Talent Matching", "HR Technology"] : ["React", "TypeScript", "Node.js", "AWS"]}
+            description={userType === 'employer' ? "Revolutionizing the hiring process with AI-powered recruitment solutions." : "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development."}
+            onBack={() => setProfileOpen(false)}
+          />
+        </div>
+      </React.Suspense>
     );
   }
 
