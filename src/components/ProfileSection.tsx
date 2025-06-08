@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 
 // Example candidate data (replace with real data as needed)
 const exampleCandidate = {
@@ -36,8 +37,18 @@ const exampleCandidate = {
 };
 
 import ProfileCardParent from "./ProfileCardParent";
+import ResumeModal from './ResumeModal';
+import ResumeView from './ResumeView';
 
-export default function ProfileSection({ candidate = exampleCandidate, onBack = () => window.history.back() }) {
+export default function ProfileSection() {
+  const candidate = exampleCandidate;
+  console.log('ProfileSection candidate', candidate);
+  console.log('ProfileSection candidate', candidate);
+  const [isResumeOpen, setResumeOpen] = useState(false);
+
+  const handleOpenResume = () => setResumeOpen(true);
+  const handleCloseResume = () => setResumeOpen(false);
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-900 to-black">
       <ProfileCardParent
@@ -53,8 +64,22 @@ export default function ProfileSection({ candidate = exampleCandidate, onBack = 
         about={candidate.about}
         location={candidate.location}
         skills={candidate.skills}
-        onContactClick={() => console.log('Contact candidate')}
+        onContactClick={handleOpenResume}
+        resume={candidate.resume}
       />
+      <ResumeModal isOpen={isResumeOpen} onClose={handleCloseResume}>
+        <ResumeView
+          avatarSrc={candidate.avatarUrl}
+          name={candidate.name}
+          title={candidate.title}
+          skills={candidate.skills}
+          onClose={handleCloseResume}
+          onAction={(action) => {
+            if (action === 'close') handleCloseResume();
+            // Add other actions (star/heart) if needed
+          }}
+        />
+      </ResumeModal>
     </div>
   );
 }

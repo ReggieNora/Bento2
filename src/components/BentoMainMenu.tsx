@@ -14,7 +14,7 @@ const MessagesOverlay = React.lazy(() => import("./MessagesOverlay"));
 const SettingsOverlay = React.lazy(() => import("./SettingsOverlay"));
 const CoachOverlay = React.lazy(() => import("./CoachOverlay"));
 const DashboardOverlay = React.lazy(() => import("./DashboardOverlay"));
-import ProfileCardGlass from "./ProfileCardGlass";
+import ProfileSection from "./ProfileSection";
 
 interface BentoMainMenuProps {
   userType: 'candidate' | 'employer' | null;
@@ -257,10 +257,13 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
     const exampleCandidate = {
       name: "Alex Johnson",
       title: "Senior Frontend Developer",
+      handle: "alexjohnson",
+      status: "Online",
+      avatarUrl: "/assets/avatar.png",
+      about: "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development.",
+      location: "San Francisco, CA",
       skills: ["React", "TypeScript", "Node.js", "AWS"],
       description: "Passionate software engineer with 8+ years of experience building scalable web applications. Expert in React ecosystem and modern JavaScript development.",
-      location: "San Francisco, CA",
-      avatarSrc: "/assets/avatar.png",
       resume: {
         experience: [
           {
@@ -286,7 +289,7 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
     };
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <ProfileCardGlass candidate={exampleCandidate} onBack={() => setProfileOpen(false)} />
+        <ProfileSection candidate={exampleCandidate} />
       </div>
     );
   }

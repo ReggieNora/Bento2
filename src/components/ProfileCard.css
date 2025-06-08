@@ -90,12 +90,58 @@
 }
 
 .pc-card * {
-  display: grid;
-  grid-area: 1/-1;
   border-radius: var(--card-radius);
   transform: translate3d(0, 0, 0.1px);
   pointer-events: none;
 }
+
+.pc-details .text-left {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1.5em;
+  font-size: 0.98em;
+  line-height: 1.5;
+  display: block;
+}
+
+.pc-details .mb-2 {
+  margin-bottom: 1em !important;
+  display: block;
+}
+
+.pc-details ul {
+  padding-left: 1.2em;
+  margin-bottom: 1em;
+  font-size: 0.97em;
+  line-height: 1.5;
+}
+
+.pc-details li {
+  margin-bottom: 0.5em;
+  display: block;
+}
+
+.pc-details h4 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-size: 1.08em;
+}
+
+.pc-details .font-semibold {
+  font-weight: 600;
+  font-size: 1em;
+}
+
+.pc-details .text-xs {
+  font-size: 0.90em;
+  opacity: 0.85;
+}
+
+.pc-details .text-sm {
+  font-size: 0.96em;
+  opacity: 0.8;
+}
+
 
 .pc-inside {
   inset: 1px;
@@ -289,11 +335,64 @@
 }
 
 .pc-details {
-  width: 100%;
-  position: absolute;
-  top: 3em;
+  position: relative;
+  left: 0;
+  right: 0;
+  top: 0;
+  padding: 2.5em 2em 1.5em 2em;
+  overflow-y: visible;
+  z-index: 2;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: #fff;
+  width: 100%;
+  min-height: 0;
+}
+
+.pc-details .text-left {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1.5em;
+}
+
+.pc-details .flex.flex-wrap {
+  width: 100%;
+  justify-content: flex-start;
+  margin-top: 1em;
+  gap: 0.5em;
+}
+
+.pc-details .flex.flex-wrap span {
+  margin: 0 0.25em 0.5em 0;
+  padding: 0.3em 0.9em;
+  border-radius: 1em;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.9em;
+  color: #fff;
+  white-space: normal;
+}
+
+.pc-details h4 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.pc-details ul {
+  padding-left: 1.2em;
+  margin-bottom: 1em;
+}
+
+.pc-details li {
+  margin-bottom: 0.5em;
+}
+
+.pc-details p, .pc-details div, .pc-details span {
+  white-space: normal !important;
+  width: auto !important;
+  overflow: visible !important;
 }
 
 .pc-details h3 {
@@ -312,15 +411,60 @@
   font-weight: 600;
   position: relative;
   top: -12px;
-  white-space: nowrap;
   font-size: 16px;
-  margin: 0 auto;
-  width: min-content;
+  margin: 0 auto 1.5em auto;
   background-image: linear-gradient(to bottom, #fff, #4a4ac0);
   background-size: 1em 1.5em;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   -webkit-background-clip: text;
+}
+
+.pc-details .text-left {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1.5em;
+}
+
+.pc-details .flex.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: flex-start;
+  margin-top: 1.5em;
+  gap: 0.5em;
+}
+
+.pc-details .flex.flex-wrap span {
+  margin: 0 0.25em 0.5em 0;
+  padding: 0.3em 0.9em;
+  border-radius: 1em;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  font-size: 0.95em;
+  color: #fff;
+  white-space: normal;
+}
+
+.pc-details h4 {
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.pc-details ul {
+  padding-left: 1.2em;
+  margin-bottom: 1em;
+}
+
+.pc-details li {
+  margin-bottom: 0.5em;
+}
+
+.pc-details p, .pc-details div, .pc-details span {
+  white-space: normal !important;
+  width: auto !important;
+  overflow: visible !important;
+  margin: 0;
 }
 
 @keyframes glow-bg {

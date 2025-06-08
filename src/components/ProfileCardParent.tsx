@@ -15,6 +15,20 @@ interface CandidateProfileProps {
   about?: string;
   location?: string;
   skills?: string[];
+  resume: {
+    experience: {
+      title: string;
+      company: string;
+      duration: string;
+      description: string;
+    }[];
+    education: {
+      degree: string;
+      school: string;
+      duration: string;
+      honors: string;
+    };
+  };
 }
 
 interface EmployerProfileProps {
@@ -35,6 +49,7 @@ interface EmployerProfileProps {
 type ProfileCardParentProps = CandidateProfileProps | EmployerProfileProps;
 
 const ProfileCardParent: React.FC<ProfileCardParentProps> = (props) => {
+
   // Common fields for both types
   const {
     name,
@@ -47,6 +62,7 @@ const ProfileCardParent: React.FC<ProfileCardParentProps> = (props) => {
     location,
     about,
     skills,
+    resume, // <-- Added resume to destructure
   } = props;
 
   // Additional fields
@@ -67,22 +83,14 @@ const ProfileCardParent: React.FC<ProfileCardParentProps> = (props) => {
           showUserInfo={showUserInfo}
           enableTilt={enableTilt}
           onContactClick={onContactClick}
+          resume={resume}
+          skills={skills}
         />
-        {/* Additional info below card */}
         <div className="mt-6 text-center text-white/90">
           {location && <div className="mb-2 font-semibold">{location}</div>}
           {about && <div className="mb-2 text-sm opacity-80">{about}</div>}
           {typeof employees === "number" && (
             <div className="mb-2 text-xs">{employees} Employees</div>
-          )}
-          {skills && skills.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-2 mt-2">
-              {skills.map((skill, idx) => (
-                <span key={idx} className="bg-white/10 border border-white/20 px-2 py-1 rounded text-xs">
-                  {skill}
-                </span>
-              ))}
-            </div>
           )}
         </div>
       </div>

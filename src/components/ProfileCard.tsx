@@ -1,6 +1,20 @@
 import React, { useEffect, useRef, useCallback, useMemo } from "react";
 import "./ProfileCard.css";
 
+interface ExperienceItem {
+  title: string;
+  company: string;
+  duration: string;
+  description: string;
+}
+
+interface EducationItem {
+  degree: string;
+  school: string;
+  duration: string;
+  honors: string;
+}
+
 interface ProfileCardProps {
   avatarUrl: string;
   iconUrl?: string;
@@ -18,6 +32,11 @@ interface ProfileCardProps {
   contactText?: string;
   showUserInfo?: boolean;
   onContactClick?: () => void;
+  resume?: {
+    experience: ExperienceItem[];
+    education: EducationItem;
+  };
+  skills?: string[];
 }
 
 const DEFAULT_BEHIND_GRADIENT =
@@ -67,7 +86,10 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   contactText = "Contact",
   showUserInfo = true,
   onContactClick,
+  resume,
+  skills,
 }) => {
+
   const wrapRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -268,40 +290,61 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
           <div className="pc-shine" />
           <div className="pc-glare" />
           <div className="pc-content pc-avatar-content">
-            <img
-              className="avatar"
-              src={avatarUrl}
-              alt={`${name || "User"} avatar`}
-              loading="lazy"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-              }}
-            />
-            {showUserInfo && (
-              <div className="pc-user-info">
-                <div className="pc-user-details">
-                  <div className="pc-user-text">
-                    <div className="pc-handle">@{handle}</div>
-                    <div className="pc-status">{status}</div>
-                  </div>
-                </div>
-                <button
-                  className="pc-contact-btn"
-                  onClick={handleContactClick}
-                  style={{ pointerEvents: "auto" }}
-                  type="button"
-                  aria-label={`More about ${name || "user"}`}
-                >
-                  {contactText}
-                </button>
-              </div>
-            )}
-          </div>
+  {/* Avatar and More button removed as requested */}
+</div>
           <div className="pc-content">
             <div className="pc-details">
               <h3>{name}</h3>
               <p>{title}</p>
+
+              {/* Resume for candidates or placeholder */}
+              {resume ? (
+                <div className="text-left mt-4">
+                  <h4 className="text-base font-bold mb-1 text-white">Experience</h4>
+                  <ul className="mb-2">
+                    {resume.experience.map((exp, idx) => (
+                      <li key={idx} className="mb-1">
+                        <div className="font-semibold text-white">{exp.title} at {exp.company}</div>
+                        <div className="text-xs text-white/80 mb-1">{exp.duration}</div>
+                        <div className="text-sm text-white/70">{exp.description}</div>
+                      </li>
+                    ))}
+                  </ul>
+                  <h4 className="text-base font-bold mb-1 text-white">Education</h4>
+                  <div className="mb-2">
+                    <div className="font-semibold text-white">{resume.education.degree}</div>
+                    <div className="text-xs text-white/80">{resume.education.school} &middot; {resume.education.duration}</div>
+                    <div className="text-sm text-white/70">{resume.education.honors}</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-left mt-4">
+                  <h4 className="text-base font-bold mb-1 text-white">Experience</h4>
+                  <ul className="mb-2">
+                    <li className="mb-1">
+                      <div className="font-semibold text-white">Senior Developer at ExampleCorp</div>
+                      <div className="text-xs text-white/80 mb-1">2020 - Present</div>
+                      <div className="text-sm text-white/70">Led a team of engineers building modern web apps.</div>
+                    </li>
+                  </ul>
+                  <h4 className="text-base font-bold mb-1 text-white">Education</h4>
+                  <div className="mb-2">
+                    <div className="font-semibold text-white">B.S. Computer Science</div>
+                    <div className="text-xs text-white/80">Sample University &middot; 2014 - 2018</div>
+                    <div className="text-sm text-white/70">Graduated with honors, focus on software engineering.</div>
+                  </div>
+                </div>
+              )}
+              {/* Skills always render */}
+              {skills && skills.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {skills.map((skill, idx) => (
+                    <span key={idx} className="bg-white/10 border border-white/20 px-2 py-1 rounded text-xs text-white">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
