@@ -17,10 +17,11 @@ export default function DashboardOverlay({ onCollapse }: DashboardOverlayProps) 
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="absolute top-8 right-8">
+        <div className="fixed top-8 right-8 z-[9999]">
           <button
             onClick={onCollapse}
             className="px-4 py-2 rounded-xl bg-white/20 text-white font-semibold shadow hover:bg-white/30 transition flex items-center gap-2"
+            style={{ zIndex: 99999 }}
           >
             <X className="w-5 h-5" />
             Close
