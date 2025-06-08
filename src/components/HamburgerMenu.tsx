@@ -7,8 +7,11 @@ interface HamburgerMenuProps {
   userRole?: 'Candidate' | 'Employer';
 }
 
+import { useNavigate } from 'react-router-dom';
+
 const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', userRole = 'Candidate' }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const navigate = useNavigate();
 
   // Placeholder navigation handlers
   const handleNavigate = (path: string) => {
@@ -68,6 +71,13 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', us
                 <span className="text-lg font-semibold text-white truncate">{userName}</span>
                 <span className="text-sm text-white/70">{userRole}</span>
               </div>
+              <button
+                className="w-full text-left px-2 py-2 rounded-lg hover:bg-white/10 text-white transition"
+                onClick={() => { navigate(-1); setMenuOpen(false); }}
+                role="menuitem"
+              >
+                &#8592; Back
+              </button>
               <button
                 className="w-full text-left px-2 py-2 rounded-lg hover:bg-white/10 text-white transition"
                 onClick={() => handleNavigate('/')} 
