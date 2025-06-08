@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Clock, DollarSign, ChevronRight, Users, Globe, Award, Heart } from 'lucide-react';
+import VerifiedBadge from './VerifiedBadge';
 
 interface CandidateExperience {
   title: string;
@@ -176,8 +177,14 @@ const JobCard: React.FC<JobCardProps> = ({ job, justCollapsed = false, isCandida
         transition-all duration-300 ease-in-out
         ${isExpanded ? 'opacity-0 translate-y-[-20px]' : 'opacity-100 translate-y-0'}
       `}>
-        <h2 className="text-2xl font-bold text-white mb-2">{displayTitle}</h2>
-        <h3 className="text-xl text-white/80 mb-4">{displayName}</h3>
+        <h2 className="text-2xl font-bold text-white mb-2 flex items-center">
+          {displayTitle}
+          {!isCandidate && <VerifiedBadge className="w-6 h-6 ml-2" />}
+        </h2>
+        <h3 className="text-xl text-white/80 mb-4 flex items-center">
+          {displayName}
+          {isCandidate && <VerifiedBadge className="w-6 h-6 ml-2" />}
+        </h3>
 
         <div className="space-y-3">
           <div className="flex items-center text-white/60">

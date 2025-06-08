@@ -1,5 +1,5 @@
 import React from "react";
-
+import VerifiedBadge from './VerifiedBadge';
 // Demo logo import (replace with actual static import or prop if needed)
 import hirlyLogo from "../assets/hirly-logo.png";
 
@@ -60,8 +60,8 @@ const EmployerProfileCardGlass: React.FC<EmployerProfileProps> = ({
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto p-6 rounded-2xl border border-white/30 text-white bg-white/20"
-      style={{ minHeight: 420, maxHeight: '90vh', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)' }}>
+    <div className="relative w-full max-w-md mx-auto p-6 rounded-2xl border border-white/30 text-white !text-white bg-white/20"
+      style={{ minHeight: 420, maxHeight: '90vh', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)', color: '#fff', textShadow: '0 0 8px #000, 0 0 2px #fff' }}>
       <div className="absolute inset-0 rounded-2xl pointer-events-none z-0 backdrop-blur-lg" style={{}} />
       <div className="absolute top-4 right-4 flex gap-2 z-10">
         {!editMode && (
@@ -88,12 +88,15 @@ const EmployerProfileCardGlass: React.FC<EmployerProfileProps> = ({
         </div>
         {!editMode ? (
           <>
-            <h2 className="text-3xl font-bold mb-1 drop-shadow-lg">{editProfile.companyName}</h2>
-            <div className="mb-4 !text-white text-white" style={{ color: '#fff' }}>{editProfile.location}</div>
+            <h2 className="text-2xl font-bold text-white mb-2 flex items-center !text-white" style={{ color: '#fff', textShadow: '0 0 8px #000, 0 0 2px #fff' }}>
+              <span className="text-white !text-white" style={{ color: '#fff', textShadow: '0 0 8px #000, 0 0 2px #fff' }}>{editProfile.companyName}</span>
+              <VerifiedBadge className="w-6 h-6 ml-2" />
+            </h2>
+            <div className="mb-4 text-white !text-white" style={{ color: '#fff', textShadow: '0 0 8px #000, 0 0 2px #fff' }}>{editProfile.location}</div>
             <div className="flex gap-6 mb-4">
               <div className="flex flex-col items-center">
-                <span className="text-lg font-semibold !text-white text-white" style={{ color: '#fff' }}>{editProfile.employees}</span>
-                <span className="text-xs !text-white text-white" style={{ color: '#fff' }}>Employees</span>
+                <span className="text-lg font-semibold text-white !text-white" style={{ color: '#fff', textShadow: '0 0 8px #000, 0 0 2px #fff' }}>{editProfile.employees}</span>
+                <span className="text-xs text-white !text-white" style={{ color: '#fff', textShadow: '0 0 8px #000, 0 0 2px #fff' }}>Employees</span>
               </div>
             </div>
           </>

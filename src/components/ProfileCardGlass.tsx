@@ -1,6 +1,7 @@
 import React from 'react';
 import backArrow from '../assets/back-arrow.svg';
 import { MapPin } from 'lucide-react';
+import VerifiedBadge from './VerifiedBadge';
 
 interface Experience {
   title: string;
@@ -107,7 +108,10 @@ const ProfileCardGlass: React.FC<CandidateProps> = ({ candidate, onBack }) => {
       <div className="pt-28 pb-6 px-6 flex flex-col items-center h-full">
         {!editMode ? (
           <React.Fragment>
-            <h2 className="text-2xl font-bold text-white mb-2">{candidate.name}</h2>
+            <h2 className="text-2xl font-bold text-white mb-2 flex items-center">
+              {candidate.name}
+              <VerifiedBadge className="w-6 h-6 ml-2" />
+            </h2>
             <h3 className="text-xl text-white/80 mb-4">{candidate.title}</h3>
             {candidate.location && (
               <div className="flex items-center text-white/60 mb-4">
