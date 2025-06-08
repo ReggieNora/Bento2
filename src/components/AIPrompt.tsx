@@ -13,9 +13,70 @@ import { useAutoResizeTextarea } from "../hooks/useAutoResizeTextarea";
 // If you have a local Button component, import it here. Otherwise, use a native button.
 const Button = (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props} />;
 // If you have a DropdownMenu component, import it here. Otherwise, use a simple fallback.
-const DropdownMenu = ({ open, setOpen, children }: { open: boolean, setOpen: (open: boolean) => void, children: React.ReactNode }) => <div style={{ display: 'inline-block', position: 'relative' }}>{React.Children.map(children, child => React.isValidElement(child) ? React.cloneElement(child, { open, setOpen }) : child)}</div>;
-const DropdownMenuTrigger = ({ asChild, children, open, setOpen }: any) => <span onClick={() => setOpen(!open)} style={{ cursor: 'pointer' }}>{children}</span>;
-const DropdownMenuContent = ({ children, className, open }: any) => open ? <div className={className} style={{ position: 'absolute', zIndex: 10, background: '#222', color: '#fff', borderRadius: 8, minWidth: 120, padding: 8 }}>{children}</div> : null;
+const DropdownMenu = ({ open, setOpen, children }: { open: boolean, setOpen: (open: boolean) => void, children: React.ReactNode }) => {
+  // Find the trigger and content children
+  let trigger: React.ReactElement | null = null;
+  let content: React.ReactElement | null = null;
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child) && child.type && (child.type as any).displayName === 'DropdownMenuTrigger') {
+      trigger = child;
+    } else if (React.isValidElement(child) && child.type && (child.type as any).displayName === 'DropdownMenuContent') {
+      content = child;
+    }
+  });
+  const triggerRef = React.useRef<HTMLSpanElement>(null);
+  return (
+    <>
+      {trigger && React.cloneElement(trigger, { open, setOpen, ref: triggerRef })}
+      {content && React.cloneElement(content, { open, triggerRef })}
+    </>
+  );
+};
+import ReactDOM from "react-dom";
+const DropdownMenuTrigger = React.forwardRef<HTMLSpanElement, any>(function DropdownMenuTrigger({ asChild, children, open, setOpen }, ref) {
+  return (
+    <span ref={ref} onClick={() => setOpen(!open)} style={{ cursor: "pointer" }}>
+      {children}
+    </span>
+  );
+});
+DropdownMenuTrigger.displayName = 'DropdownMenuTrigger';
+const DropdownMenuContent = ({ children, className, open, triggerRef }: any) => {
+  const [position, setPosition] = React.useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
+  React.useEffect(() => {
+    if (open && triggerRef && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + window.scrollY + 4, // 4px offset
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, [open, triggerRef]);
+  if (!open) return null;
+  return ReactDOM.createPortal(
+    <div
+      className={className}
+      style={{
+        position: "fixed",
+        zIndex: 1000,
+        top: position.top,
+        left: position.left,
+        minWidth: position.width,
+        maxHeight: 192, // max-h-48
+        overflowY: "auto",
+        background: "#222",
+        color: "#fff",
+        borderRadius: 8,
+        padding: 8,
+      }}
+    >
+      {children}
+    </div>,
+    document.body
+  );
+};
+DropdownMenuContent.displayName = 'DropdownMenuContent';
 const DropdownMenuItem = ({ children, onSelect, className }: any) => <div className={className} onClick={onSelect} style={{ padding: 8, cursor: 'pointer' }}>{children}</div>;
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -33,6 +94,54 @@ export default function AIPrompt() {
   });
   const [selectedModel, setSelectedModel] = useState("GPT-4-1 Mini");
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
+  // Typing/backspacing placeholder animation
+  const placeholders = [
+    "Ready to practice?",
+    "You can type to me...",
+    "Or you can speak to me",
+    "Let me know when you're ready"
+  ];
+  const [placeholderIdx, setPlaceholderIdx] = React.useState(0);
+  const [typed, setTyped] = React.useState("");
+  const [phase, setPhase] = React.useState<'typing' | 'pausing' | 'deleting'>('typing');
+
+  React.useEffect(() => {
+    if (value) {
+      setTyped("");
+      return;
+    }
+    let timeout: NodeJS.Timeout;
+    const current = placeholders[placeholderIdx];
+    if (phase === 'typing') {
+      if (typed.length < current.length) {
+        timeout = setTimeout(() => {
+          setTyped(current.slice(0, typed.length + 1));
+        }, 50);
+      } else {
+        timeout = setTimeout(() => setPhase('pausing'), 1000);
+      }
+    } else if (phase === 'pausing') {
+      timeout = setTimeout(() => setPhase('deleting'), 600);
+    } else if (phase === 'deleting') {
+      if (typed.length > 0) {
+        timeout = setTimeout(() => {
+          setTyped(current.slice(0, typed.length - 1));
+        }, 30);
+      } else {
+        setPhase('typing');
+        setPlaceholderIdx(idx => (idx + 1) % placeholders.length);
+      }
+    }
+    return () => clearTimeout(timeout);
+  }, [typed, phase, placeholderIdx, value]);
+
+  React.useEffect(() => {
+    if (!value) {
+      setTyped("");
+      setPhase('typing');
+      setPlaceholderIdx(0);
+    }
+  }, [value]);
 
   const AI_MODELS = ["o3-mini", "Gemini 2.5 Flash", "Claude 3.5 Sonnet", "GPT-4-1 Mini", "GPT-4-1"];
 
@@ -61,7 +170,7 @@ export default function AIPrompt() {
               <Textarea
                 id="ai-input-15"
                 value={value}
-                placeholder={"What can I do for you?"}
+                placeholder={value ? "" : typed}
                 className={cn(
                   "w-full rounded-xl rounded-b-none px-4 py-3 bg-black/5 dark:bg-white/5 border-none dark:text-white placeholder:text-black/70 dark:placeholder:text-white/70 resize-none focus-visible:ring-0 focus-visible:ring-offset-0",
                   "min-h-[72px]",
@@ -102,7 +211,7 @@ export default function AIPrompt() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                       className={cn(
-                        "min-w-[10rem]",
+                        "min-w-[10rem] max-h-48 overflow-y-auto",
                         "border-black/10 dark:border-white/10",
                         "bg-gradient-to-b from-white via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800",
                       )}
