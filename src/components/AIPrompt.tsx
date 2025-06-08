@@ -172,7 +172,7 @@ export default function AIPrompt() {
                 value={value}
                 placeholder={value ? "" : typed}
                 className={cn(
-                  "w-full rounded-xl rounded-b-none px-4 py-3 bg-black/5 dark:bg-white/5 border-none dark:text-white placeholder:text-black/70 dark:placeholder:text-white/70 resize-none focus-visible:ring-0 focus-visible:ring-offset-0",
+                  "w-full rounded-xl rounded-b-none px-4 py-3 bg-black/5 dark:bg-white/5 border-none dark:text-white placeholder:text-black/70 dark:placeholder:text-white/70 resize-none focus:outline-none focus:ring-0 focus:border-transparent",
                   "min-h-[72px]",
                 )}
                 ref={textareaRef}
