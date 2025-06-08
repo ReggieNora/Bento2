@@ -13,9 +13,9 @@ import { useAutoResizeTextarea } from "../hooks/useAutoResizeTextarea";
 // If you have a local Button component, import it here. Otherwise, use a native button.
 const Button = (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props} />;
 // If you have a DropdownMenu component, import it here. Otherwise, use a simple fallback.
-const DropdownMenu = ({ children }: { children: React.ReactNode }) => <div style={{ display: 'inline-block', position: 'relative' }}>{children}</div>;
-const DropdownMenuTrigger = ({ asChild, children }: any) => <>{children}</>;
-const DropdownMenuContent = ({ children, className }: any) => <div className={className} style={{ position: 'absolute', zIndex: 10, background: '#222', color: '#fff', borderRadius: 8, minWidth: 120, padding: 8 }}>{children}</div>;
+const DropdownMenu = ({ open, setOpen, children }: { open: boolean, setOpen: (open: boolean) => void, children: React.ReactNode }) => <div style={{ display: 'inline-block', position: 'relative' }}>{React.Children.map(children, child => React.isValidElement(child) ? React.cloneElement(child, { open, setOpen }) : child)}</div>;
+const DropdownMenuTrigger = ({ asChild, children, open, setOpen }: any) => <span onClick={() => setOpen(!open)} style={{ cursor: 'pointer' }}>{children}</span>;
+const DropdownMenuContent = ({ children, className, open }: any) => open ? <div className={className} style={{ position: 'absolute', zIndex: 10, background: '#222', color: '#fff', borderRadius: 8, minWidth: 120, padding: 8 }}>{children}</div> : null;
 const DropdownMenuItem = ({ children, onSelect, className }: any) => <div className={className} onClick={onSelect} style={{ padding: 8, cursor: 'pointer' }}>{children}</div>;
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,6 +32,7 @@ export default function AIPrompt() {
     maxHeight: 300,
   });
   const [selectedModel, setSelectedModel] = useState("GPT-4-1 Mini");
+  const [modelMenuOpen, setModelMenuOpen] = useState(false);
 
   const AI_MODELS = ["o3-mini", "Gemini 2.5 Flash", "Claude 3.5 Sonnet", "GPT-4-1 Mini", "GPT-4-1"];
 
@@ -76,10 +77,11 @@ export default function AIPrompt() {
             <div className="h-14 bg-black/5 dark:bg-white/5 rounded-b-xl flex items-center">
               <div className="absolute left-3 right-3 bottom-3 flex items-center justify-between w-[calc(100%-24px)]">
                 <div className="flex items-center gap-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                   {/* Model Dropdown Menu - controlled open state */}
+                  <DropdownMenu open={modelMenuOpen} setOpen={setModelMenuOpen}>
+                    <DropdownMenuTrigger asChild open={modelMenuOpen} setOpen={setModelMenuOpen}>
                       <Button
-                        variant="ghost"
+                        type="button"
                         className="flex items-center gap-1 h-8 pl-1 pr-2 text-xs rounded-md dark:text-white hover:bg-black/10 dark:hover:bg-white/10 focus-visible:ring-1 focus-visible:ring-offset-0 focus-visible:ring-blue-500"
                       >
                         <AnimatePresence mode="wait">
@@ -104,11 +106,12 @@ export default function AIPrompt() {
                         "border-black/10 dark:border-white/10",
                         "bg-gradient-to-b from-white via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800",
                       )}
+                      open={modelMenuOpen}
                     >
                       {AI_MODELS.map((model) => (
                         <DropdownMenuItem
                           key={model}
-                          onSelect={() => setSelectedModel(model)}
+                          onSelect={() => { setSelectedModel(model); setModelMenuOpen(false); }}
                           className="flex items-center justify-between gap-2"
                         >
                           <div className="flex items-center gap-2">
@@ -120,6 +123,7 @@ export default function AIPrompt() {
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
+
                   <div className="h-4 w-px bg-black/10 dark:bg-white/10 mx-0.5" />
                   <label
                     className={cn(
