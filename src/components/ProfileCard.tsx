@@ -295,9 +295,6 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
         <div className="pc-inside">
           <div className="pc-shine" />
           <div className="pc-glare" />
-          <div className="pc-content pc-avatar-content">
-  {/* Avatar and More button removed as requested */}
-</div>
           {/* Faded profile background image */}
           {avatarUrl && (
             <div
@@ -316,44 +313,43 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
               }}
             />
           )}
+          {type !== 'employer' && (
+            <button
+              className="pc-back-btn"
+              style={{
+                position: 'absolute',
+                top: '1.2em',
+                left: '1.2em',
+                zIndex: 10,
+                background: 'rgba(30,32,65,0.32)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '999px',
+                padding: '0.55em 1.4em',
+                fontWeight: 600,
+                fontSize: '1em',
+                cursor: 'pointer',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
+                transition: 'background 0.2s',
+                outline: 'none',
+              }}
+              onClick={() => (typeof onBackClick === 'function' ? onBackClick() : window.history.back())}
+            >
+              &#8592; Back
+            </button>
+          )}
           <div className="pc-content">
             <div className="pc-details">
-              {/* Back Button */}
-              <button
-                className="pc-back-btn"
-                style={{
-                  position: 'absolute',
-                  top: '1.2em',
-                  left: '1.2em',
-                  zIndex: 10,
-                  background: 'rgba(30,32,65,0.32)',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '999px',
-                  padding: '0.55em 1.4em',
-                  fontWeight: 600,
-                  fontSize: '1em',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
-                  transition: 'background 0.2s',
-                  outline: 'none',
-                }}
-                onClick={() => (typeof onBackClick === 'function' ? onBackClick() : window.history.back())}
-              >
-                &#8592; Back
-              </button>
               <h3>{name}</h3>
               <p>{title}</p>
 
               {/* Resume or summary depending on card type */}
               {type === 'employer' ? (
-                <div className="text-left mt-4">
-                  <div className="bg-white/5 rounded-xl p-4">
-                    <h4 className="text-base font-bold mb-2 text-white">About Hirly</h4>
-                    <p className="text-white/80 text-sm">
-                      Hirly is revolutionizing the hiring process with AI-powered recruitment solutions. Our platform matches top talent with leading companies, streamlines hiring workflows, and empowers teams to build their dream workforce faster and smarter.
-                    </p>
-                  </div>
+                <div className="text-left mt-10 mb-6" style={{ minHeight: '180px', marginTop: '2.5rem' }}>
+                  <h4 className="text-lg font-extrabold mb-3 text-white">About Hirly</h4>
+                  <p className="text-white/90 text-base leading-relaxed" style={{ maxWidth: 420 }}>
+                    Hirly is revolutionizing hiring with AI-powered recruitment. Our platform connects top talent with leading companies, streamlines workflows, and helps teams build their dream workforce faster and smarter.
+                  </p>
                 </div>
               ) : resume ? (
                 <div className="text-left mt-4">
