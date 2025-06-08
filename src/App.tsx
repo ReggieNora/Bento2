@@ -407,7 +407,7 @@ function App() {
           location="San Francisco, CA"
           about="Revolutionizing the hiring process with AI-powered recruitment solutions."
           employees={120}
-          contactText="Contact"
+          contactText="More"
           showUserInfo={true}
           enableTilt={true}
           onContactClick={() => console.log('Contact employer')}
@@ -579,7 +579,7 @@ function App() {
               location="San Francisco, CA"
               about="Revolutionizing the hiring process with AI-powered recruitment solutions."
               employees={120}
-              contactText="Contact"
+              contactText="More"
               showUserInfo={true}
               enableTilt={true}
               onContactClick={() => setProfileOpen(false)}
@@ -592,7 +592,7 @@ function App() {
               handle={placeholderCandidate.handle}
               status={placeholderCandidate.status}
               avatarUrl={placeholderCandidate.avatarUrl}
-              contactText="Contact"
+              contactText="More"
               showUserInfo={true}
               enableTilt={true}
               about={placeholderCandidate.about}

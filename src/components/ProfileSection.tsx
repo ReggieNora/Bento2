@@ -47,7 +47,7 @@ export default function ProfileSection({ candidate = exampleCandidate, onBack = 
         handle={candidate.handle}
         status={candidate.status}
         avatarUrl={candidate.avatarUrl}
-        contactText="Contact"
+        contactText="More"
         showUserInfo={true}
         enableTilt={true}
         about={candidate.about}

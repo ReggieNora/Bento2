@@ -60,7 +60,6 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   showBehindGradient = true,
   className = "",
   enableTilt = true,
-  miniAvatarUrl,
   name = "Javi A. Torres",
   title = "Software Engineer",
   handle = "javicodes",
@@ -282,18 +281,6 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
             {showUserInfo && (
               <div className="pc-user-info">
                 <div className="pc-user-details">
-                  <div className="pc-mini-avatar">
-                    <img
-                      src={miniAvatarUrl || avatarUrl}
-                      alt={`${name || "User"} mini avatar`}
-                      loading="lazy"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.opacity = "0.5";
-                        target.src = avatarUrl;
-                      }}
-                    />
-                  </div>
                   <div className="pc-user-text">
                     <div className="pc-handle">@{handle}</div>
                     <div className="pc-status">{status}</div>
@@ -304,7 +291,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
                   onClick={handleContactClick}
                   style={{ pointerEvents: "auto" }}
                   type="button"
-                  aria-label={`Contact ${name || "user"}`}
+                  aria-label={`More about ${name || "user"}`}
                 >
                   {contactText}
                 </button>

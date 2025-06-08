@@ -40,7 +40,7 @@ const ProfileCardParent: React.FC<ProfileCardParentProps> = (props) => {
     name,
     handle,
     avatarUrl,
-    contactText = "Contact",
+    contactText = "More",
     showUserInfo = true,
     enableTilt = true,
     onContactClick,
