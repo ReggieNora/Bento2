@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Users, MessageSquare, BarChart2, Settings, Briefcase, Building2 } from 'lucide-react';
 
-import ProfileCardGlass from './components/ProfileCardGlass';
-import MessagesCard from './components/MessagesCard';
+import ProfileCardGlass from "./components/ProfileCardGlass";
+import MessagesCard from "./components/MessagesCard";
+import EmployerProfileCardGlass from "./components/EmployerProfileCardGlass";
 import HamburgerMenu from './components/HamburgerMenu';
 import SettingsCard from './components/SettingsCard';
 import ActionButtons from './components/ActionButtons';
@@ -397,13 +398,7 @@ function App() {
     {
       type: 'candidates',
       component: (
-        <ProfileCard 
-          name={candidateProfiles[currentCandidateIndex].name}
-          title={candidateProfiles[currentCandidateIndex].title}
-          skills={candidateProfiles[currentCandidateIndex].skills}
-          description={candidateProfiles[currentCandidateIndex].description}
-          onBack={() => console.log("Back clicked")}
-        />
+        <EmployerProfileCardGlass />
       )
     },
     {
@@ -609,8 +604,12 @@ function App() {
         }}
       />
       {profileOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-lg">
-          <ProfileCardGlass candidate={placeholderCandidate} onBack={() => setProfileOpen(false)} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          {userType === 'employer' ? (
+            <EmployerProfileCardGlass onBack={() => setProfileOpen(false)} />
+          ) : (
+            <ProfileCardGlass candidate={placeholderCandidate} onBack={() => setProfileOpen(false)} />
+          )}
         </div>
       )}
     </div>
