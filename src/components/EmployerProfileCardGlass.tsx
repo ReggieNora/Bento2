@@ -21,8 +21,9 @@ const EmployerProfileCardGlass: React.FC<EmployerProfileProps> = ({
   onBack,
 }) => {
   return (
-    <div className="relative w-full max-w-md mx-auto p-6 rounded-2xl shadow-2xl bg-white/20 backdrop-blur-lg border border-white/30 text-white"
-      style={{ minHeight: 420, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="relative w-full max-w-md mx-auto p-6 rounded-2xl border border-white/30 text-white bg-white/20"
+      style={{ minHeight: 420, maxHeight: '90vh', display: 'flex', flexDirection: 'column', boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.18)' }}>
+      <div className="absolute inset-0 rounded-2xl pointer-events-none z-0 backdrop-blur-lg" style={{}} />
       <button
         aria-label="Back"
         className="absolute top-4 left-4 text-white/70 hover:text-white"
@@ -36,15 +37,18 @@ const EmployerProfileCardGlass: React.FC<EmployerProfileProps> = ({
           <img src={logoUrl} alt={`${companyName} logo`} className="object-contain w-20 h-20" />
         </div>
         <h2 className="text-3xl font-bold mb-1 drop-shadow-lg">{companyName}</h2>
-        <div className="text-white/80 mb-4">{location}</div>
+        <div className="mb-4 !text-white text-white" style={{ color: '#fff' }}>{location}</div>
         <div className="flex gap-6 mb-4">
           <div className="flex flex-col items-center">
-            <span className="text-lg font-semibold">{employees}</span>
-            <span className="text-xs text-white/60">Employees</span>
+            <span className="text-lg font-semibold !text-white text-white" style={{ color: '#fff' }}>{employees}</span>
+            <span className="text-xs !text-white text-white" style={{ color: '#fff' }}>Employees</span>
           </div>
         </div>
       </div>
-      <div className="flex-1 w-full overflow-y-auto mt-2 pb-2" style={{ minHeight: 0 }}>
+      <div
+        className="flex-1 w-full overflow-y-auto mt-2 pb-2 scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent overscroll-contain"
+        style={{ minHeight: 0, scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y', willChange: 'transform' }}
+      >
         <div className="w-full bg-white/10 rounded-xl p-4 text-sm text-white/90 mb-2" style={{ minHeight: 80 }}>
           {about}
         </div>
