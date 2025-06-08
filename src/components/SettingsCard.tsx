@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import GradientButton from './GradientButton';
 import SettingRow from './SettingRow';
+import { AlgorandVerification } from './AlgorandVerification';
 
 interface SettingSection {
   title: string;
@@ -201,6 +202,7 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) =>
           .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         `}</style>
 
+        <AlgorandVerification email={pendingSettings.email} />
         <div className="mt-8 flex gap-6 justify-end">
           <GradientButton className="rounded-2xl px-6 py-2 shadow-lg border border-white/25" onClick={handleSave}>
             Save Changes
