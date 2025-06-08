@@ -98,8 +98,8 @@ export default function AIPrompt() {
   const placeholders = [
     "Ready to practice?",
     "You can type to me...",
-    "Or you can speak to me",
-    "Let me know when you're ready"
+    "Or you can speak to me...",
+    "Let me know when you're ready!"
   ];
   const [placeholderIdx, setPlaceholderIdx] = React.useState(0);
   const [typed, setTyped] = React.useState("");
