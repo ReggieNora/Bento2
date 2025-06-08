@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import CoachCard from './CoachCard';
+import AIPrompt from './AIPrompt';
 import backArrow from '../assets/back-arrow.svg';
 import Orb from './Orb';
 
@@ -57,7 +57,7 @@ export default function CoachOverlay({ onCollapse }: CoachOverlayProps) {
             {/* Coach Card Content */}
             <div className="w-full max-w-[95vw] md:max-w-2xl max-h-[90vh] flex items-center justify-center">
               <div className="w-full">
-                <CoachCard forceExpanded={true} onStartSession={() => console.log('Begin AI Interview Session')} />
+                <AIPrompt />
               </div>
             </div>
           </div>
