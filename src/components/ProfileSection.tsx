@@ -1,10 +1,14 @@
 import React from 'react';
-import ProfileCardGlass from './ProfileCardGlass';
 
 // Example candidate data (replace with real data as needed)
 const exampleCandidate = {
   name: 'Jane Doe',
   title: 'Senior Frontend Developer',
+  handle: 'janedoe',
+  status: 'Online',
+  avatarUrl: '/avatars/jane.jpg',
+  about: 'Passionate frontend developer with a knack for building delightful user interfaces and scalable web apps.',
+  location: 'San Francisco, CA',
   skills: ['React', 'TypeScript', 'Tailwind CSS', 'UI/UX'],
   description: 'Passionate frontend developer with a knack for building delightful user interfaces and scalable web apps.',
   resume: {
@@ -31,10 +35,26 @@ const exampleCandidate = {
   }
 };
 
+import ProfileCardParent from "./ProfileCardParent";
+
 export default function ProfileSection({ candidate = exampleCandidate, onBack = () => window.history.back() }) {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-900 to-black">
-      <ProfileCardGlass candidate={candidate} />
+      <ProfileCardParent
+        type="candidate"
+        name={candidate.name}
+        title={candidate.title}
+        handle={candidate.handle}
+        status={candidate.status}
+        avatarUrl={candidate.avatarUrl}
+        contactText="Contact"
+        showUserInfo={true}
+        enableTilt={true}
+        about={candidate.about}
+        location={candidate.location}
+        skills={candidate.skills}
+        onContactClick={() => console.log('Contact candidate')}
+      />
     </div>
   );
 }
