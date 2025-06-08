@@ -50,36 +50,46 @@ export default function ProfileSection() {
   const handleCloseResume = () => setResumeOpen(false);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-900 to-black">
-      <ProfileCardParent
-        type="candidate"
-        name={candidate.name}
-        title={candidate.title}
-        handle={candidate.handle}
-        status={candidate.status}
-        avatarUrl={candidate.avatarUrl}
-        contactText="More"
-        showUserInfo={true}
-        enableTilt={true}
-        about={candidate.about}
-        location={candidate.location}
-        skills={candidate.skills}
-        onContactClick={handleOpenResume}
-        resume={candidate.resume}
-      />
-      <ResumeModal isOpen={isResumeOpen} onClose={handleCloseResume}>
-        <ResumeView
-          avatarSrc={candidate.avatarUrl}
-          name={candidate.name}
-          title={candidate.title}
-          skills={candidate.skills}
-          onClose={handleCloseResume}
-          onAction={(action) => {
-            if (action === 'close') handleCloseResume();
-            // Add other actions (star/heart) if needed
-          }}
-        />
-      </ResumeModal>
+    <>
+      {/* Click anywhere outside the card to exit */}
+      <div
+        className="flex justify-center items-center min-h-screen bg-gradient-to-b from-purple-900 to-black"
+        onClick={() => window.history.back()}
+        style={{ cursor: 'pointer' }}
+      >
+        <div onClick={e => e.stopPropagation()} style={{ cursor: 'default' }}>
+          <ProfileCardParent
+            type="candidate"
+            name={candidate.name}
+            title={candidate.title}
+            handle={candidate.handle}
+            status={candidate.status}
+            avatarUrl={candidate.avatarUrl}
+            contactText="More"
+            showUserInfo={true}
+            enableTilt={true}
+            about={candidate.about}
+            location={candidate.location}
+            skills={candidate.skills}
+            onContactClick={handleOpenResume}
+            resume={candidate.resume}
+          />
+        </div>
+        <ResumeModal isOpen={isResumeOpen} onClose={handleCloseResume}>
+          <ResumeView
+            avatarSrc={candidate.avatarUrl}
+            name={candidate.name}
+            title={candidate.title}
+            skills={candidate.skills}
+            onClose={handleCloseResume}
+            onAction={(action) => {
+              if (action === 'close') handleCloseResume();
+              // Add other actions (star/heart) if needed
+            }}
+          />
+        </ResumeModal>
+      </div>
     </div>
+    </>
   );
 }

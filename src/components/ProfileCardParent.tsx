@@ -74,6 +74,7 @@ const ProfileCardParent: React.FC<ProfileCardParentProps> = (props) => {
     <div className="flex items-center justify-center min-h-screen bg-black/60">
       <div className="max-w-lg w-full">
         <ProfileCard
+          type={props.type}
           name={name}
           title={title}
           handle={handle}

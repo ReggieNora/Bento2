@@ -16,6 +16,7 @@ interface EducationItem {
 }
 
 interface ProfileCardProps {
+  type: 'candidate' | 'employer';
   avatarUrl: string;
   iconUrl?: string;
   grainUrl?: string;
@@ -32,10 +33,13 @@ interface ProfileCardProps {
   contactText?: string;
   showUserInfo?: boolean;
   onContactClick?: () => void;
+  onBackClick?: () => void;
   resume?: {
     experience: ExperienceItem[];
     education: EducationItem;
   };
+  experience?: ExperienceItem[];
+  education?: EducationItem;
   skills?: string[];
 }
 
@@ -71,11 +75,12 @@ const easeInOutCubic = (x: number): number =>
   x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 
 const ProfileCardComponent: React.FC<ProfileCardProps> = ({
+  type,
   avatarUrl = "<Placeholder for avatar URL>",
   iconUrl = "<Placeholder for icon URL>",
   grainUrl = "<Placeholder for grain URL>",
-  behindGradient,
-  innerGradient,
+  behindGradient = DEFAULT_BEHIND_GRADIENT,
+  innerGradient = DEFAULT_INNER_GRADIENT,
   showBehindGradient = true,
   className = "",
   enableTilt = true,
@@ -86,6 +91,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   contactText = "Contact",
   showUserInfo = true,
   onContactClick,
+  onBackClick,
   resume,
   skills,
 }) => {
@@ -292,13 +298,64 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
           <div className="pc-content pc-avatar-content">
   {/* Avatar and More button removed as requested */}
 </div>
+          {/* Faded profile background image */}
+          {avatarUrl && (
+            <div
+              className="pc-profile-bg"
+              style={{
+                backgroundImage: `url(${avatarUrl})`,
+                position: 'absolute',
+                inset: 0,
+                zIndex: 1,
+                opacity: 0.18,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'blur(0.5px) grayscale(10%)',
+                pointerEvents: 'none',
+                borderRadius: 'inherit',
+              }}
+            />
+          )}
           <div className="pc-content">
             <div className="pc-details">
+              {/* Back Button */}
+              <button
+                className="pc-back-btn"
+                style={{
+                  position: 'absolute',
+                  top: '1.2em',
+                  left: '1.2em',
+                  zIndex: 10,
+                  background: 'rgba(30,32,65,0.32)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '999px',
+                  padding: '0.55em 1.4em',
+                  fontWeight: 600,
+                  fontSize: '1em',
+                  cursor: 'pointer',
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
+                  transition: 'background 0.2s',
+                  outline: 'none',
+                }}
+                onClick={() => (typeof onBackClick === 'function' ? onBackClick() : window.history.back())}
+              >
+                &#8592; Back
+              </button>
               <h3>{name}</h3>
               <p>{title}</p>
 
-              {/* Resume for candidates or placeholder */}
-              {resume ? (
+              {/* Resume or summary depending on card type */}
+              {type === 'employer' ? (
+                <div className="text-left mt-4">
+                  <div className="bg-white/5 rounded-xl p-4">
+                    <h4 className="text-base font-bold mb-2 text-white">About Hirly</h4>
+                    <p className="text-white/80 text-sm">
+                      Hirly is revolutionizing the hiring process with AI-powered recruitment solutions. Our platform matches top talent with leading companies, streamlines hiring workflows, and empowers teams to build their dream workforce faster and smarter.
+                    </p>
+                  </div>
+                </div>
+              ) : resume ? (
                 <div className="text-left mt-4">
                   <h4 className="text-base font-bold mb-1 text-white">Experience</h4>
                   <ul className="mb-2">
