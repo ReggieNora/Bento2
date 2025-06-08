@@ -380,12 +380,12 @@ function App() {
   };
 
   const menuItems = selectedRole === 'employer' ? [
-    { icon: <Users className="w-5 h-5" />, label: 'Candidates', index: 0 },
-    { icon: <MessageSquare className="w-5 h-5" />, label: 'Messages', index: 1 },
-    { icon: <BarChart2 className="w-5 h-5" />, label: 'Dashboard', index: 2 },
-    { icon: <Briefcase className="w-5 h-5" />, label: 'Coach', index: 3 },
-    { icon: <Building2 className="w-5 h-5" />, label: 'Profile', index: 4 },
-    { icon: <Settings className="w-5 h-5" />, label: 'Settings', index: 5 },
+    { icon: <Users className="w-5 h-5" />, label: 'Candidates', index: 0, overlay: 'candidates' },
+    { icon: <MessageSquare className="w-5 h-5" />, label: 'Messages', index: 1, overlay: 'messages' },
+    { icon: <BarChart2 className="w-5 h-5" />, label: 'Dashboard', index: 2, overlay: 'dashboard' },
+    { icon: <Briefcase className="w-5 h-5" />, label: 'Coach', index: 3, overlay: 'coach' },
+    { icon: <Building2 className="w-5 h-5" />, label: 'Profile', index: 4, overlay: 'profile' },
+    { icon: <Settings className="w-5 h-5" />, label: 'Settings', index: 5, overlay: 'settings' },
   ] : [
     { icon: <Briefcase className="w-5 h-5" />, label: 'Jobs', index: 0 },
     { icon: <MessageSquare className="w-5 h-5" />, label: 'Messages', index: 1 },
@@ -599,6 +599,7 @@ function App() {
             case 'settings': setSettingsOpen(true); break;
             case 'coach': setCoachOpen(true); break;
             case 'dashboard': setDashboardOpen(true); break;
+            case 'candidates': /* open candidates overlay if needed */ break;
             default: break;
           }
         }}

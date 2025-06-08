@@ -30,6 +30,12 @@ export function getFlowingMenuItems(userType: 'candidate' | 'employer' | null): 
         overlay: 'dashboard',
       },
       {
+        link: '#profile',
+        text: 'Profile',
+        image: '/assets/image.png',
+        overlay: 'profile',
+      },
+      {
         link: '#settings',
         text: 'Settings',
         image: '/assets/setting.png',
