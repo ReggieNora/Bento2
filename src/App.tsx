@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, Suspense, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Users, MessageSquare, BarChart2, Settings, Briefcase, Building2 } from 'lucide-react';
 
-
 import MessagesCard from "./components/MessagesCard";
 import ProfileCardParent from "./components/ProfileCardParent";
 
@@ -19,11 +18,15 @@ import { getFlowingMenuItems, FlowingMenuItem } from './components/FlowingMenuIt
 import GradientBackground from './components/GradientBackground';
 import ErrorBoundary from './components/ErrorBoundary';
 const CompleteProfileModal = React.lazy(() => import('./components/CompleteProfileModal')); // Lazy load for isolation
+const WelcomeModal = React.lazy(() => import('./components/WelcomeModal')); // Lazy load for welcome
 
 function App() {
   // --- First-time user modal state ---
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const [signupUserType, setSignupUserType] = useState<'candidate' | 'employer' | null>(null);
+  // Welcome modal state
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [welcomeName, setWelcomeName] = useState<string>('');
 
   // --- CompleteProfileModal handlers (must be defined at top level to avoid hook order bugs) ---
   const handleCompleteProfileModalComplete = useCallback(({ name, resumeFile }) => {
@@ -32,6 +35,8 @@ function App() {
       localStorage.setItem('profileResume', resumeFile.name);
     }
     setShowCompleteProfile(false);
+    setWelcomeName(name);
+    setShowWelcomeModal(true);
   }, []);
 
   const handleCompleteProfileModalClose = useCallback(() => setShowCompleteProfile(false), []);
@@ -633,6 +638,12 @@ function App() {
           </ErrorBoundary>
         </>
       )}
+      {showWelcomeModal && (
+        <Suspense fallback={null}>
+          <WelcomeModal name={welcomeName} onClose={() => setShowWelcomeModal(false)} />
+        </Suspense>
+      )}
+
 
       {profileOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
