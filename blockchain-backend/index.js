@@ -3,6 +3,8 @@ import express from 'express';
 import algosdk from 'algosdk';
 
 const app = express();
+import cors from 'cors';
+app.use(cors());
 app.use(express.json());
 
 const algodToken = process.env.ALGOD_TOKEN || '';

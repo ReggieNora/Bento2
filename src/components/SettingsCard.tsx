@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import GradientButton from './GradientButton';
 import SettingRow from './SettingRow';
 import { AlgorandVerification } from './AlgorandVerification';
@@ -34,6 +34,9 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) =>
     marketingEmails: false,
   });
   const [pendingSettings, setPendingSettings] = useState(settings);
+
+  // Refs for each section
+  const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Map setting label to correct key
   const labelToKey: Record<string, keyof typeof settings> = {
@@ -121,6 +124,10 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) =>
         { type: 'toggle', label: 'Dark Mode', value: settings.darkMode },
         { type: 'toggle', label: 'Location Access', value: settings.locationAccess },
       ]
+    },
+    {
+      title: 'Verification',
+      settings: [] // We'll render AlgorandVerification directly
     }
   ];
 
@@ -170,10 +177,16 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) =>
 
         <div className="flex-1 overflow-y-auto pr-2 space-y-3 scrollbar-hide">
           {settingSections.map((section) => (
-            <div key={section.title} className="mb-2 rounded-xl bg-white/5">
+            <div
+              key={section.title}
+              className="mb-2 rounded-xl bg-white/5"
+              ref={el => (sectionRefs.current[section.title] = el)}
+            >
               <button
                 className="flex items-center justify-between w-full px-4 py-3 text-lg font-semibold text-white focus:outline-none"
-                onClick={() => setOpenSection(openSection === section.title ? null : section.title)}
+                onClick={() => {
+                  setOpenSection(openSection === section.title ? null : section.title);
+                }}
                 aria-expanded={openSection === section.title}
               >
                 <span>{section.title}</span>
@@ -192,6 +205,9 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) =>
                       />
                     );
                   })}
+                  {section.title === 'Verification' && (
+                    <AlgorandVerification email={pendingSettings.email} />
+                  )}
                 </div>
               )}
             </div>
@@ -202,7 +218,6 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ forceExpanded = false }) =>
           .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         `}</style>
 
-        <AlgorandVerification email={pendingSettings.email} />
         <div className="mt-8 flex gap-6 justify-end">
           <GradientButton className="rounded-2xl px-6 py-2 shadow-lg border border-white/25" onClick={handleSave}>
             Save Changes
