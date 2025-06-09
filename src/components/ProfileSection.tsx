@@ -71,7 +71,7 @@ export default function ProfileSection() {
             about={candidate.about}
             location={candidate.location}
             skills={candidate.skills}
-            onContactClick={handleOpenResume}
+            onEditClick={handleOpenResume}
             resume={candidate.resume}
           />
         </div>
