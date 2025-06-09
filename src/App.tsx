@@ -17,8 +17,13 @@ import AboutPage from './components/AboutPage';
 import FlowingMenu from './components/FlowingMenu';
 import { getFlowingMenuItems, FlowingMenuItem } from './components/FlowingMenuItems';
 import GradientBackground from './components/GradientBackground';
+import CompleteProfileModal from './components/CompleteProfileModal';
 
 function App() {
+  // --- First-time user modal state ---
+  const [showCompleteProfile, setShowCompleteProfile] = useState(false);
+  const [signupUserType, setSignupUserType] = useState<'candidate' | 'employer' | null>(null);
+
   // Move ALL hooks to the top (including overlay/modal states and lazy imports)
   const [selectedRole, setSelectedRole] = useState<'candidate' | 'employer' | null>(null);
   const [userType, setUserType] = useState<'candidate' | 'employer' | null>(() => {
@@ -487,14 +492,22 @@ function App() {
     setIsMenuOpen(false);
   };
 
+  const handleAuthSuccess = (type: string) => {
+    setUserType(type);
+    setSelectedRole(type);
+    setIsAuthenticated(true);
+    localStorage.setItem('isAuthenticated', 'true');
+    localStorage.setItem('userType', type);
+  };
+
   if (!isAuthenticated) {
-    return <LandingPage onAuthSuccess={(type) => {
-      setUserType(type);
-      setSelectedRole(type);
-      setIsAuthenticated(true);
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userType', type);
-    }} />;
+    return <LandingPage 
+      onAuthSuccess={handleAuthSuccess}
+      onSignupSuccess={(userType) => {
+        setSignupUserType(userType);
+        setShowCompleteProfile(true);
+      }}
+    />;
   }
 
   if (swipeOpen) {
@@ -590,6 +603,22 @@ function App() {
           }
         }}
       />
+      {/* Complete Profile Modal for new users */}
+      {showCompleteProfile && (
+        <CompleteProfileModal
+          onComplete={({ name, resumeFile }) => {
+            // Save to localStorage for demo purposes
+            localStorage.setItem('profileName', name);
+            if (resumeFile) {
+              // Only store file name for demo; real app would upload
+              localStorage.setItem('profileResume', resumeFile.name);
+            }
+            setShowCompleteProfile(false);
+          }}
+          onClose={() => setShowCompleteProfile(false)}
+        />
+      )}
+
       {profileOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           {userType === 'employer' ? (

@@ -8,10 +8,12 @@ import AuthModal from './AuthModal';
 
 interface LandingPageProps {
   onAuthSuccess: (userType: 'candidate' | 'employer') => void;
+  onSignupSuccess?: (userType: 'candidate' | 'employer') => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess, onSignupSuccess }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authAction, setAuthAction] = useState<'signin' | 'signup'>('signin');
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
@@ -45,7 +47,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
                 Pricing
               </Link>
               <motion.button 
-                onClick={() => setShowAuthModal(true)}
+                onClick={() => { setAuthAction('signin'); setShowAuthModal(true); }}
                 className="px-6 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-white font-medium"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -83,7 +85,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
                 as="button"
                 color="rgb(147, 51, 234)"
                 speed="5s"
-                onClick={() => setShowAuthModal(true)}
+                onClick={() => { setAuthAction('signup'); setShowAuthModal(true); }}
               >
                 Get Started
               </StarBorder>
@@ -97,6 +99,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onAuthSuccess }) => {
         <AuthModal
           onAuthSuccess={onAuthSuccess}
           onClose={() => setShowAuthModal(false)}
+          initialAuthAction={authAction}
+          onSignupSuccess={onSignupSuccess}
         />
       )}
     </div>

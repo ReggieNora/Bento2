@@ -6,11 +6,13 @@ import AuthForm from './AuthForm';
 interface AuthModalProps {
   onAuthSuccess: (userType: 'candidate' | 'employer') => void;
   onClose: () => void;
+  initialAuthAction?: 'signin' | 'signup';
+  onSignupSuccess?: (userType: 'candidate' | 'employer') => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ onAuthSuccess, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ onAuthSuccess, onClose, initialAuthAction = 'signin', onSignupSuccess }) => {
   const [userType, setUserType] = useState<'candidate' | 'employer'>('candidate');
-  const [authAction, setAuthAction] = useState<'signin' | 'signup'>('signin');
+  const [authAction, setAuthAction] = useState<'signin' | 'signup'>(initialAuthAction);
   const [isClosing, setIsClosing] = useState(false);
 
   const handleClose = () => {
@@ -54,6 +56,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ onAuthSuccess, onClose }) => {
             onToggleAuthAction={() =>
               setAuthAction((current) => (current === 'signin' ? 'signup' : 'signin'))
             }
+            onSignupSuccess={onSignupSuccess}
           />
         </motion.div>
       </motion.div>

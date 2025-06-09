@@ -7,6 +7,7 @@ interface AuthFormProps {
   userType: 'candidate' | 'employer';
   onUserTypeChange: (type: 'candidate' | 'employer') => void;
   onToggleAuthAction: () => void;
+  onSignupSuccess?: (userType: 'candidate' | 'employer') => void;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -15,6 +16,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   userType,
   onUserTypeChange,
   onToggleAuthAction,
+  onSignupSuccess,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -93,6 +95,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
           onClick={(e) => {
             e.preventDefault();
             onAuthSuccess(userType);
+            if (authAction === 'signup' && typeof onSignupSuccess === 'function') {
+              onSignupSuccess(userType);
+            }
           }}
           className="w-full mt-2 px-8 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold shadow-lg flex items-center justify-center gap-2 hover:from-pink-600 hover:to-purple-600 transition-colors text-lg"
         >
