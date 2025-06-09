@@ -10,7 +10,7 @@ import SettingsCard from './components/SettingsCard';
 import ActionButtons from './components/ActionButtons';
 import Dashboard from './components/Dashboard';
 import CoachCard from './components/CoachCard';
-import CompanyProfileCard from './components/CompanyProfileCard';
+import SimpleCompanyProfileCard from './components/SimpleCompanyProfileCard';
 import LandingPage from './components/LandingPage';
 import JobCard from './components/JobCard';
 import AboutPage from './components/AboutPage';
@@ -428,7 +428,13 @@ function App() {
     },
     {
       type: 'company',
-      component: <CompanyProfileCard />
+      component: <SimpleCompanyProfileCard 
+        companyName="Hirly, Inc."
+        industry="Technology"
+        logoUrl="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600"
+        description="Revolutionizing the hiring process with AI-powered recruitment solutions."
+        specialties={["AI Recruitment", "Talent Matching", "HR Technology"]}
+      />
     },
     {
       type: 'settings',
