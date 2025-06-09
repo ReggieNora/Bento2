@@ -1,31 +1,14 @@
-import React from 'react';
-import './ProfileCard.css';
-
-// Employer card CSS override to remove gradient/transparent text
-const employerOverride = `
-  .employer-details p,
-  .employer-details h2,
-  .employer-details h3,
-  .employer-details h4 {
-    color: #fff !important;
-    background: none !important;
-    background-image: none !important;
-    background-clip: unset !important;
-    -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: #fff !important;
-  }
-`;
+import React, { useState } from 'react';
+import { Building2, MapPin, Globe, Users, Star, Award, Briefcase } from 'lucide-react';
+import GradientButton from './GradientButton';
 
 interface CompanyProfileCardProps {
   onViewProfile?: () => void;
 }
 
-const DEFAULT_BEHIND_GRADIENT =
-  "radial-gradient(farthest-side circle at var(--pointer-x) var(--pointer-y),hsla(266,100%,90%,var(--card-opacity)) 4%,hsla(266,50%,80%,calc(var(--card-opacity)*0.75)) 10%,hsla(266,25%,70%,calc(var(--card-opacity)*0.5)) 50%,hsla(266,0%,60%,0) 100%),radial-gradient(35% 52% at 55% 20%,#00ffaac4 0%,#073aff00 100%),radial-gradient(100% 100% at 50% 50%,#00c1ffff 1%,#073aff00 76%),conic-gradient(from 124deg at 50% 50%,#c137ffff 0%,#07c6ffff 40%,#07c6ffff 60%,#c137ffff 100%)";
-const DEFAULT_INNER_GRADIENT =
-  "linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)";
-
 const CompanyProfileCard: React.FC<CompanyProfileCardProps> = ({ onViewProfile }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const companyInfo = {
     name: "Hirly, Inc.",
     logo: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600",
@@ -40,160 +23,198 @@ const CompanyProfileCard: React.FC<CompanyProfileCardProps> = ({ onViewProfile }
     awards: ["Best Tech Startup 2023", "Innovation Award 2023"]
   };
 
-  // Style for gradients, like ProfileCard
-  const cardStyle = {
-    '--icon': 'none',
-    '--grain': 'none',
-    '--behind-gradient': DEFAULT_BEHIND_GRADIENT,
-    '--inner-gradient': DEFAULT_INNER_GRADIENT
-  } as React.CSSProperties;
+  if (!isExpanded) {
+    return (
+      <div className="relative w-[350px]">
+        <div className="flex flex-col h-[480px] p-8 rounded-3xl 
+                      bg-white/10 backdrop-blur-md border border-white/20
+                      shadow-xl shadow-black/20">
+          
+          {/* Company Logo and Name */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="w-24 h-24 rounded-2xl overflow-hidden mb-4 border-2 border-white/20">
+              <img 
+                src={companyInfo.logo} 
+                alt={companyInfo.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <h2 className="text-2xl font-bold text-white tracking-wide text-center
+                         text-shadow-glow">{companyInfo.name}</h2>
+            <p className="text-white/60 mt-1">{companyInfo.industry}</p>
+          </div>
+
+          {/* Quick Info */}
+          <div className="space-y-4 mb-6">
+            <div className="flex items-center space-x-3">
+              <MapPin className="w-5 h-5 text-white/60" />
+              <span className="text-white/80">{companyInfo.location}</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Users className="w-5 h-5 text-white/60" />
+              <span className="text-white/80">{companyInfo.size}</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Globe className="w-5 h-5 text-white/60" />
+              <span className="text-white/80">{companyInfo.website}</span>
+            </div>
+          </div>
+
+          {/* Specialties */}
+          <div className="mb-6">
+            <h3 className="text-white/90 text-sm font-semibold mb-3">Specialties</h3>
+            <div className="flex flex-wrap gap-2">
+              {companyInfo.specialties.map((specialty, index) => (
+                <div
+                  key={index}
+                  className="px-3 py-1 rounded-full bg-white/10 border border-white/20
+                           text-white/80 text-sm"
+                >
+                  {specialty}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-auto flex flex-col items-center space-y-4">
+            <GradientButton onClick={() => setIsExpanded(true)}>
+              View Full Profile
+            </GradientButton>
+          </div>
+        </div>
+        
+        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-[95%] h-4 
+                      bg-black/20 blur-md rounded-full"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="pc-card-wrapper" style={cardStyle}>
-      <section className="pc-card">
-        <div className="pc-inside">
-          <div className="pc-shine" />
-          <div className="pc-glare" />
-          {/* Faded company logo as background */}
-          <div
-            className="pc-profile-bg"
-            style={{
-              backgroundImage: `url(${companyInfo.logo})`,
-              position: 'absolute',
-              inset: 0,
-              zIndex: 1,
-              opacity: 0.18,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              filter: 'blur(0.5px) grayscale(10%)',
-              pointerEvents: 'none',
-              borderRadius: 'inherit',
-            }}
-          />
-          <div className="pc-content" style={{ mixBlendMode: 'normal' }}>
-            <div className="pc-details employer-details">
-              <div className="flex flex-col items-center mb-6">
-                <div className="w-24 h-24 rounded-2xl overflow-hidden mb-4 border-2 border-white/20">
-                  <img
-                    src={companyInfo.logo}
-                    alt={companyInfo.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '2rem', textAlign: 'center', margin: 0 }}>
-                  {companyInfo.name}
-                </h2>
-                <p className="text-white/60 mt-1">{companyInfo.industry}</p>
-              </div>
-              {/* Quick Info */}
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center space-x-3">
-                  <span className="material-icons text-white/60">location_on</span>
-                  <span className="text-white/80">{companyInfo.location}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className="material-icons text-white/60">groups</span>
-                  <span className="text-white/80">{companyInfo.size}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className="material-icons text-white/60">public</span>
-                  <span className="text-white/80">{companyInfo.website}</span>
+    <div className="relative w-[700px]">
+      <div className="flex flex-col h-[600px] p-8 rounded-3xl 
+                    bg-white/10 backdrop-blur-md border border-white/20
+                    shadow-xl shadow-black/20">
+        
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-white/20">
+              <img 
+                src={companyInfo.logo} 
+                alt={companyInfo.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-white tracking-wide
+                           text-shadow-glow">{companyInfo.name}</h2>
+              <p className="text-white/60">{companyInfo.industry}</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="px-4 py-2 bg-white/10 text-white rounded-xl
+                     hover:bg-white/20 transition-colors duration-200"
+          >
+            Collapse
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto pr-4 space-y-6">
+          {/* Company Description */}
+          <div className="bg-white/5 rounded-xl p-6">
+            <h3 className="text-white font-semibold mb-4">About Us</h3>
+            <p className="text-white/80 leading-relaxed">{companyInfo.description}</p>
+          </div>
+
+          {/* Company Details */}
+          <div className="bg-white/5 rounded-xl p-6">
+            <h3 className="text-white font-semibold mb-4">Company Details</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center space-x-3">
+                <Building2 className="w-5 h-5 text-white/60" />
+                <div>
+                  <p className="text-white/60 text-sm">Founded</p>
+                  <p className="text-white">{companyInfo.founded}</p>
                 </div>
               </div>
-              {/* About Us */}
-              <div className="text-left mt-6 mb-6" style={{ minHeight: '100px' }}>
-                <h4 style={{ color: '#fff', fontWeight: 800, fontSize: '1.2rem', margin: '0 0 1rem 0' }}>About Us</h4>
-                <p style={{ color: '#fff', fontSize: '1rem', lineHeight: 1.6, maxWidth: 420, margin: 0 }}>
-                  {companyInfo.description}
-                </p>
-              </div>
-              {/* Specialties */}
-              <div className="mb-6">
-                <h3 style={{ color: '#fff', fontWeight: 600, fontSize: '1rem', margin: '0 0 0.75rem 0' }}>Specialties</h3>
-                <div className="flex flex-wrap gap-2">
-                  {companyInfo.specialties.map((specialty, index) => (
-                    <span
-                      key={index}
-                      className="bg-white/10 border border-white/20 px-2 py-1 rounded text-xs text-white"
-                    >
-                      {specialty}
-                    </span>
-                  ))}
+              <div className="flex items-center space-x-3">
+                <Users className="w-5 h-5 text-white/60" />
+                <div>
+                  <p className="text-white/60 text-sm">Company Size</p>
+                  <p className="text-white">{companyInfo.size}</p>
                 </div>
               </div>
-              {/* Benefits */}
-              <div className="mb-6">
-                <h3 style={{ color: '#fff', fontWeight: 600, fontSize: '1rem', margin: '0 0 0.75rem 0' }}>Benefits & Perks</h3>
-                <div className="flex flex-wrap gap-2">
-                  {companyInfo.benefits.map((benefit, index) => (
-                    <span
-                      key={index}
-                      className="bg-white/10 border border-white/20 px-2 py-1 rounded text-xs text-white"
-                    >
-                      {benefit}
-                    </span>
-                  ))}
+              <div className="flex items-center space-x-3">
+                <MapPin className="w-5 h-5 text-white/60" />
+                <div>
+                  <p className="text-white/60 text-sm">Location</p>
+                  <p className="text-white">{companyInfo.location}</p>
                 </div>
               </div>
-              {/* Awards */}
-              <div className="mb-6">
-                <h3 style={{ color: '#fff', fontWeight: 600, fontSize: '1rem', margin: '0 0 0.75rem 0' }}>Awards & Recognition</h3>
-                <div className="flex flex-wrap gap-2">
-                  {companyInfo.awards.map((award, index) => (
-                    <span
-                      key={index}
-                      className="bg-white/10 border border-white/20 px-2 py-1 rounded text-xs text-white"
-                    >
-                      {award}
-                    </span>
-                  ))}
+              <div className="flex items-center space-x-3">
+                <Globe className="w-5 h-5 text-white/60" />
+                <div>
+                  <p className="text-white/60 text-sm">Website</p>
+                  <p className="text-white">{companyInfo.website}</p>
                 </div>
               </div>
-              {/* View Profile Button */}
-              {onViewProfile && (
-                <div className="mt-6 flex justify-center">
-                  <button
-                    className="pc-back-btn"
-                    style={{
-                      background: 'rgba(30,32,65,0.32)',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '999px',
-                      padding: '0.55em 1.4em',
-                      fontWeight: 600,
-                      fontSize: '1em',
-                      cursor: 'pointer',
-                      boxShadow: '0 2px 12px rgba(0,0,0,0.10)',
-                      transition: 'background 0.2s',
-                      outline: 'none',
-                    }}
-                    onClick={onViewProfile}
-                  >
-                    View Full Profile
-                  </button>
+            </div>
+          </div>
+
+          {/* Specialties */}
+          <div className="bg-white/5 rounded-xl p-6">
+            <h3 className="text-white font-semibold mb-4">Specialties</h3>
+            <div className="flex flex-wrap gap-2">
+              {companyInfo.specialties.map((specialty, index) => (
+                <div
+                  key={index}
+                  className="px-4 py-2 rounded-full bg-white/10 border border-white/20
+                           text-white/80"
+                >
+                  {specialty}
                 </div>
-              )}
+              ))}
+            </div>
+          </div>
+
+          {/* Benefits */}
+          <div className="bg-white/5 rounded-xl p-6">
+            <h3 className="text-white font-semibold mb-4">Benefits & Perks</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {companyInfo.benefits.map((benefit, index) => (
+                <div
+                  key={index}
+                  className="flex items-center space-x-2 text-white/80"
+                >
+                  <Star className="w-4 h-4 text-white/60" />
+                  <span>{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Awards */}
+          <div className="bg-white/5 rounded-xl p-6">
+            <h3 className="text-white font-semibold mb-4">Awards & Recognition</h3>
+            <div className="space-y-3">
+              {companyInfo.awards.map((award, index) => (
+                <div
+                  key={index}
+                  className="flex items-center space-x-3 text-white/80"
+                >
+                  <Award className="w-5 h-5 text-white/60" />
+                  <span>{award}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      </section>
+      </div>
+      
+      <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-[95%] h-4 
+                    bg-black/20 blur-md rounded-full"></div>
     </div>
   );
 };
 
-// Remove gradient/transparent text for all headings and paragraphs in this card
-const noGradientTextStyle = `
-  .no-gradient-text {
-    color: #fff !important;
-    background: none !important;
-    background-image: none !important;
-    background-clip: unset !important;
-    -webkit-background-clip: unset !important;
-    -webkit-text-fill-color: #fff !important;
-  }
-`;
-
-export default () => <>
-  <style>{noGradientTextStyle}</style>
-  <CompanyProfileCard />
-</>;
+export default CompanyProfileCard; 
