@@ -96,7 +96,7 @@ const AboutUsPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full relative">
+    <div className="min-h-screen w-full relative overflow-auto">
       {/* Optimized Gradient Background */}
       <GradientBackground animated={false} />
 
