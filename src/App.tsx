@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Users, MessageSquare, BarChart2, Settings, Briefcase, Building2 } from 'lucide-react';
 
 
@@ -17,12 +17,25 @@ import AboutPage from './components/AboutPage';
 import FlowingMenu from './components/FlowingMenu';
 import { getFlowingMenuItems, FlowingMenuItem } from './components/FlowingMenuItems';
 import GradientBackground from './components/GradientBackground';
-import CompleteProfileModal from './components/CompleteProfileModal';
+import ErrorBoundary from './components/ErrorBoundary';
+const CompleteProfileModal = React.lazy(() => import('./components/CompleteProfileModal')); // Lazy load for isolation
 
 function App() {
   // --- First-time user modal state ---
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
   const [signupUserType, setSignupUserType] = useState<'candidate' | 'employer' | null>(null);
+
+  // --- CompleteProfileModal handlers (must be defined at top level to avoid hook order bugs) ---
+  const handleCompleteProfileModalComplete = useCallback(({ name, resumeFile }) => {
+    localStorage.setItem('profileName', name);
+    if (resumeFile) {
+      localStorage.setItem('profileResume', resumeFile.name);
+    }
+    setShowCompleteProfile(false);
+  }, []);
+
+  const handleCompleteProfileModalClose = useCallback(() => setShowCompleteProfile(false), []);
+
 
   // Move ALL hooks to the top (including overlay/modal states and lazy imports)
   const [selectedRole, setSelectedRole] = useState<'candidate' | 'employer' | null>(null);
@@ -605,18 +618,20 @@ function App() {
       />
       {/* Complete Profile Modal for new users */}
       {showCompleteProfile && (
-        <CompleteProfileModal
-          onComplete={({ name, resumeFile }) => {
-            // Save to localStorage for demo purposes
-            localStorage.setItem('profileName', name);
-            if (resumeFile) {
-              // Only store file name for demo; real app would upload
-              localStorage.setItem('profileResume', resumeFile.name);
-            }
-            setShowCompleteProfile(false);
-          }}
-          onClose={() => setShowCompleteProfile(false)}
-        />
+        <>
+          <div style={{zIndex: 9999, position: 'fixed', top: 20, left: 20, color: 'red', background: 'white', padding: 8}}>DEBUG: About to render ErrorBoundary/Suspense/Modal</div>
+          <ErrorBoundary>
+            <Suspense fallback={<div className="fixed inset-0 z-50 flex items-center justify-center bg-red-900 text-white text-2xl font-bold">DEBUG: Suspense fallback - Modal Loading</div>}>
+              <>
+                <div style={{zIndex: 9999, position: 'fixed', top: 60, left: 20, color: 'blue', background: 'white', padding: 8}}>DEBUG: Inside Suspense, about to render Modal</div>
+                <CompleteProfileModal
+                  onComplete={handleCompleteProfileModalComplete}
+                  onClose={handleCompleteProfileModalClose}
+                />
+              </>
+            </Suspense>
+          </ErrorBoundary>
+        </>
       )}
 
       {profileOpen && (

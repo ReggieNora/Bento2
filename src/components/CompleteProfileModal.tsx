@@ -5,6 +5,8 @@ interface CompleteProfileModalProps {
   onClose: () => void;
 }
 
+import ReactDOM from 'react-dom';
+
 const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({ onComplete, onClose }) => {
   const [name, setName] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -26,9 +28,9 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({ onComplete,
     }, 500);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-lg">
-      <div className="relative w-full max-w-lg mx-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden p-8">
+  return ReactDOM.createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+      <div className="relative w-full max-w-lg mx-4 bg-white/10 border border-white/20 rounded-2xl shadow-2xl overflow-hidden p-8">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-xl hover:bg-white/20 transition-all duration-300 text-white/80 hover:text-white bg-white/5 border border-white/10 shadow-lg"
@@ -70,8 +72,9 @@ const CompleteProfileModal: React.FC<CompleteProfileModalProps> = ({ onComplete,
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
-export default CompleteProfileModal;
+export default React.memo(CompleteProfileModal);
