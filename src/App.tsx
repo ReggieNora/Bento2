@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown, Users, MessageSquare, BarChart2, Settings, Briefcase, Building2 } from 'lucide-react';
 
-import ProfileCardGlass from "./components/ProfileCardGlass";
+
 import MessagesCard from "./components/MessagesCard";
-import EmployerProfileCardGlass from "./components/EmployerProfileCardGlass";
+import ProfileCardParent from "./components/ProfileCardParent";
+
 import HamburgerMenu from './components/HamburgerMenu';
 import SettingsCard from './components/SettingsCard';
 import ActionButtons from './components/ActionButtons';
@@ -394,41 +395,24 @@ function App() {
     { icon: <Settings className="w-5 h-5" />, label: 'Settings', index: 4 },
   ];
 
-  const cards = selectedRole === 'employer' ? [
+  const cards = [
     {
       type: 'candidates',
       component: (
-        <EmployerProfileCardGlass />
-      )
-    },
-    {
-      type: 'messages',
-      component: (
-        <MessagesCard 
-          onViewProfile={() => console.log("View profile clicked")}
+        <ProfileCardParent
+          type="employer"
+          name="Hirly, Inc."
+          handle="hirlyinc"
+          avatarUrl="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600"
+          location="San Francisco, CA"
+          about="Revolutionizing the hiring process with AI-powered recruitment solutions."
+          employees={120}
+          contactText="More"
+          showUserInfo={true}
+          enableTilt={true}
+          onContactClick={() => console.log('Contact employer')}
         />
       )
-    },
-    {
-      type: 'dashboard',
-      component: <Dashboard />
-    },
-    {
-      type: 'coach',
-      component: <CoachCard onStartSession={() => console.log("Start session clicked")} />
-    },
-    {
-      type: 'company',
-      component: <CompanyProfileCard />
-    },
-    {
-      type: 'settings',
-      component: <SettingsCard />
-    }
-  ] : [
-    {
-      type: 'jobs',
-      component: <JobCard job={jobListings[currentJobIndex]} />
     },
     {
       type: 'messages',
@@ -555,33 +539,13 @@ function App() {
 
   const placeholderCandidate = {
     name: 'Jane Doe',
-    title: 'Software Engineer',
-    location: 'San Francisco, CA',
-    avatarSrc: 'https://randomuser.me/api/portraits/women/44.jpg',
-    description: 'Creative software engineer with 5+ years of experience building scalable web apps.',
-    skills: ['React', 'TypeScript', 'Node.js', 'GraphQL'],
-    resume: {
-      experience: [
-        {
-          title: 'Frontend Developer',
-          company: 'TechCo',
-          duration: '2020-2023',
-          description: 'Built and maintained core UI features for SaaS platform.'
-        },
-        {
-          title: 'Software Engineer',
-          company: 'Webify',
-          duration: '2018-2020',
-          description: 'Worked on cross-functional teams to deliver new product features.'
-        }
-      ],
-      education: {
-        degree: 'B.Sc. Computer Science',
-        school: 'UC Berkeley',
-        duration: '2014-2018',
-        honors: 'Summa Cum Laude'
-      }
-    }
+    title: 'Frontend Developer',
+    handle: 'janedoe',
+    status: 'Open to Work',
+    avatarUrl: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=600',
+    about: 'Experienced frontend developer passionate about building beautiful and performant web apps.',
+    location: 'Seattle, WA',
+    skills: ['React', 'TypeScript', 'CSS', 'UI/UX'],
   };
 
   return (
@@ -607,9 +571,35 @@ function App() {
       {profileOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           {userType === 'employer' ? (
-            <EmployerProfileCardGlass onBack={() => setProfileOpen(false)} />
+            <ProfileCardParent
+              type="employer"
+              name="Hirly, Inc."
+              handle="hirlyinc"
+              avatarUrl="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600"
+              location="San Francisco, CA"
+              about="Revolutionizing the hiring process with AI-powered recruitment solutions."
+              employees={120}
+              contactText="More"
+              showUserInfo={true}
+              enableTilt={true}
+              onContactClick={() => setProfileOpen(false)}
+            />
           ) : (
-            <ProfileCardGlass candidate={placeholderCandidate} onBack={() => setProfileOpen(false)} />
+            <ProfileCardParent
+              type="candidate"
+              name={placeholderCandidate.name}
+              title={placeholderCandidate.title}
+              handle={placeholderCandidate.handle}
+              status={placeholderCandidate.status}
+              avatarUrl={placeholderCandidate.avatarUrl}
+              contactText="More"
+              showUserInfo={true}
+              enableTilt={true}
+              about={placeholderCandidate.about}
+              location={placeholderCandidate.location}
+              skills={placeholderCandidate.skills}
+              onContactClick={() => setProfileOpen(false)}
+            />
           )}
         </div>
       )}
