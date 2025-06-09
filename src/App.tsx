@@ -21,7 +21,10 @@ import GradientBackground from './components/GradientBackground';
 function App() {
   // Move ALL hooks to the top (including overlay/modal states and lazy imports)
   const [selectedRole, setSelectedRole] = useState<'candidate' | 'employer' | null>(null);
-  const [userType, setUserType] = useState<'candidate' | 'employer' | null>(null);
+  const [userType, setUserType] = useState<'candidate' | 'employer' | null>(() => {
+  const storedType = localStorage.getItem('userType');
+  return storedType === 'candidate' || storedType === 'employer' ? storedType : null;
+});
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
   const [currentJobIndex, setCurrentJobIndex] = useState(0);
@@ -35,7 +38,9 @@ function App() {
   const touchStartX = useRef<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+  return localStorage.getItem('isAuthenticated') === 'true';
+});
   // Overlay/modal state for FlowingMenu overlays
   const [swipeOpen, setSwipeOpen] = useState(false);
   const [messagesOpen, setMessagesOpen] = useState(false);
@@ -487,6 +492,8 @@ function App() {
       setUserType(type);
       setSelectedRole(type);
       setIsAuthenticated(true);
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userType', type);
     }} />;
   }
 
@@ -554,11 +561,20 @@ function App() {
     skills: ['React', 'TypeScript', 'CSS', 'UI/UX'],
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userType');
+    setIsAuthenticated(false);
+    setUserType(null);
+    setSelectedRole(null);
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
       <GradientBackground animated={true} />
       {/* Always-visible Hamburger Menu */}
-      <HamburgerMenu userName={"John Doe"} userRole={userType === 'employer' ? 'Employer' : 'Candidate'} />
+      <HamburgerMenu userName={"John Doe"} userRole={userType === 'employer' ? 'Employer' : 'Candidate'} onLogout={handleLogout} />
+      
       <FlowingMenu 
         items={getFlowingMenuItems(userType)}
         onItemClick={(item: FlowingMenuItem) => {

@@ -5,11 +5,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 interface HamburgerMenuProps {
   userName?: string;
   userRole?: 'Candidate' | 'Employer';
+  onLogout?: () => void;
 }
 
 import { useNavigate } from 'react-router-dom';
 
-const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', userRole = 'Candidate' }) => {
+const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', userRole = 'Candidate', onLogout }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const navigate = useNavigate();
 
@@ -23,7 +24,11 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', us
     setMenuOpen(false);
   };
   const handleLogout = () => {
-    alert('Logout clicked! (Replace with actual logout logic)');
+    if (typeof onLogout === 'function') {
+      onLogout();
+    } else {
+      alert('Logout clicked! (Replace with actual logout logic)');
+    }
     setMenuOpen(false);
   };
 
@@ -108,3 +113,4 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', us
 };
 
 export default HamburgerMenu;
+
