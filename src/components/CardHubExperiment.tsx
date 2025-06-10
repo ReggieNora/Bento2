@@ -10,16 +10,12 @@ const menuItems = [
   { key: "settings", label: "Settings", description: "Adjust your preferences", flippable: true },
 ];
 
-// Fixed layout for the four cards (top-left, top-right, bottom-left, bottom-right)
-const fixedLayout = [
-  // Coach (top-left)
-  { x: -220, y: -120, rotate: -6 },
-  // Settings (top-right)
-  { x: 220, y: -120, rotate: 6 },
-  // Jobs (bottom-left)
-  { x: -220, y: 120, rotate: -4 },
-  // Profile (bottom-right)
-  { x: 220, y: 120, rotate: 8 },
+// Fixed x/y positions for the four cards (top-left, top-right, bottom-left, bottom-right)
+const fixedPositions = [
+  { x: -180, y: -140 }, // Profile (top-left)
+  { x: 180, y: -140 },  // Coach (top-right)
+  { x: -180, y: 140 },  // Jobs (bottom-left)
+  { x: 180, y: 140 },   // Settings (bottom-right)
 ];
 
 // Flip state for flippable cards
@@ -29,8 +25,15 @@ function useFlipStates(keys: string[]) {
   return [flipped, flip] as const;
 }
 
+import { useNavigate } from 'react-router-dom';
+
 export default function CardHubExperiment() {
+  const navigate = useNavigate();
   const [flipped, flip] = useFlipStates(menuItems.filter(m => m.flippable).map(m => m.key));
+  // Generate random rotation for each card on mount
+  const [randomAngles] = React.useState(() =>
+    Array.from({ length: menuItems.length }, () => (Math.random() * 20 - 10))
+  );
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#18122B] via-[#251E40] to-[#1A1A2E] overflow-hidden">
@@ -44,15 +47,16 @@ export default function CardHubExperiment() {
         {menuItems.map((item, i) => {
           const isFlippable = !!item.flippable;
           const isFlipped = flipped[item.key];
-          const layout = fixedLayout[i];
+          const pos = fixedPositions[i];
+          const angle = randomAngles[i];
           return (
             <div
               key={item.key}
               style={{
                 position: 'absolute',
-                left: `calc(50% + ${layout.x}px)` ,
-                top: `calc(50% + ${layout.y}px)` ,
-                transform: `translate(-50%, -50%) rotate(${layout.rotate}deg)`
+                left: `calc(50% + ${pos.x}px)` ,
+                top: `calc(50% + ${pos.y}px)` ,
+                transform: `translate(-50%, -50%) rotate(${angle}deg)`
               }}
             >
               <DraggableCardContainer>
@@ -73,29 +77,32 @@ export default function CardHubExperiment() {
                         className="absolute w-full h-full"
                         style={{ backfaceVisibility: 'hidden' }}
                       >
-                        <DraggableCardBody className="w-64 h-40 bg-white/80 rounded-2xl shadow-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition">
-                          <span className="text-xl font-bold text-gray-800 mb-1">{item.label}</span>
-                          <span className="text-gray-500 text-sm text-center">{item.description}</span>
+                        <DraggableCardBody className="w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition p-6">
+                          <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">{item.label}</span>
+                          <span className="text-gray-700 text-base text-center font-medium drop-shadow">{item.description}</span>
                         </DraggableCardBody>
                       </div>
                       {/* Back Side */}
                       <div
-                        className="absolute w-full h-full flex flex-col items-center justify-center bg-white/90 rounded-2xl shadow-2xl"
+                        className="absolute w-full h-full flex flex-col items-center justify-center w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl p-6"
                         style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                       >
-                        <span className="text-lg font-semibold text-gray-800 mb-2">
+                        <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
                           {item.label} (Back)
                         </span>
-                        <span className="text-gray-600 text-sm text-center">
+                        <span className="text-gray-700 text-base text-center font-medium drop-shadow">
                           {item.key === 'profile' ? 'Profile details coming soon!' : 'Settings options coming soon!'}
                         </span>
                       </div>
                     </motion.div>
                   </motion.div>
                 ) : (
-                  <DraggableCardBody className="w-64 h-40 bg-white/80 rounded-2xl shadow-2xl flex flex-col items-center justify-center cursor-default">
-                    <span className="text-xl font-bold text-gray-800 mb-1">{item.label}</span>
-                    <span className="text-gray-500 text-sm text-center">{item.description}</span>
+                  <DraggableCardBody
+                    className={`w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center p-6 transition ${item.key === 'jobs' ? 'cursor-pointer hover:scale-105' : 'cursor-default'}`}
+                    onTap={item.key === 'jobs' ? () => navigate('/app/jobs') : undefined}
+                  >
+                    <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">{item.label}</span>
+                    <span className="text-gray-700 text-base text-center font-medium drop-shadow">{item.description}</span>
                   </DraggableCardBody>
                 )}
               </DraggableCardContainer>
