@@ -27,6 +27,8 @@ function useFlipStates(keys: string[]) {
 
 import { useNavigate } from 'react-router-dom';
 
+import CoachOverlay from './CoachOverlay';
+
 export default function CardHubExperiment() {
   const navigate = useNavigate();
   const [flipped, flip] = useFlipStates(menuItems.filter(m => m.flippable).map(m => m.key));
@@ -34,6 +36,7 @@ export default function CardHubExperiment() {
   const [randomAngles] = React.useState(() =>
     Array.from({ length: menuItems.length }, () => (Math.random() * 20 - 10))
   );
+  const [showCoach, setShowCoach] = React.useState(false);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#18122B] via-[#251E40] to-[#1A1A2E] overflow-hidden">
@@ -42,6 +45,10 @@ export default function CardHubExperiment() {
         <img src={logo} alt="Hirly" className="w-32 h-32 mb-2 select-none pointer-events-none" />
         <span className="text-2xl font-extrabold text-white drop-shadow-lg">Hirly</span>
       </div>
+      {/* Coach Overlay Modal */}
+      {showCoach && (
+        <CoachOverlay onCollapse={() => setShowCoach(false)} />
+      )}
       {/* Cards arranged around logo */}
       <div className="relative z-20 w-full h-full flex items-center justify-center">
         {menuItems.map((item, i) => {
@@ -98,8 +105,8 @@ export default function CardHubExperiment() {
                   </motion.div>
                 ) : (
                   <DraggableCardBody
-                    className={`w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center p-6 transition ${item.key === 'jobs' ? 'cursor-pointer hover:scale-105' : 'cursor-default'}`}
-                    onTap={item.key === 'jobs' ? () => navigate('/app/jobs') : undefined}
+                    className={`w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center p-6 transition ${item.key === 'jobs' || item.key === 'coach' ? 'cursor-pointer hover:scale-105' : 'cursor-default'}`}
+                    onTap={item.key === 'jobs' ? () => navigate('/app/jobs') : item.key === 'coach' ? () => setShowCoach(true) : undefined}
                   >
                     <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">{item.label}</span>
                     <span className="text-gray-700 text-base text-center font-medium drop-shadow">{item.description}</span>
