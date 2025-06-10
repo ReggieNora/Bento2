@@ -16,7 +16,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/about" element={<AboutUsPage />} />
         <Route path="/app/cards" element={<CardHubExperiment />} />
-        <Route path="/app/jobs" element={<SwipeApp onCollapse={() => {}} userType={null} />} />
+        <Route path="/app/jobs" element={<SwipeApp onCollapse={() => {}} userType={null} jobListings={[
+          {company: 'Microsoft', title: 'Software Engineer', location: 'Remote', description: 'Build cool stuff!'},
+          {company: 'Google', title: 'Frontend Developer', location: 'NYC', description: 'Work on search UI.'},
+          {company: 'Amazon', title: 'Cloud Architect', location: 'Seattle', description: 'Design AWS solutions.'}
+        ]} />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

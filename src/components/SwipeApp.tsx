@@ -32,8 +32,10 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
   const [isTopCardExpanded, setIsTopCardExpanded] = React.useState(false);
 
   // Use the appropriate data based on user type
-  const data = userType === 'employer' ? candidateProfiles : jobListings;
-  
+  let actualUserType = userType;
+  if (!actualUserType) actualUserType = 'candidate'; // fallback if null
+  const data = actualUserType === 'employer' ? candidateProfiles : jobListings;
+
   const [stack, setStack] = useState(data);
   const [cardLayout, setCardLayout] = useState(() => getRandomLayout(data.length));
   const [expanded, setExpanded] = useState(true);
@@ -54,14 +56,16 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
   const leftIconOpacity = useTransform(dragX, [-150, 0], [1, 0.3]);
   const rightIconOpacity = useTransform(dragX, [0, 150], [0.3, 1]);
 
-  // Update stack when data changes
+  // Update stack when data changes (guard against unnecessary updates)
   useEffect(() => {
-    setStack(data);
-    setCardLayout(getRandomLayout(data.length));
-    setInterested([]);
-    setRejected([]);
-    setResetKey(k => k + 1);
-  }, [data, userType]);
+    if (Array.isArray(data) && data.length > 0) {
+      setStack(data);
+      setCardLayout(getRandomLayout(data.length));
+      setInterested([]);
+      setRejected([]);
+      setResetKey(k => k + 1);
+    }
+  }, [JSON.stringify(data), actualUserType]);
 
   const handleDismiss = (idx: number, direction: 'left' | 'right') => {
     setForceCollapseIdx(idx);
