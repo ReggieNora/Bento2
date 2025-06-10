@@ -1,275 +1,329 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { DraggableCardContainer, DraggableCardBody } from "./ui/draggable-card";
-import { motion } from "framer-motion";
 import logo from "../assets/hirly-logo.png";
 import SettingsCard from "./SettingsCard";
 import CoachOverlay from "./CoachOverlay";
 import SimpleProfileCard from "./SimpleProfileCard";
 
-const menuItems = [
-  { key: "profile", label: "Profile", description: "View or edit your profile", flippable: true },
-  { key: "coach", label: "Coach", description: "AI-powered career coach", flippable: false },
-  { key: "jobs", label: "Jobs", description: "Browse job listings", flippable: false },
-  { key: "settings", label: "Settings", description: "Adjust your preferences", flippable: true },
+// Menu item interface
+interface MenuItem {
+  key: string;
+  label: string;
+  description: string;
+  flippable?: boolean;
+  color: string;
+  icon: string;
+}
+
+// Initial menu items data
+const initialMenuItems: MenuItem[] = [
+  { 
+    key: "profile", 
+    label: "Profile", 
+    description: "View and edit your profile", 
+    flippable: true,
+    color: "from-purple-500 to-pink-500",
+    icon: "👤"
+  },
+  { 
+    key: "coach", 
+    label: "Coach", 
+    description: "AI-powered career coaching", 
+    flippable: false,
+    color: "from-blue-500 to-cyan-500",
+    icon: "🤖"
+  },
+  { 
+    key: "jobs", 
+    label: "Jobs", 
+    description: "Browse job opportunities", 
+    flippable: false,
+    color: "from-green-500 to-emerald-500",
+    icon: "💼"
+  },
+  { 
+    key: "settings", 
+    label: "Settings", 
+    description: "Adjust your preferences", 
+    flippable: true,
+    color: "from-orange-500 to-red-500",
+    icon: "⚙️"
+  },
+  { 
+    key: "messages", 
+    label: "Messages", 
+    description: "Chat with recruiters", 
+    flippable: false,
+    color: "from-indigo-500 to-purple-500",
+    icon: "💬"
+  },
+  { 
+    key: "analytics", 
+    label: "Analytics", 
+    description: "View your job search stats", 
+    flippable: false,
+    color: "from-teal-500 to-blue-500",
+    icon: "📊"
+  }
 ];
 
-// Fixed x/y positions for the four cards (top-left, top-right, bottom-left, bottom-right)
-const fixedPositions = [
-  { x: -180, y: -140 }, // Profile (top-left)
-  { x: 180, y: -140 },  // Coach (top-right)
-  { x: -180, y: 140 },  // Jobs (bottom-left)
-  { x: 180, y: 140 },   // Settings (bottom-right)
-];
+// Card positioning configuration
+const CARD_WIDTH = 320;
+const CARD_HEIGHT = 400;
+const STACK_OFFSET = 8; // Offset between stacked cards
+const ROTATION_RANGE = 6; // Max rotation in degrees
+
+// Generate stacked positions for cards
+function generateStackPositions(totalCards: number) {
+  return Array.from({ length: totalCards }, (_, index) => ({
+    x: index * STACK_OFFSET,
+    y: index * STACK_OFFSET,
+    rotate: (Math.random() - 0.5) * ROTATION_RANGE,
+    scale: 1 - (index * 0.02), // Slightly scale down cards behind
+    zIndex: totalCards - index
+  }));
+}
 
 export default function CardHubExperiment() {
-  const navigate = useNavigate();
-  const [flipped, setFlipped] = React.useState<Record<string, boolean>>({});
-  const [locked, setLocked] = React.useState<string | null>(null);
-  const [randomAngles] = React.useState(() =>
-    Array.from({ length: menuItems.length }, () => (Math.random() * 20 - 10))
-  );
-  const [showCoach, setShowCoach] = React.useState(false);
+  // State for card stack management
+  const [menuItems, setMenuItems] = useState(initialMenuItems);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [stackPositions] = useState(() => generateStackPositions(initialMenuItems.length));
+  
+  // Modal states
+  const [showCoach, setShowCoach] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  
+  // Animation key for forcing re-renders
+  const [animationKey, setAnimationKey] = useState(0);
 
-  // Outside click handler for flipping back
-  React.useEffect(() => {
-    if (!locked) return;
-    function handleOutside(e: MouseEvent) {
-      const card = document.getElementById(`flippable-card-${locked}`);
-      if (card && !card.contains(e.target as Node)) {
-        setFlipped({});
-        setLocked(null);
-      }
+  // Handle card dismissal and recycling
+  const handleCardDismiss = (direction: 'left' | 'right') => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    
+    // Move the top card to the back of the stack
+    setTimeout(() => {
+      setMenuItems(prevItems => {
+        const [topCard, ...restCards] = prevItems;
+        return [...restCards, topCard];
+      });
+      
+      // Force re-render with new animation key
+      setAnimationKey(prev => prev + 1);
+      setIsAnimating(false);
+    }, 300); // Match the exit animation duration
+  };
+
+  // Handle card interactions
+  const handleCardAction = (item: MenuItem) => {
+    switch (item.key) {
+      case 'coach':
+        setShowCoach(true);
+        break;
+      case 'settings':
+      case 'profile':
+        setExpandedCard(item.key);
+        break;
+      case 'jobs':
+        // Navigate to jobs
+        window.location.href = '/app/jobs';
+        break;
+      default:
+        console.log(`${item.label} clicked`);
     }
-    document.addEventListener('mousedown', handleOutside);
-    return () => document.removeEventListener('mousedown', handleOutside);
-  }, [locked]);
+  };
+
+  // Close expanded card
+  const closeExpandedCard = () => {
+    setExpandedCard(null);
+  };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#18122B] via-[#251E40] to-[#1A1A2E] overflow-hidden">
-      {/* Center logo */}
-      <div className="absolute z-10 flex flex-col items-center justify-center left-1/2 top-1/2" style={{ transform: 'translate(-50%, -50%)' }}>
-        <img src={logo} alt="Hirly" className="w-32 h-32 mb-2 select-none pointer-events-none" />
-        <span className="text-2xl font-extrabold text-white drop-shadow-lg">Hirly</span>
+      
+      {/* Background Logo */}
+      <div className="absolute z-10 flex flex-col items-center justify-center">
+        <img src={logo} alt="Hirly" className="w-32 h-32 mb-2 select-none pointer-events-none opacity-20" />
+        <span className="text-2xl font-extrabold text-white/20 drop-shadow-lg">Hirly</span>
       </div>
+
+      {/* Card Stack Container */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center">
+        <DraggableCardContainer key={animationKey} className="relative">
+          <AnimatePresence mode="popLayout">
+            {menuItems.map((item, index) => {
+              const position = stackPositions[index] || stackPositions[0];
+              const isTopCard = index === 0;
+              
+              return (
+                <motion.div
+                  key={`${item.key}-${animationKey}`}
+                  className="absolute"
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                    zIndex: position.zIndex
+                  }}
+                  initial={{
+                    x: '-50%',
+                    y: '-50%',
+                    scale: position.scale,
+                    rotate: position.rotate,
+                    translateX: position.x,
+                    translateY: position.y,
+                  }}
+                  animate={{
+                    x: '-50%',
+                    y: '-50%',
+                    scale: position.scale,
+                    rotate: position.rotate,
+                    translateX: position.x,
+                    translateY: position.y,
+                  }}
+                  exit={{
+                    x: '-50%',
+                    y: '-50%',
+                    scale: 0.8,
+                    rotate: (Math.random() - 0.5) * 30,
+                    translateX: (Math.random() - 0.5) * 1000,
+                    translateY: -500,
+                    opacity: 0,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 25,
+                    duration: 0.3
+                  }}
+                >
+                  <DraggableCardBody
+                    onDismiss={isTopCard ? handleCardDismiss : undefined}
+                    dragDisabled={!isTopCard}
+                    onTap={isTopCard ? () => handleCardAction(item) : undefined}
+                  >
+                    <motion.div
+                      className={`
+                        w-[${CARD_WIDTH}px] h-[${CARD_HEIGHT}px] 
+                        rounded-2xl bg-gradient-to-br ${item.color}
+                        shadow-2xl border border-white/20 backdrop-blur-xl
+                        flex flex-col items-center justify-center p-8 text-center
+                        ${isTopCard ? 'cursor-pointer' : 'cursor-default'}
+                      `}
+                      style={{
+                        width: CARD_WIDTH,
+                        height: CARD_HEIGHT,
+                      }}
+                      whileHover={isTopCard ? { scale: 1.02 } : {}}
+                      whileTap={isTopCard ? { scale: 0.98 } : {}}
+                    >
+                      {/* Card Content */}
+                      <div className="text-6xl mb-6 select-none">
+                        {item.icon}
+                      </div>
+                      
+                      <h2 className="text-3xl font-bold text-white mb-4 drop-shadow-lg">
+                        {item.label}
+                      </h2>
+                      
+                      <p className="text-white/90 text-lg leading-relaxed max-w-xs">
+                        {item.description}
+                      </p>
+
+                      {/* Top card indicator */}
+                      {isTopCard && (
+                        <motion.div
+                          className="absolute top-4 right-4 w-3 h-3 bg-white/80 rounded-full"
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
+                      )}
+
+                      {/* Stack indicator for non-top cards */}
+                      {!isTopCard && (
+                        <div className="absolute inset-0 bg-black/20 rounded-2xl pointer-events-none" />
+                      )}
+                    </motion.div>
+                  </DraggableCardBody>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </DraggableCardContainer>
+      </div>
+
+      {/* Instructions */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30">
+        <motion.div
+          className="bg-white/10 backdrop-blur-md rounded-2xl px-6 py-3 border border-white/20"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+        >
+          <p className="text-white/80 text-sm text-center">
+            Swipe or tap the top card to navigate • Cards cycle infinitely
+          </p>
+        </motion.div>
+      </div>
+
       {/* Coach Overlay Modal */}
       {showCoach && (
         <CoachOverlay onCollapse={() => setShowCoach(false)} />
       )}
-      {/* Expanded Settings Card with Backdrop */}
-      {locked === 'settings' && (
-        <>
-          {/* Backdrop for outside click */}
-          <div
-            style={{
-              position: 'fixed',
-              left: 0,
-              top: 0,
-              width: '100vw',
-              height: '100vh',
-              zIndex: 50,
-              background: 'transparent',
-            }}
-            onClick={() => {
-              setFlipped({});
-              setLocked(null);
-            }}
-          />
-          <motion.div
-            className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
-            animate={{ width: 440, height: 420 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 28 }}
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 51,
-              borderRadius: 20,
-              background: 'rgba(255,255,255,0.10)',
-              boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <SettingsCard forceExpanded={true} />
-          </motion.div>
-        </>
-      )}
-      {/* Expanded Profile Card */}
-      {locked === 'profile' && (
-        <>
-          {/* Backdrop for outside click */}
-          <div
-            style={{
-              position: 'fixed',
-              left: 0,
-              top: 0,
-              width: '100vw',
-              height: '100vh',
-              zIndex: 50,
-              background: 'transparent',
-            }}
-            onClick={() => {
-              setFlipped({});
-              setLocked(null);
-            }}
-          />
-          <motion.div
-            className="w-[270px] h-[320px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 border border-white/70 shadow-2xl"
-            style={{
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 51,
-              borderRadius: 20,
-              background: 'rgba(255,255,255,0.85)',
-              boxShadow: '0 4px 32px rgba(0,0,0,0.22)',
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="w-full h-full flex flex-col items-center justify-center p-8">
-              <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
-                alt="Javi A. Torres"
-                className="w-24 h-24 rounded-xl object-cover mb-4 border border-gray-300"
-              />
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">Javi A. Torres</h2>
-              <h3 className="text-lg text-gray-800 mb-2">Software Engineer</h3>
-              <p className="text-gray-800 text-base mb-3 text-center">Passionate about building delightful UIs and robust web apps.</p>
-              <div className="flex gap-2 justify-center text-xs text-gray-700 mb-3">
-                <span className="bg-white/70 backdrop-blur rounded px-2 py-1">React, TypeScript, Node.js</span>
-                <span className="bg-white/70 backdrop-blur rounded px-2 py-1">Acme Corp</span>
-                <span className="bg-white/70 backdrop-blur rounded px-2 py-1">MIT Alum</span>
-              </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-      {/* Cards arranged around logo */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center">
-        {menuItems.map((item, i) => {
-          const isFlippable = !!item.flippable;
-          const isFlipped = flipped[item.key];
-          const isLocked = locked === item.key;
-          const pos = fixedPositions[i];
-          const angle = randomAngles[i];
-          // Hide original card if settings or profile card is expanded
-          if ((item.key === 'settings' || item.key === 'profile') && isLocked) return null;
-          return (
-            <div
-              key={item.key}
-              style={{
-                position: 'absolute',
-                left: `calc(50% + ${pos.x}px)`,
-                top: `calc(50% + ${pos.y}px)`,
-                transform: `translate(-50%, -50%) rotate(${angle}deg)`
-              }}
-              id={isFlippable ? `flippable-card-${item.key}` : undefined}
+
+      {/* Expanded Settings Card */}
+      {expandedCard === 'settings' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-lg">
+          <div className="relative">
+            <button
+              onClick={closeExpandedCard}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
             >
-              <DraggableCardContainer>
-                {isFlippable ? (
-                  <motion.div
-                    className="w-64 h-40"
-                    style={{ perspective: 1000 }}
-                    onClick={() => {
-                      if (!isFlipped && !locked) {
-                        setFlipped({ [item.key]: true });
-                        setLocked(item.key);
-                      }
-                    }}
-                  >
-                    <motion.div
-                      className="w-full h-full"
-                      animate={{ rotateY: isFlipped ? 180 : 0 }}
-                      transition={{ duration: 0.6 }}
-                      style={{ position: 'relative', transformStyle: 'preserve-3d', cursor: locked ? 'default' : 'pointer' }}
-                    >
-                      {/* Front Side */}
-                      <div
-                        className="absolute w-full h-full"
-                        style={{ backfaceVisibility: 'hidden' }}
-                      >
-                        <DraggableCardBody className="w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition p-6">
-                          <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">{item.label}</span>
-                          <span className="text-gray-700 text-base text-center font-medium drop-shadow">{item.description}</span>
-                        </DraggableCardBody>
-                      </div>
-                      {/* Back Side */}
-                      <div
-                        className="absolute flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl p-0"
-                        style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-                      >
-                        {item.key === 'settings' ? (
-                          <motion.div
-                            className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
-                            animate={isLocked ? { width: 440, height: 420 } : { width: 270, height: 320 }}
-                            transition={{ type: 'spring', stiffness: 200, damping: 28 }}
-                            style={isLocked && item.key === 'settings' ? {
-                              borderRadius: 20,
-                              background: 'rgba(255,255,255,0.10)',
-                              boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
-                              position: 'absolute',
-                              left: '50%',
-                              top: '50%',
-                              right: 'auto',
-                              bottom: 'auto',
-                              transform: 'translate(-50%, -50%)',
-                              zIndex: 51
-                            } : {
-                              borderRadius: 20,
-                              background: 'rgba(255,255,255,0.10)',
-                              boxShadow: '0 4px 32px rgba(0,0,0,0.18)'
-                            }}
-                          >
-                            <SettingsCard forceExpanded={true} />
-                          </motion.div>
-                        ) : (
-                          item.key === 'profile' ? (
-                            <DraggableCardBody dragDisabled={true} className="pointer-events-none w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center p-6 overflow-y-auto">
-  <img
-    src="https://randomuser.me/api/portraits/men/32.jpg"
-    alt="Javi A. Torres"
-    className="w-20 h-20 rounded-xl object-cover mb-4 border border-gray-200"
-  />
-  <h2 className="text-xl font-bold text-gray-900 mb-1">Javi A. Torres</h2>
-  <h3 className="text-base text-gray-600 mb-2">Software Engineer</h3>
-  <p className="text-gray-700 text-sm mb-3 text-center">Passionate about building delightful UIs and robust web apps.</p>
-  <div className="flex gap-2 justify-center text-xs text-gray-500 mb-3">
-    <span className="bg-white/30 backdrop-blur rounded px-2 py-1">React, TypeScript, Node.js</span>
-    <span className="bg-white/30 backdrop-blur rounded px-2 py-1">Acme Corp</span>
-    <span className="bg-white/30 backdrop-blur rounded px-2 py-1">MIT Alum</span>
-  </div>
-</DraggableCardBody>
-                          ) : (
-                            <>
-                              <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
-                                {item.label} (Back)
-                              </span>
-                              <span className="text-gray-700 text-base text-center font-medium drop-shadow">
-                                Settings options coming soon!
-                              </span>
-                            </>
-                          )
-                        )}
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                ) : (
-                  <DraggableCardBody
-                    className={`w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center p-6 transition ${item.key === 'jobs' || item.key === 'coach' ? 'cursor-pointer hover:scale-105' : 'cursor-default'}`}
-                    onTap={item.key === 'jobs' ? () => navigate('/app/jobs') : item.key === 'coach' ? () => setShowCoach(true) : undefined}
-                  >
-                    <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">{item.label}</span>
-                    <span className="text-gray-700 text-base text-center font-medium drop-shadow">{item.description}</span>
-                  </DraggableCardBody>
-                )}
-              </DraggableCardContainer>
-            </div>
-          );
-        })}
-      </div>
-      {/* TODO: Add hamburger menu, overlays, etc. */}
+              <span className="text-white text-xl">×</span>
+            </button>
+            <SettingsCard forceExpanded={true} />
+          </div>
+        </div>
+      )}
+
+      {/* Expanded Profile Card */}
+      {expandedCard === 'profile' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-lg">
+          <div className="relative">
+            <button
+              onClick={closeExpandedCard}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+            >
+              <span className="text-white text-xl">×</span>
+            </button>
+            <SimpleProfileCard
+              name="Javi A. Torres"
+              title="Software Engineer"
+              imageUrl="https://randomuser.me/api/portraits/men/32.jpg"
+              description="Passionate about building delightful UIs and robust web apps."
+              meta1="React, TypeScript, Node.js"
+              meta2="Acme Corp"
+              meta3="MIT Alum"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Back to Home Button */}
+      <motion.button
+        onClick={() => window.location.href = '/'}
+        className="fixed top-8 left-8 z-50 flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-2xl text-white font-semibold shadow-2xl transition-all duration-300 hover:scale-105"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.5, duration: 0.4 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <span className="text-lg">←</span>
+        <span>Home</span>
+      </motion.button>
     </div>
   );
 }
