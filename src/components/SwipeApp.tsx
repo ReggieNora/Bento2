@@ -27,9 +27,12 @@ function getRandomLayout(num: number) {
 }
 
 
+import { useNavigate } from 'react-router-dom';
+
 export default function SwipeApp({ onCollapse, userType, candidateProfiles = [], jobListings = [] }: SwipeAppProps) {
   // Track if the visually top card is expanded for drag lock
   const [isTopCardExpanded, setIsTopCardExpanded] = React.useState(false);
+  const navigate = useNavigate();
 
   // Use the appropriate data based on user type
   let actualUserType = userType;
@@ -267,7 +270,7 @@ export default function SwipeApp({ onCollapse, userType, candidateProfiles = [],
                 </h2>
                 <p className="text-gray-600">Check back later for new opportunities!</p>
                 <button
-                  onClick={handleCollapse}
+                  onClick={() => navigate('/app/cards')}
                   className="mt-6 px-6 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold shadow hover:from-pink-600 hover:to-purple-600 transition"
                 >
                   Back to Menu
