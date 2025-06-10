@@ -1,7 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { DraggableCardContainer, DraggableCardBody } from "./ui/draggable-card";
 import { motion } from "framer-motion";
 import logo from "../assets/hirly-logo.png";
+import SettingsCard from "./SettingsCard";
+import CoachOverlay from "./CoachOverlay";
+import SimpleProfileCard from "./SimpleProfileCard";
 
 const menuItems = [
   { key: "profile", label: "Profile", description: "View or edit your profile", flippable: true },
@@ -17,11 +21,6 @@ const fixedPositions = [
   { x: -180, y: 140 },  // Jobs (bottom-left)
   { x: 180, y: 140 },   // Settings (bottom-right)
 ];
-
-import { useNavigate } from 'react-router-dom';
-
-import CoachOverlay from './CoachOverlay';
-import SettingsCard from './SettingsCard';
 
 export default function CardHubExperiment() {
   const navigate = useNavigate();
@@ -175,14 +174,28 @@ export default function CardHubExperiment() {
                             <SettingsCard forceExpanded={true} />
                           </motion.div>
                         ) : (
-                          <>
-                            <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
-                              {item.label} (Back)
-                            </span>
-                            <span className="text-gray-700 text-base text-center font-medium drop-shadow">
-                              {item.key === 'profile' ? 'Profile details coming soon!' : 'Settings options coming soon!'}
-                            </span>
-                          </>
+                          item.key === 'profile' ? (
+                            <div className="w-full h-full flex items-center justify-center overflow-y-auto">
+                              <SimpleProfileCard
+                                name="Javi A. Torres"
+                                title="Software Engineer"
+                                imageUrl="https://randomuser.me/api/portraits/men/32.jpg"
+                                description="Passionate about building delightful UIs and robust web apps."
+                                meta1="React, TypeScript, Node.js"
+                                meta2="Acme Corp"
+                                meta3="MIT Alum"
+                              />
+                            </div>
+                          ) : (
+                            <>
+                              <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
+                                {item.label} (Back)
+                              </span>
+                              <span className="text-gray-700 text-base text-center font-medium drop-shadow">
+                                Settings options coming soon!
+                              </span>
+                            </>
+                          )
                         )}
                       </div>
                     </motion.div>
