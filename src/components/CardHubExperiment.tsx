@@ -175,17 +175,21 @@ export default function CardHubExperiment() {
                           </motion.div>
                         ) : (
                           item.key === 'profile' ? (
-                            <div className="w-full h-full flex items-center justify-center overflow-y-auto">
-                              <SimpleProfileCard
-                                name="Javi A. Torres"
-                                title="Software Engineer"
-                                imageUrl="https://randomuser.me/api/portraits/men/32.jpg"
-                                description="Passionate about building delightful UIs and robust web apps."
-                                meta1="React, TypeScript, Node.js"
-                                meta2="Acme Corp"
-                                meta3="MIT Alum"
-                              />
-                            </div>
+                            <DraggableCardBody dragDisabled={true} className="pointer-events-none w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl flex flex-col items-center justify-center p-6 overflow-y-auto">
+  <img
+    src="https://randomuser.me/api/portraits/men/32.jpg"
+    alt="Javi A. Torres"
+    className="w-20 h-20 rounded-xl object-cover mb-4 border border-gray-200"
+  />
+  <h2 className="text-xl font-bold text-gray-900 mb-1">Javi A. Torres</h2>
+  <h3 className="text-base text-gray-600 mb-2">Software Engineer</h3>
+  <p className="text-gray-700 text-sm mb-3 text-center">Passionate about building delightful UIs and robust web apps.</p>
+  <div className="flex gap-2 justify-center text-xs text-gray-500 mb-3">
+    <span className="bg-white/30 backdrop-blur rounded px-2 py-1">React, TypeScript, Node.js</span>
+    <span className="bg-white/30 backdrop-blur rounded px-2 py-1">Acme Corp</span>
+    <span className="bg-white/30 backdrop-blur rounded px-2 py-1">MIT Alum</span>
+  </div>
+</DraggableCardBody>
                           ) : (
                             <>
                               <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
