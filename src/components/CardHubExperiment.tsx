@@ -95,6 +95,57 @@ export default function CardHubExperiment() {
           </motion.div>
         </>
       )}
+      {/* Expanded Profile Card */}
+      {locked === 'profile' && (
+        <>
+          {/* Backdrop for outside click */}
+          <div
+            style={{
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              width: '100vw',
+              height: '100vh',
+              zIndex: 50,
+              background: 'transparent',
+            }}
+            onClick={() => {
+              setFlipped({});
+              setLocked(null);
+            }}
+          />
+          <motion.div
+            className="w-[270px] h-[320px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 border border-white/70 shadow-2xl"
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 51,
+              borderRadius: 20,
+              background: 'rgba(255,255,255,0.85)',
+              boxShadow: '0 4px 32px rgba(0,0,0,0.22)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-full h-full flex flex-col items-center justify-center p-8">
+              <img
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="Javi A. Torres"
+                className="w-24 h-24 rounded-xl object-cover mb-4 border border-gray-300"
+              />
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">Javi A. Torres</h2>
+              <h3 className="text-lg text-gray-800 mb-2">Software Engineer</h3>
+              <p className="text-gray-800 text-base mb-3 text-center">Passionate about building delightful UIs and robust web apps.</p>
+              <div className="flex gap-2 justify-center text-xs text-gray-700 mb-3">
+                <span className="bg-white/70 backdrop-blur rounded px-2 py-1">React, TypeScript, Node.js</span>
+                <span className="bg-white/70 backdrop-blur rounded px-2 py-1">Acme Corp</span>
+                <span className="bg-white/70 backdrop-blur rounded px-2 py-1">MIT Alum</span>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
       {/* Cards arranged around logo */}
       <div className="relative z-20 w-full h-full flex items-center justify-center">
         {menuItems.map((item, i) => {
@@ -103,8 +154,8 @@ export default function CardHubExperiment() {
           const isLocked = locked === item.key;
           const pos = fixedPositions[i];
           const angle = randomAngles[i];
-          // Hide original card if settings card is expanded
-          if (item.key === 'settings' && isLocked) return null;
+          // Hide original card if settings or profile card is expanded
+          if ((item.key === 'settings' || item.key === 'profile') && isLocked) return null;
           return (
             <div
               key={item.key}
