@@ -18,25 +18,33 @@ const fixedPositions = [
   { x: 180, y: 140 },   // Settings (bottom-right)
 ];
 
-// Flip state for flippable cards
-function useFlipStates(keys: string[]) {
-  const [flipped, setFlipped] = React.useState<Record<string, boolean>>({});
-  const flip = (key: string) => setFlipped(f => ({ ...f, [key]: !f[key] }));
-  return [flipped, flip] as const;
-}
-
 import { useNavigate } from 'react-router-dom';
 
 import CoachOverlay from './CoachOverlay';
+import SettingsCard from './SettingsCard';
 
 export default function CardHubExperiment() {
   const navigate = useNavigate();
-  const [flipped, flip] = useFlipStates(menuItems.filter(m => m.flippable).map(m => m.key));
-  // Generate random rotation for each card on mount
+  const [flipped, setFlipped] = React.useState<Record<string, boolean>>({});
+  const [locked, setLocked] = React.useState<string | null>(null);
   const [randomAngles] = React.useState(() =>
     Array.from({ length: menuItems.length }, () => (Math.random() * 20 - 10))
   );
   const [showCoach, setShowCoach] = React.useState(false);
+
+  // Outside click handler for flipping back
+  React.useEffect(() => {
+    if (!locked) return;
+    function handleOutside(e: MouseEvent) {
+      const card = document.getElementById(`flippable-card-${locked}`);
+      if (card && !card.contains(e.target as Node)) {
+        setFlipped({});
+        setLocked(null);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, [locked]);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[#18122B] via-[#251E40] to-[#1A1A2E] overflow-hidden">
@@ -54,30 +62,40 @@ export default function CardHubExperiment() {
         {menuItems.map((item, i) => {
           const isFlippable = !!item.flippable;
           const isFlipped = flipped[item.key];
+          const isLocked = locked === item.key;
           const pos = fixedPositions[i];
           const angle = randomAngles[i];
           return (
             <div
               key={item.key}
               style={{
-                position: 'absolute',
-                left: `calc(50% + ${pos.x}px)` ,
-                top: `calc(50% + ${pos.y}px)` ,
-                transform: `translate(-50%, -50%) rotate(${angle}deg)`
+                position: isLocked ? 'fixed' : 'absolute',
+                left: isLocked ? '50%' : `calc(50% + ${pos.x}px)`,
+                top: isLocked ? '50%' : `calc(50% + ${pos.y}px)`,
+                transform: isLocked ? 'translate(-50%, -50%) scale(1.08)' : `translate(-50%, -50%) rotate(${angle}deg)`,
+                zIndex: isLocked ? 50 : undefined,
+                boxShadow: isLocked ? '0 0 0 6px #a78bfa80' : undefined,
+                transition: isLocked ? 'all 0.5s cubic-bezier(.42,0,.58,1)' : undefined,
               }}
+              id={isFlippable ? `flippable-card-${item.key}` : undefined}
             >
               <DraggableCardContainer>
                 {isFlippable ? (
                   <motion.div
                     className="w-64 h-40"
                     style={{ perspective: 1000 }}
-                    onClick={() => flip(item.key)}
+                    onClick={() => {
+                      if (!isFlipped && !locked) {
+                        setFlipped({ [item.key]: true });
+                        setLocked(item.key);
+                      }
+                    }}
                   >
                     <motion.div
                       className="w-full h-full"
                       animate={{ rotateY: isFlipped ? 180 : 0 }}
                       transition={{ duration: 0.6 }}
-                      style={{ position: 'relative', transformStyle: 'preserve-3d', cursor: 'pointer' }}
+                      style={{ position: 'relative', transformStyle: 'preserve-3d', cursor: locked ? 'default' : 'pointer' }}
                     >
                       {/* Front Side */}
                       <div
@@ -91,15 +109,23 @@ export default function CardHubExperiment() {
                       </div>
                       {/* Back Side */}
                       <div
-                        className="absolute w-full h-full flex flex-col items-center justify-center w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl p-6"
+                        className="absolute w-full h-full flex flex-col items-center justify-center w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl p-0"
                         style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                       >
-                        <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
-                          {item.label} (Back)
-                        </span>
-                        <span className="text-gray-700 text-base text-center font-medium drop-shadow">
-                          {item.key === 'profile' ? 'Profile details coming soon!' : 'Settings options coming soon!'}
-                        </span>
+                        {item.key === 'settings' ? (
+                          <div className="w-full h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                            <SettingsCard forceExpanded={true} />
+                          </div>
+                        ) : (
+                          <>
+                            <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
+                              {item.label} (Back)
+                            </span>
+                            <span className="text-gray-700 text-base text-center font-medium drop-shadow">
+                              {item.key === 'profile' ? 'Profile details coming soon!' : 'Settings options coming soon!'}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </motion.div>
                   </motion.div>
