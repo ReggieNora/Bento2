@@ -57,6 +57,26 @@ export default function CardHubExperiment() {
       {showCoach && (
         <CoachOverlay onCollapse={() => setShowCoach(false)} />
       )}
+      {/* Expanded Settings Card */}
+      {locked === 'settings' && (
+        <motion.div
+          className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+          animate={{ width: 440, height: 420 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 28 }}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 51,
+            borderRadius: 20,
+            background: 'rgba(255,255,255,0.10)',
+            boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
+          }}
+        >
+          <SettingsCard forceExpanded={true} />
+        </motion.div>
+      )}
       {/* Cards arranged around logo */}
       <div className="relative z-20 w-full h-full flex items-center justify-center">
         {menuItems.map((item, i) => {
@@ -65,17 +85,16 @@ export default function CardHubExperiment() {
           const isLocked = locked === item.key;
           const pos = fixedPositions[i];
           const angle = randomAngles[i];
+          // Hide original card if settings card is expanded
+          if (item.key === 'settings' && isLocked) return null;
           return (
             <div
               key={item.key}
               style={{
-                position: isLocked ? 'fixed' : 'absolute',
-                left: isLocked ? '50%' : `calc(50% + ${pos.x}px)`,
-                top: isLocked ? '50%' : `calc(50% + ${pos.y}px)`,
-                transform: isLocked ? 'translate(-50%, -50%) scale(1.08)' : `translate(-50%, -50%) rotate(${angle}deg)`,
-                zIndex: isLocked ? 50 : undefined,
-                boxShadow: isLocked ? '0 0 0 6px #a78bfa80' : undefined,
-                transition: isLocked ? 'all 0.5s cubic-bezier(.42,0,.58,1)' : undefined,
+                position: 'absolute',
+                left: `calc(50% + ${pos.x}px)`,
+                top: `calc(50% + ${pos.y}px)`,
+                transform: `translate(-50%, -50%) rotate(${angle}deg)`
               }}
               id={isFlippable ? `flippable-card-${item.key}` : undefined}
             >
@@ -109,13 +128,33 @@ export default function CardHubExperiment() {
                       </div>
                       {/* Back Side */}
                       <div
-                        className="absolute w-full h-full flex flex-col items-center justify-center w-[270px] h-[320px] rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl p-0"
+                        className="absolute flex flex-col items-center justify-center rounded-2xl bg-white/10 backdrop-blur-xl border border-white/30 shadow-2xl p-0"
                         style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                       >
                         {item.key === 'settings' ? (
-                          <div className="w-full h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                          <motion.div
+                            className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+                            animate={isLocked ? { width: 440, height: 420 } : { width: 270, height: 320 }}
+                            transition={{ type: 'spring', stiffness: 200, damping: 28 }}
+                            style={isLocked && item.key === 'settings' ? {
+                              borderRadius: 20,
+                              background: 'rgba(255,255,255,0.10)',
+                              boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
+                              position: 'absolute',
+                              left: '50%',
+                              top: '50%',
+                              right: 'auto',
+                              bottom: 'auto',
+                              transform: 'translate(-50%, -50%)',
+                              zIndex: 51
+                            } : {
+                              borderRadius: 20,
+                              background: 'rgba(255,255,255,0.10)',
+                              boxShadow: '0 4px 32px rgba(0,0,0,0.18)'
+                            }}
+                          >
                             <SettingsCard forceExpanded={true} />
-                          </div>
+                          </motion.div>
                         ) : (
                           <>
                             <span className="text-2xl font-bold text-gray-900 mb-2 drop-shadow-lg">
