@@ -57,25 +57,44 @@ export default function CardHubExperiment() {
       {showCoach && (
         <CoachOverlay onCollapse={() => setShowCoach(false)} />
       )}
-      {/* Expanded Settings Card */}
+      {/* Expanded Settings Card with Backdrop */}
       {locked === 'settings' && (
-        <motion.div
-          className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
-          animate={{ width: 440, height: 420 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 28 }}
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 51,
-            borderRadius: 20,
-            background: 'rgba(255,255,255,0.10)',
-            boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
-          }}
-        >
-          <SettingsCard forceExpanded={true} />
-        </motion.div>
+        <>
+          {/* Backdrop for outside click */}
+          <div
+            style={{
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              width: '100vw',
+              height: '100vh',
+              zIndex: 50,
+              background: 'transparent',
+            }}
+            onClick={() => {
+              setFlipped({});
+              setLocked(null);
+            }}
+          />
+          <motion.div
+            className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
+            animate={{ width: 440, height: 420 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 28 }}
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 51,
+              borderRadius: 20,
+              background: 'rgba(255,255,255,0.10)',
+              boxShadow: '0 4px 32px rgba(0,0,0,0.18)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <SettingsCard forceExpanded={true} />
+          </motion.div>
+        </>
       )}
       {/* Cards arranged around logo */}
       <div className="relative z-20 w-full h-full flex items-center justify-center">
