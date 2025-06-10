@@ -19,6 +19,28 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick, user
   const [selectedIdx, setSelectedIdx] = React.useState(0);
   const [arrowNavActive, setArrowNavActive] = React.useState(false);
 
+  // --- Tutorial Overlay State ---
+  const [tutorialActive, setTutorialActive] = React.useState(false);
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const email = localStorage.getItem('email');
+      const tutorialKey = email ? `mainMenuTutorialSeen_${email}` : 'mainMenuTutorialSeen';
+      const value = localStorage.getItem(tutorialKey);
+      console.log('[TutorialOverlay] email:', email, 'tutorialKey:', tutorialKey, 'localStorage value:', value);
+      if (!value) {
+        setTutorialActive(true);
+        console.log('[TutorialOverlay] Tutorial set to active');
+      }
+    }
+  }, []);
+  const dismissTutorial = React.useCallback(() => {
+    setTutorialActive(false);
+    const email = localStorage.getItem('email');
+    const tutorialKey = email ? `mainMenuTutorialSeen_${email}` : 'mainMenuTutorialSeen';
+    localStorage.setItem(tutorialKey, 'true');
+    console.log('[TutorialOverlay] Tutorial dismissed for', tutorialKey);
+  }, []);
+
   const handleItemClick = (item: FlowingMenuItem) => {
     onItemClick?.(item);
   };
@@ -52,6 +74,24 @@ const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [], onItemClick, user
   return (
     <div style={{position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden'}}>
       <LampBackground />
+      {/* Tutorial Overlay */}
+      {tutorialActive && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm" style={{pointerEvents: 'auto'}}>
+          <div className="bg-white rounded-2xl shadow-2xl px-8 py-10 max-w-md w-full flex flex-col items-center">
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">Welcome to Hirly!</h2>
+            <p className="text-gray-700 mb-6 text-center">
+              Explore the menu to navigate through jobs, candidates, messages, and more. Use your keyboard or mouse to get started. This quick guide appears only once.
+            </p>
+            <button
+              className="mt-2 px-6 py-2 rounded-lg bg-emerald-600 text-white font-semibold shadow hover:bg-emerald-700 transition"
+              onClick={dismissTutorial}
+              autoFocus
+            >
+              Got it!
+            </button>
+          </div>
+        </div>
+      )}
       {/* Brand background text */}
       <h1
         className="fixed top-1/2 left-1/2 -translate-x-[48%] -translate-y-1/2 text-[8rem] md:text-[12rem] font-bold bg-clip-text text-transparent bg-gradient-to-b from-white via-white/80 to-white/30 opacity-20 pointer-events-none select-none z-10 font-[Clash Display,sans-serif]"

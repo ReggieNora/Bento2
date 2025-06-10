@@ -98,6 +98,28 @@ const SkeletonDashboard = () => (
 );
 
 export default function BentoMainMenu({ userType, candidateProfiles = [], jobListings = [] }: BentoMainMenuProps) {
+  // --- Tutorial Overlay State ---
+  const [tutorialActive, setTutorialActive] = React.useState(false);
+
+  // Use email as unique identifier for tutorial overlay key
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const email = localStorage.getItem('email');
+      const tutorialKey = email ? `mainMenuTutorialSeen_${email}` : 'mainMenuTutorialSeen';
+      if (!localStorage.getItem(tutorialKey)) {
+        setTutorialActive(true);
+      }
+    }
+  }, []);
+
+  const dismissTutorial = React.useCallback(() => {
+    setTutorialActive(false);
+    const email = localStorage.getItem('email');
+    const tutorialKey = email ? `mainMenuTutorialSeen_${email}` : 'mainMenuTutorialSeen';
+    localStorage.setItem(tutorialKey, 'true');
+  }, []);
+
+
   const [swipeOpen, setSwipeOpen] = React.useState(false);
   const [messagesOpen, setMessagesOpen] = React.useState(false);
   const [profileOpen, setProfileOpen] = React.useState(false);
@@ -205,6 +227,31 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
 
   const items = React.useMemo(() => userType === 'employer' ? employerItems : candidateItems, [userType, employerItems, candidateItems]);
 
+  // --- Tutorial Tooltip Render Helper ---
+  const renderTutorialTooltip = (idx: number) => {
+    if (!tutorialActive || tutorialStep !== idx) return null;
+    return (
+      <motion.div
+        className="absolute -top-20 left-1/2 z-50 flex flex-col items-center justify-center rounded-md bg-black px-4 py-2 text-xs shadow-xl -translate-x-1/2"
+        initial={{ opacity: 0, y: 20, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.8 }}
+      >
+        <div className="relative z-30 text-base font-bold text-white">
+          {tutorialSteps[idx]?.title}
+        </div>
+        <div className="text-xs text-white mb-2">{tutorialSteps[idx]?.description}</div>
+        <button
+          onClick={skipTutorial}
+          className="text-xs text-emerald-400 underline underline-offset-2 mt-1"
+        >
+          Skip
+        </button>
+      </motion.div>
+    );
+  };
+
+
   const overlayFallback = <div className="w-full h-full flex items-center justify-center text-white text-lg">Loading...</div>;
 
   if (swipeOpen) {
@@ -296,43 +343,42 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
 
   return (
     <div className="relative z-10">
-      {/* User Type Indicator */}
-      <div className="text-center mb-8">
-        <motion.div
-          className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {userType === 'employer' ? (
-            <>
-              <IconBriefcase className="w-5 h-5 text-purple-400" />
-              <span className="text-white font-semibold">Employer Dashboard</span>
-            </>
-          ) : (
-            <>
-              <IconUser className="w-5 h-5 text-purple-400" />
-              <span className="text-white font-semibold">Candidate Dashboard</span>
-            </>
-          )}
-        </motion.div>
-      </div>
-
-      <BentoGrid className="max-w-4xl mx-auto md:auto-rows-[20rem]">
-        {items.map((item, i) => (
-          <BentoGridItem
-            key={i}
-            title={item.title}
-            description={item.description}
-            header={item.header}
-            className={item.className}
-            icon={item.icon}
-            onClick={item.action}
-            style={{ cursor: "pointer" }}
-          />
+      <BentoGrid className="mx-auto max-w-4xl md:auto-rows-[20rem]">
+        {items.map((item, idx) => (
+          <div className="relative" key={item.title}>
+            <BentoGridItem
+              className={item.className}
+              title={item.title}
+              description={item.description}
+              header={item.header}
+              icon={item.icon}
+              onClick={item.action}
+            />
+          </div>
         ))}
       </BentoGrid>
-      
+      {/* Tutorial Overlay Modal */}
+      {tutorialActive && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <motion.div
+            className="bg-white rounded-lg shadow-xl p-8 flex flex-col items-center max-w-md mx-auto"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+          >
+            <h2 className="text-2xl font-bold mb-4 text-emerald-600">Welcome to the Main Menu!</h2>
+            <p className="mb-4 text-gray-700 text-center">
+              Here you can access all the core features of the app: swiping for jobs or candidates, chatting, updating your profile, and more. Click any menu card to get started.
+            </p>
+            <button
+              onClick={dismissTutorial}
+              className="mt-4 px-6 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition"
+            >
+              Got it!
+            </button>
+          </motion.div>
+        </div>
+      )}
       {/* Home Button */}
       <motion.button
         onClick={handleGoHome}
@@ -352,4 +398,3 @@ export default function BentoMainMenu({ userType, candidateProfiles = [], jobLis
       </motion.button>
     </div>
   );
-}

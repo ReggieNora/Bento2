@@ -6,11 +6,12 @@ interface HamburgerMenuProps {
   userName?: string;
   userRole?: 'Candidate' | 'Employer';
   onLogout?: () => void;
+  onCloseOverlay?: () => void;
 }
 
 import { useNavigate } from 'react-router-dom';
 
-const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', userRole = 'Candidate', onLogout }) => {
+const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', userRole = 'Candidate', onLogout, onCloseOverlay }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const navigate = useNavigate();
 
@@ -78,7 +79,10 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ userName = 'John Doe', us
               </div>
               <button
                 className="w-full text-left px-2 py-2 rounded-lg hover:bg-white/10 text-white transition"
-                onClick={() => { navigate(-1); setMenuOpen(false); }}
+                onClick={() => {
+                  if (onCloseOverlay) onCloseOverlay();
+                  setMenuOpen(false);
+                }}
                 role="menuitem"
               >
                 &#8592; Back

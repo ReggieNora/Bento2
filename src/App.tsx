@@ -71,6 +71,16 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [coachOpen, setCoachOpen] = useState(false);
   const [dashboardOpen, setDashboardOpen] = useState(false);
+
+  // Function to close all overlays
+  const closeAllOverlays = () => {
+    setSwipeOpen(false);
+    setMessagesOpen(false);
+    setProfileOpen(false);
+    setSettingsOpen(false);
+    setCoachOpen(false);
+    setDashboardOpen(false);
+  };
   // Lazy load overlays
   const SwipeApp = React.lazy(() => import('./components/SwipeApp'));
   const MessagesOverlay = React.lazy(() => import('./components/MessagesOverlay'));
@@ -604,7 +614,7 @@ function App() {
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative">
       <GradientBackground animated={true} />
       {/* Always-visible Hamburger Menu */}
-      <HamburgerMenu userName={"John Doe"} userRole={userType === 'employer' ? 'Employer' : 'Candidate'} onLogout={handleLogout} />
+      <HamburgerMenu userName={"John Doe"} userRole={userType === 'employer' ? 'Employer' : 'Candidate'} onLogout={handleLogout} onCloseOverlay={closeAllOverlays} />
       
       <FlowingMenu 
         items={getFlowingMenuItems(userType)}
